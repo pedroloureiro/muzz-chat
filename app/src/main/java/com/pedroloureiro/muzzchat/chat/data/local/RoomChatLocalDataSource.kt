@@ -1,8 +1,8 @@
-package com.pedroloureiro.muzzchat.chat.data
+package com.pedroloureiro.muzzchat.chat.data.local
 
-import com.pedroloureiro.muzzchat.chat.data.db.MessageDao
-import com.pedroloureiro.muzzchat.chat.data.db.MessageDeliveryStatus
-import com.pedroloureiro.muzzchat.chat.data.db.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.db.dao.MessageDao
+import com.pedroloureiro.muzzchat.chat.data.db.entities.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.db.models.MessageDeliveryStatus
 import kotlinx.coroutines.flow.Flow
 
 class RoomChatLocalDataSource(private val dao: MessageDao) : ChatLocalDataSource {

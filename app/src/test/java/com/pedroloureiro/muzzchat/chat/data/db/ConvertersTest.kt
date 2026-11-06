@@ -1,5 +1,7 @@
 package com.pedroloureiro.muzzchat.chat.data.db
 
+import com.pedroloureiro.muzzchat.chat.data.db.models.ContentType
+import com.pedroloureiro.muzzchat.chat.data.db.models.MessageDeliveryStatus
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

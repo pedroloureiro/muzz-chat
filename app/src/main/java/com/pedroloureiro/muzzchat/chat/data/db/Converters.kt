@@ -1,6 +1,8 @@
 package com.pedroloureiro.muzzchat.chat.data.db
 
 import androidx.room.TypeConverter
+import com.pedroloureiro.muzzchat.chat.data.db.models.ContentType
+import com.pedroloureiro.muzzchat.chat.data.db.models.MessageDeliveryStatus
 
 class Converters {
     @TypeConverter
