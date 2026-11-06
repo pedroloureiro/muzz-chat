@@ -9,9 +9,6 @@ import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.MockChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
 import com.pedroloureiro.muzzchat.chat.domain.usecase.SendMessageUseCase
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
@@ -21,7 +18,6 @@ val chatModule = module {
     single<ChatLocalDataSource> { RoomChatLocalDataSource(get()) }
     single<ChatRemoteDataSource> { MockChatRemoteDataSource() }
     single { MockData(androidContext()) }
-    single { CoroutineScope(SupervisorJob() + Dispatchers.Default) }
-    single<ChatRepository> { ChatRepositoryImpl(local = get(), remote = get(), mockData = get(), scope = get()) }
+    single<ChatRepository> { ChatRepositoryImpl(local = get(), remote = get(), mockData = get()) }
     factory { SendMessageUseCase(get()) }
 }

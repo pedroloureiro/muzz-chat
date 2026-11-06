@@ -12,7 +12,6 @@ import com.pedroloureiro.muzzchat.chat.domain.model.Content
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,13 +48,6 @@ class ChatRepositoryImplTest {
         content = ContentDto(type = "TEXT", value = "text"),
         timestamp = 1L
     )
-
-    @Test
-    fun `creating the repository stores nothing`() = runTest {
-        repository()
-
-        assertEquals(emptyList<MessageEntity>(), local.stored.value)
-    }
 
     @Test
     fun `getMessages maps stored entities to domain messages`() = runTest {
@@ -103,6 +95,7 @@ class ChatRepositoryImplTest {
     @Test
     fun `sent message moves from SENDING to SENT after the mock echo delay`() = runTest {
         val repository = repository(remote = MockChatRemoteDataSource())
+        startSync(repository)
 
         launch { repository.sendMessage(message) }
 
@@ -113,12 +106,21 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `incoming messages are stored as SENT`() = runTest {
-        repository()
+    fun `syncIncomingMessages stores incoming messages as SENT`() = runTest {
+        startSync(repository())
 
         remote.incoming.emit(dto)
 
         assertEquals(listOf(dto.toEntity(MessageDeliveryStatus.SENT)), local.stored.value)
+    }
+
+    @Test
+    fun `syncIncomingMessages stops storing when its caller cancels it`() = runTest {
+        startSync(repository()).cancel()
+
+        remote.incoming.emit(dto)
+
+        assertEquals(emptyList<MessageEntity>(), local.stored.value)
     }
 
     @Test
@@ -140,13 +142,11 @@ class ChatRepositoryImplTest {
 
     private fun mockData() = MockData(ApplicationProvider.getApplicationContext())
 
-    private fun TestScope.repository(remote: ChatRemoteDataSource = this@ChatRepositoryImplTest.remote) =
-        ChatRepositoryImpl(
-            local = local,
-            remote = remote,
-            mockData = mockData(),
-            scope = CoroutineScope(backgroundScope.coroutineContext + UnconfinedTestDispatcher(testScheduler))
-        )
+    private fun repository(remote: ChatRemoteDataSource = this.remote) =
+        ChatRepositoryImpl(local = local, remote = remote, mockData = mockData())
+
+    private fun TestScope.startSync(repository: ChatRepositoryImpl) =
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.syncIncomingMessages() }
 
     private class FakeChatLocalDataSource : ChatLocalDataSource {
         val stored = MutableStateFlow(emptyList<MessageEntity>())

@@ -6,29 +6,23 @@ import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.launch
 
 class ChatRepositoryImpl(
     private val local: ChatLocalDataSource,
     private val remote: ChatRemoteDataSource,
-    private val mockData: MockData,
-    scope: CoroutineScope
+    private val mockData: MockData
 ) : ChatRepository {
-
-    init {
-        // Listens to the remote stream (a WebSocket in production). Only stores what the remote emits, so nothing is inserted at startup.
-        scope.launch {
-            remote.incomingMessages().collect { dto ->
-                local.insertMessage(dto.toEntity(status = MessageDeliveryStatus.SENT))
-            }
-        }
-    }
 
     override fun getMessages(): Flow<List<Message>> =
         local.getMessages().map { entities -> entities.map { it.toMessage() } }
+
+    override suspend fun syncIncomingMessages() {
+        remote.incomingMessages().collect { dto ->
+            local.insertMessage(dto.toEntity(status = MessageDeliveryStatus.SENT))
+        }
+    }
 
     override suspend fun sendMessage(message: Message) {
         local.insertMessage(message.toEntity())
