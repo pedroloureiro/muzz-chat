@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muzz Chat — Design System</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #FAFAFA; color: #1A1A1A; padding: 40px; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #9E9E9E; font-size: 14px; margin-bottom: 48px; }
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #9E9E9E; margin-bottom: 20px; margin-top: 56px; border-bottom: 1px solid #E0E0E0; padding-bottom: 8px; }
+  h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #BDBDBD; margin-bottom: 12px; margin-top: 28px; }
+  code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
+
+  /* ── Token Tables ── */
+  .token-table { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
+  .token-table th { text-align: left; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 12px; background: #F5F5F5; }
+  .token-table td { padding: 10px 12px; border-bottom: 1px solid #F0F0F0; font-size: 13px; vertical-align: middle; }
+  .token-table tr:last-child td { border-bottom: none; }
+  .token-name { font-family: monospace; font-weight: 600; }
+  .token-value { font-family: monospace; color: #666; font-size: 12px; }
+  .token-desc { color: #555; }
+  .swatch { width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); display: inline-block; vertical-align: middle; margin-right: 8px; }
+  .role-ref { font-family: monospace; font-size: 11px; color: #E8175D; }
+
+  /* ── Typography ── */
+  .type-row { display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #F0F0F0; }
+  .type-meta { width: 220px; flex-shrink: 0; }
+  .type-label { font-size: 12px; font-weight: 600; color: #E8175D; font-family: monospace; }
+  .type-spec  { font-size: 11px; color: #9E9E9E; font-family: monospace; margin-top: 2px; }
+  .type-role  { font-size: 11px; color: #BDBDBD; margin-top: 2px; }
+
+  /* ── Spacing ── */
+  .spacing-grid { display: flex; flex-direction: column; gap: 10px; }
+  .spacing-row { display: flex; align-items: center; gap: 16px; }
+  .spacing-bar { background: #E8175D; height: 8px; border-radius: 4px; opacity: 0.6; }
+  .spacing-label { font-size: 12px; font-weight: 600; font-family: monospace; width: 120px; }
+  .spacing-value { font-size: 11px; color: #9E9E9E; font-family: monospace; width: 44px; }
+  .spacing-desc { font-size: 12px; color: #666; }
+
+  /* ══════════════════════════════
+     COMPONENT SHOWCASE
+     ══════════════════════════════ */
+  .component-section { margin-bottom: 48px; }
+  .component-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 20px; }
+  .component-title { font-size: 18px; font-weight: 700; font-family: monospace; }
+  .component-subtitle { font-size: 13px; color: #9E9E9E; }
+
+  /* state grid */
+  .states-grid { display: flex; flex-wrap: wrap; gap: 24px; }
+  .state-card { background: white; border: 1px solid #F0F0F0; border-radius: 12px; padding: 20px; min-width: 160px; }
+  .state-card.dark-bg { background: #2C2C2C; }
+  .state-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #BDBDBD; margin-bottom: 16px; font-family: monospace; }
+  .state-label.active { color: #E8175D; }
+  .state-props { font-size: 11px; color: #BDBDBD; margin-top: 12px; font-family: monospace; line-height: 18px; }
+
+  /* ── Button states ── */
+  .btn { display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 14px; gap: 8px; }
+  .btn-primary { background: #E8175D; color: white; border-radius: 50%; width: 44px; height: 44px; }
+  .btn-primary-pressed { background: #C01048; color: white; border-radius: 50%; width: 44px; height: 44px; }
+  .btn-primary-disabled { background: #F2F2F2; color: #BDBDBD; border-radius: 50%; width: 44px; height: 44px; cursor: not-allowed; }
+  .btn-icon { font-size: 18px; }
+
+  /* ── TextInput states ── */
+  .text-input { width: 220px; border-radius: 24px; padding: 10px 16px; font-size: 14px; font-family: inherit; border: none; outline: none; }
+  .text-input-empty { background: #F5F5F5; color: #9E9E9E; }
+  .text-input-focused { background: #F5F5F5; color: #1A1A1A; box-shadow: 0 0 0 2px #E8175D40; }
+  .text-input-filled { background: #F5F5F5; color: #1A1A1A; }
+  .text-input-disabled { background: #F5F5F5; color: #BDBDBD; cursor: not-allowed; opacity: 0.6; }
+
+  /* ── MessageBubble states ── */
+  .bubble { padding: 8px 12px; font-size: 14px; line-height: 20px; display: inline-block; max-width: 240px; }
+  .bubble-sent { background: #E8175D; color: white; border-radius: 18px 18px 4px 18px; }
+  .bubble-recv { background: #F2F2F2; color: #1A1A1A; border-radius: 18px 18px 18px 4px; }
+  .bubble-sent-grouped { background: #E8175D; color: white; border-radius: 18px; }
+  .bubble-recv-grouped { background: #F2F2F2; color: #1A1A1A; border-radius: 18px; }
+  .bubble-sending { opacity: 0.5; }
+  .sending-indicator { font-size: 11px; color: #9E9E9E; margin-top: 3px; text-align: right; letter-spacing: 2px; }
+  @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+  .sending-dots span { animation: pulse 1.2s infinite; display: inline-block; }
+  .sending-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .sending-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+  /* ── MessageItem states ── */
+  .msg-item-wrap { width: 280px; display: flex; flex-direction: column; gap: 8px; padding: 12px; background: #FFF; border-radius: 8px; border: 1px solid #F0F0F0; }
+  .msg-row { display: flex; }
+  .msg-row.sent { justify-content: flex-end; }
+  .msg-row.recv { justify-content: flex-start; }
+  .msg-row.grouped { margin-top: 2px; }
+
+  /* ── SectionHeader ── */
+  .section-header-demo { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 4px 16px; letter-spacing: 0; }
+
+  /* ── Avatar ── */
+  .avatar-lg { width: 48px; height: 48px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: 700; flex-shrink: 0; border: 2px solid #F2F2F2; }
+  .avatar-md { width: 36px; height: 36px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+  .avatar-placeholder { background: #F2F2F2; color: #9E9E9E; }
+
+  /* ── TopBar ── */
+  .topbar-demo { display: flex; align-items: center; padding: 12px 16px; background: white; border-bottom: 1px solid #E0E0E0; gap: 12px; width: 360px; border-radius: 12px 12px 0 0; }
+  .topbar-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; color: #1A1A1A; font-size: 20px; flex-shrink: 0; border-radius: 50%; }
+  .topbar-back:hover { background: #F5F5F5; }
+  .topbar-info { flex: 1; display: flex; align-items: center; gap: 10px; }
+  .topbar-name-block { display: flex; flex-direction: column; }
+  .topbar-name-text { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 20px; }
+  .topbar-overflow { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; color: #9E9E9E; font-size: 20px; border-radius: 50%; flex-shrink: 0; }
+  .topbar-overflow:hover { background: #F5F5F5; }
+  .topbar-overflow-pressed { background: #F5F5F5; color: #1A1A1A; }
+
+  /* ── OverflowMenu ── */
+  .overflow-menu { background: white; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 180px; overflow: hidden; }
+  .overflow-item { padding: 14px 16px; font-size: 14px; color: #1A1A1A; cursor: pointer; border-bottom: 1px solid #F5F5F5; }
+  .overflow-item:last-child { border-bottom: none; }
+  .overflow-item:hover { background: #F9F9F9; }
+  .overflow-item-destructive { color: #E8175D; }
+
+  /* ── SendAsOther button ── */
+  .send-as-btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.1s; }
+  .send-as-default { background: white; color: #9E9E9E; border: 1.5px solid #E0E0E0; }
+  .send-as-pressed { background: #F5F5F5; color: #9E9E9E; border: 1.5px solid #BDBDBD; transform: scale(0.97); }
+  .send-as-disabled { background: white; color: #BDBDBD; border: 1.5px solid #F0F0F0; cursor: not-allowed; opacity: 0.6; }
+
+  /* ── ChatInput states ── */
+  .chat-input-wrap { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: white; border: 1px solid #F0F0F0; border-radius: 12px; width: 320px; }
+  .ci-field { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 10px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
+  .ci-field::placeholder { color: #9E9E9E; }
+  .ci-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ci-btn-active { background: #E8175D; }
+  .ci-btn-disabled { background: #F2F2F2; cursor: not-allowed; }
+  .ci-btn svg { fill: white; }
+  .ci-btn-disabled svg { fill: #BDBDBD; }
+
+  /* ── Chat Preview ── */
+  .chat-preview { background: #FFF; border-radius: 24px; border: 1px solid #E0E0E0; overflow: hidden; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  .chat-topbar { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #F0F0F0; gap: 12px; }
+  .avatar { width: 36px; height: 36px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; flex-shrink: 0; }
+  .topbar-name { font-size: 16px; font-weight: 600; }
+  .chat-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; min-height: 300px; }
+  .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 4px 0 8px; }
+  .pbubble { padding: 8px 12px; border-radius: 18px; max-width: 72%; font-size: 14px; line-height: 20px; }
+  .pbubble.sent { background: #E8175D; color: white; border-bottom-right-radius: 4px; }
+  .pbubble.recv { background: #F2F2F2; color: #1A1A1A; border-bottom-left-radius: 4px; }
+  .pbubble.sent.g { border-top-right-radius: 18px; border-bottom-right-radius: 18px; }
+  .pbubble.recv.g { border-top-left-radius: 18px; border-bottom-left-radius: 18px; }
+  .preview-input-row { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid #F0F0F0; }
+  .preview-input { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 10px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
+  .preview-send { width: 40px; height: 40px; border-radius: 50%; background: #E8175D; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .preview-send svg { fill: white; }
+</style>
+</head>
+<body>
+
+<h1>Muzz Chat</h1>
+<p class="subtitle">Design System — v0.1 · 2026</p>
+
+<!-- ══════════════════════════════════════════════════════
+     COLOURS
+     ══════════════════════════════════════════════════════ -->
+<h2>Colours</h2>
+
+<h3>Tier 1 — Primitives</h3>
+<table class="token-table">
+  <tr><th>Token</th><th>Swatch</th><th>Hex</th><th>Notes</th></tr>
+  <tr><td class="token-name">Pink500</td><td><span class="swatch" style="background:#E8175D;"></span></td><td class="token-value">#E8175D</td><td class="token-desc">Muzz brand pink</td></tr>
+  <tr><td class="token-name">Pink700</td><td><span class="swatch" style="background:#C01048;"></span></td><td class="token-value">#C01048</td><td class="token-desc">Pressed state of Pink500</td></tr>
+  <tr><td class="token-name">Neutral900</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="token-value">#1A1A1A</td><td class="token-desc">Near-black</td></tr>
+  <tr><td class="token-name">Neutral500</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="token-value">#9E9E9E</td><td class="token-desc">Mid grey</td></tr>
+  <tr><td class="token-name">Neutral300</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="token-value">#BDBDBD</td><td class="token-desc">Disabled text / icons</td></tr>
+  <tr><td class="token-name">Neutral200</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="token-value">#F2F2F2</td><td class="token-desc">Light grey</td></tr>
+  <tr><td class="token-name">Neutral100</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="token-value">#F5F5F5</td><td class="token-desc">Near-white surface</td></tr>
+  <tr><td class="token-name">Neutral50</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="token-value">#E0E0E0</td><td class="token-desc">Border / divider</td></tr>
+  <tr><td class="token-name">White</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="token-value">#FFFFFF</td><td class="token-desc">Pure white</td></tr>
+</table>
+
+<h3>Tier 2 — Semantic roles</h3>
+<table class="token-table">
+  <tr><th>Role</th><th>Swatch</th><th>→ Primitive</th><th>Usage</th></tr>
+  <tr><td class="token-name">colorPrimary</td><td><span class="swatch" style="background:#E8175D;"></span></td><td class="role-ref">Pink500</td><td class="token-desc">Brand CTAs, send button, sent bubble bg</td></tr>
+  <tr><td class="token-name">colorPrimaryPressed</td><td><span class="swatch" style="background:#C01048;"></span></td><td class="role-ref">Pink700</td><td class="token-desc">Send button pressed state</td></tr>
+  <tr><td class="token-name">colorPrimaryDisabled</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="role-ref">Neutral200</td><td class="token-desc">Send button disabled bg</td></tr>
+  <tr><td class="token-name">colorBackground</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Screen / scaffold background</td></tr>
+  <tr><td class="token-name">colorSurface</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Top bar, input bar surface</td></tr>
+  <tr><td class="token-name">colorSurfaceVariant</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="role-ref">Neutral200</td><td class="token-desc">Received bubble bg, input focus ring bg</td></tr>
+  <tr><td class="token-name">colorInputBackground</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="role-ref">Neutral100</td><td class="token-desc">TextInput field background</td></tr>
+  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border</td></tr>
+  <tr><td class="token-name">textPrimary</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="role-ref">Neutral900</td><td class="token-desc">Message text on received bubbles, top bar</td></tr>
+  <tr><td class="token-name">textSecondary</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="role-ref">Neutral500</td><td class="token-desc">Section headers, timestamps, placeholder</td></tr>
+  <tr><td class="token-name">textDisabled</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Disabled input text, disabled button icon</td></tr>
+  <tr><td class="token-name">textOnPrimary</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Text/icons on pink (sent bubble, send button)</td></tr>
+</table>
+
+<!-- ══════════════════════════════════════════════════════
+     TYPOGRAPHY
+     ══════════════════════════════════════════════════════ -->
+<h2>Typography</h2>
+<div class="type-row">
+  <div class="type-meta"><div class="type-label">bodyLarge</div><div class="type-spec">16sp / lh 22sp / Regular</div><div class="type-role">color: textPrimary</div></div>
+  <div style="font-size:16px;line-height:22px;">Does 7pm work for you?</div>
+</div>
+<div class="type-row">
+  <div class="type-meta"><div class="type-label">bodyMedium</div><div class="type-spec">14sp / lh 20sp / Regular</div><div class="type-role">color: textPrimary</div></div>
+  <div style="font-size:14px;line-height:20px;">Actually just about to go shopping</div>
+</div>
+<div class="type-row">
+  <div class="type-meta"><div class="type-label">bodySmall</div><div class="type-spec">12sp / lh 16sp / Regular</div><div class="type-role">color: textSecondary</div></div>
+  <div style="font-size:12px;line-height:16px;color:#9E9E9E;">11:59</div>
+</div>
+<div class="type-row">
+  <div class="type-meta"><div class="type-label">labelSmall</div><div class="type-spec">11sp / lh 16sp / SemiBold · 0 tracking</div><div class="type-role">color: textSecondary</div></div>
+  <div style="font-size:11px;font-weight:600;color:#9E9E9E;letter-spacing:0;">Thursday 11:59</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SPACING
+     ══════════════════════════════════════════════════════ -->
+<h2>Spacing</h2>
+<div class="spacing-grid">
+  <div class="spacing-row"><div class="spacing-label">xs</div><div class="spacing-bar" style="width:4px;"></div><div class="spacing-value">4dp</div><div class="spacing-desc">Icon gaps, tight nudges</div></div>
+  <div class="spacing-row"><div class="spacing-label">sm</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-value">8dp</div><div class="spacing-desc">Inner padding, standard message gap</div></div>
+  <div class="spacing-row"><div class="spacing-label">md</div><div class="spacing-bar" style="width:16px;"></div><div class="spacing-value">16dp</div><div class="spacing-desc">Screen horizontal margin</div></div>
+  <div class="spacing-row"><div class="spacing-label">lg</div><div class="spacing-bar" style="width:24px;"></div><div class="spacing-value">24dp</div><div class="spacing-desc">Section spacing</div></div>
+  <div class="spacing-row"><div class="spacing-label">xl</div><div class="spacing-bar" style="width:32px;"></div><div class="spacing-value">32dp</div><div class="spacing-desc">Large layout gaps</div></div>
+  <div class="spacing-row"><div class="spacing-label">bubblePadH</div><div class="spacing-bar" style="width:12px;"></div><div class="spacing-value">12dp</div><div class="spacing-desc">Bubble horizontal padding</div></div>
+  <div class="spacing-row"><div class="spacing-label">bubblePadV</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-value">8dp</div><div class="spacing-desc">Bubble vertical padding</div></div>
+  <div class="spacing-row"><div class="spacing-label">msgGrouped</div><div class="spacing-bar" style="width:2px;"></div><div class="spacing-value">2dp</div><div class="spacing-desc">Gap: same user, &lt;20s apart</div></div>
+  <div class="spacing-row"><div class="spacing-label">msgSeparated</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-value">8dp</div><div class="spacing-desc">Gap: different user or &gt;20s apart</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SHAPES
+     ══════════════════════════════════════════════════════ -->
+<h2>Shapes</h2>
+<div style="display:flex;gap:24px;flex-wrap:wrap;">
+  <div style="text-align:center;"><div style="width:80px;height:80px;background:#E8175D;border-radius:18px;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">Bubble</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">18dp (tail: 4dp)</div></div>
+  <div style="text-align:center;"><div style="width:120px;height:44px;background:#E8175D;border-radius:24px;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">TextInput</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">24dp pill</div></div>
+  <div style="text-align:center;"><div style="width:44px;height:44px;background:#E8175D;border-radius:50%;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">Button</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">circle</div></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     COMPONENTS & STATES
+     ══════════════════════════════════════════════════════ -->
+<h2>Components &amp; States</h2>
+
+<!-- ── Avatar ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">Avatar</div>
+    <div class="component-subtitle">User profile image — initials fallback when no image available</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">md — with initials (default)</div>
+      <div class="avatar-md">S</div>
+      <div class="state-props">size: 36dp<br>bg: colorPrimary<br>text: textOnPrimary<br>shape: circle</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">lg — with initials</div>
+      <div class="avatar-lg">S</div>
+      <div class="state-props">size: 48dp<br>bg: colorPrimary<br>border: colorSurfaceVariant 2dp<br>shape: circle</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label">placeholder (no user)</div>
+      <div class="avatar-md avatar-placeholder">?</div>
+      <div class="state-props">size: 36dp<br>bg: colorSurfaceVariant<br>text: textSecondary</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TopBar ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">TopBar</div>
+    <div class="component-subtitle">Composes back button + Avatar + name + overflow menu trigger</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card" style="padding:0;overflow:hidden;min-width:360px;">
+      <div style="padding:12px 16px 8px 16px;"><div class="state-label active" style="margin-bottom:12px;">Default</div></div>
+      <div class="topbar-demo" style="border-radius:0;border-top:none;border-left:none;border-right:none;">
+        <button class="topbar-back">‹</button>
+        <div class="topbar-info">
+          <div class="avatar-md">S</div>
+          <div class="topbar-name-block">
+            <span class="topbar-name-text">Sarah</span>
+          </div>
+        </div>
+        <button class="topbar-overflow">⋮</button>
+      </div>
+      <div class="state-props" style="padding:12px 16px;">bg: colorSurface<br>border-bottom: colorBorder<br>back icon: textPrimary<br>overflow icon: textSecondary</div>
+    </div>
+    <div class="state-card" style="padding:0;overflow:hidden;min-width:360px;">
+      <div style="padding:12px 16px 8px 16px;"><div class="state-label active" style="margin-bottom:12px;">Overflow pressed</div></div>
+      <div class="topbar-demo" style="border-radius:0;border-top:none;border-left:none;border-right:none;">
+        <button class="topbar-back">‹</button>
+        <div class="topbar-info">
+          <div class="avatar-md">S</div>
+          <div class="topbar-name-block">
+            <span class="topbar-name-text">Sarah</span>
+          </div>
+        </div>
+        <button class="topbar-overflow topbar-overflow-pressed">⋮</button>
+      </div>
+      <div class="state-props" style="padding:12px 16px;">overflow bg: colorInputBackground<br>icon: textPrimary</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── OverflowMenu ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">OverflowMenu</div>
+    <div class="component-subtitle">Dropdown anchored to the ⋮ button — two items</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">Open</div>
+      <div class="overflow-menu">
+        <div class="overflow-item">Load sample data</div>
+        <div class="overflow-item overflow-item-destructive">Clear messages</div>
+      </div>
+      <div class="state-props">bg: colorSurface<br>shadow: 0 4dp 16dp #00000012<br>radius: 8dp<br>"Clear messages": colorPrimary (destructive)</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Item hovered</div>
+      <div class="overflow-menu">
+        <div class="overflow-item" style="background:#F9F9F9;">Load sample data</div>
+        <div class="overflow-item overflow-item-destructive">Clear messages</div>
+      </div>
+      <div class="state-props">item bg: colorInputBackground<br>on tap: execute action + dismiss</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Button ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">Button</div>
+    <div class="component-subtitle">Generic configurable action button — variant: primary | secondary</div>
+  </div>
+
+  <h3>variant = primary</h3>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">Default</div>
+      <button class="btn btn-primary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+      <div class="state-props">bg: colorPrimary<br>icon: textOnPrimary<br>shape: circle</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Pressed</div>
+      <button class="btn btn-primary-pressed">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+      <div class="state-props">bg: colorPrimaryPressed<br>scale: 0.95<br>icon: textOnPrimary</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label">Disabled</div>
+      <button class="btn btn-primary-disabled" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+      <div class="state-props">bg: colorPrimaryDisabled<br>icon: textDisabled<br>not clickable</div>
+    </div>
+  </div>
+
+  <h3>variant = secondary (outlined pill)</h3>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">Default</div>
+      <button class="send-as-btn send-as-default">↩ Reply as Sarah</button>
+      <div class="state-props">bg: colorSurface<br>text: textSecondary<br>border: colorBorder<br>shape: 20dp pill</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Pressed</div>
+      <button class="send-as-btn send-as-pressed">↩ Reply as Sarah</button>
+      <div class="state-props">bg: colorInputBackground<br>border: Neutral300<br>scale: 0.97</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label">Disabled</div>
+      <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
+      <div class="state-props">opacity: 0.6<br>not clickable</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── TextInput ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">TextInput</div>
+    <div class="component-subtitle">Generic configurable text field</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">Empty (default)</div>
+      <input class="text-input text-input-empty" placeholder="Message…" readonly />
+      <div class="state-props">bg: colorInputBackground<br>text: textSecondary (placeholder)<br>border: none</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Focused</div>
+      <input class="text-input text-input-focused" value="" placeholder="Message…" readonly />
+      <div class="state-props">bg: colorInputBackground<br>ring: colorPrimary @25%<br>text: textPrimary</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Filled</div>
+      <input class="text-input text-input-filled" value="Hey, Sara looks great" readonly />
+      <div class="state-props">bg: colorInputBackground<br>text: textPrimary<br>border: none</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label">Disabled</div>
+      <input class="text-input text-input-disabled" value="Disabled" disabled />
+      <div class="state-props">bg: colorInputBackground<br>text: textDisabled<br>opacity: 0.6</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MessageBubble ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">MessageBubble</div>
+    <div class="component-subtitle">Bubble shell — text, background, tail direction</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">Sent — tail</div>
+      <span class="bubble bubble-sent">Does 7pm work for you?</span>
+      <div class="state-props">bg: colorPrimary<br>text: textOnPrimary<br>tail: bottom-right 4dp</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Received — tail</div>
+      <span class="bubble bubble-recv">Yeh for sure, sounds fun</span>
+      <div class="state-props">bg: colorSurfaceVariant<br>text: textPrimary<br>tail: bottom-left 4dp</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Sent — grouped</div>
+      <span class="bubble bubble-sent-grouped">What are you up to?</span>
+      <div class="state-props">bg: colorPrimary<br>text: textOnPrimary<br>all corners: 18dp (no tail)</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Received — grouped</div>
+      <span class="bubble bubble-recv-grouped">Nothing much</span>
+      <div class="state-props">bg: colorSurfaceVariant<br>text: textPrimary<br>all corners: 18dp (no tail)</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Sent — sending</div>
+      <span class="bubble bubble-sent bubble-sending">On my way!</span>
+      <div class="sending-indicator sending-dots"><span>●</span><span>●</span><span>●</span></div>
+      <div class="state-props">status: SENDING<br>opacity: 0.5<br>pulsing dots below bubble<br>transitions to SENT on echo</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MessageItem ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">MessageItem</div>
+    <div class="component-subtitle">Bubble + alignment + spacing logic</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card" style="min-width:300px;">
+      <div class="state-label active">Sent — separated</div>
+      <div class="msg-item-wrap" style="border:none;padding:0;">
+        <div class="msg-row sent"><span class="bubble bubble-sent">Does 7pm work?</span></div>
+      </div>
+      <div class="state-props">align: end<br>topPadding: msgSeparated (8dp)</div>
+    </div>
+    <div class="state-card" style="min-width:300px;">
+      <div class="state-label active">Sent — grouped (same user, &lt;20s)</div>
+      <div class="msg-item-wrap" style="border:none;padding:0;">
+        <div class="msg-row sent"><span class="bubble bubble-sent">Does 7pm work?</span></div>
+        <div class="msg-row sent grouped"><span class="bubble bubble-sent-grouped">Or maybe 8pm?</span></div>
+      </div>
+      <div class="state-props">align: end<br>topPadding: msgGrouped (2dp)</div>
+    </div>
+    <div class="state-card" style="min-width:300px;">
+      <div class="state-label active">Received — separated</div>
+      <div class="msg-item-wrap" style="border:none;padding:0;">
+        <div class="msg-row recv"><span class="bubble bubble-recv">Ok cool!</span></div>
+      </div>
+      <div class="state-props">align: start<br>topPadding: msgSeparated (8dp)</div>
+    </div>
+    <div class="state-card" style="min-width:300px;">
+      <div class="state-label active">Sent — sending (status: SENDING)</div>
+      <div class="msg-item-wrap" style="border:none;padding:0;">
+        <div class="msg-row sent">
+          <div style="display:flex;flex-direction:column;align-items:flex-end;">
+            <span class="bubble bubble-sent bubble-sending">On my way!</span>
+            <div class="sending-indicator sending-dots"><span>●</span><span>●</span><span>●</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="state-props">align: end<br>opacity: 0.5 on bubble<br>pulsing dots below<br>→ snaps to SENT on echo (~200ms)</div>
+    </div>
+    <div class="state-card" style="min-width:300px;">
+      <div class="state-label active">Sent — confirmed (status: SENT)</div>
+      <div class="msg-item-wrap" style="border:none;padding:0;">
+        <div class="msg-row sent"><span class="bubble bubble-sent">On my way!</span></div>
+      </div>
+      <div class="state-props">align: end<br>opacity: 1.0<br>no indicator<br>full opacity restored</div>
+    </div>
+    <div class="state-card" style="min-width:300px;">
+      <div class="state-label active">Received — grouped</div>
+      <div class="msg-item-wrap" style="border:none;padding:0;">
+        <div class="msg-row recv"><span class="bubble bubble-recv">Nothing much</span></div>
+        <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Just about to go shopping</span></div>
+      </div>
+      <div class="state-props">align: start<br>topPadding: msgGrouped (2dp)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SectionHeader ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">SectionHeader</div>
+    <div class="component-subtitle">Centred timestamp divider between message groups</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card" style="min-width:300px;">
+      <div class="state-label active">Default (only state)</div>
+      <div style="background:#F9F9F9;border-radius:8px;padding:12px 0;">
+        <div class="section-header-demo">Thursday 11:59</div>
+      </div>
+      <div class="state-props">style: labelSmall<br>color: textSecondary<br>align: center<br>shown when gap &gt; 1h or first msg</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ChatInput ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">ChatInput</div>
+    <div class="component-subtitle">Composes TextInput + Button — chat-specific bottom bar</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card" style="min-width:360px;">
+      <div class="state-label active">Empty — all disabled</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:flex-end;padding:0 4px;">
+          <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
+        </div>
+        <div class="chat-input-wrap" style="border-top:1px solid #E0E0E0;border-radius:0 0 12px 12px;border-left:none;border-right:none;border-bottom:none;padding-top:8px;">
+          <input class="ci-field" placeholder="Message…" readonly />
+          <button class="ci-btn ci-btn-disabled" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="state-props">TextInput: empty<br>Button: disabled<br>SendAsOther: disabled<br>both enabled when text.isNotBlank()</div>
+    </div>
+    <div class="state-card" style="min-width:360px;">
+      <div class="state-label active">Filled — both enabled</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:flex-end;padding:0 4px;">
+          <button class="send-as-btn send-as-default">↩ Reply as Sarah</button>
+        </div>
+        <div class="chat-input-wrap" style="border-top:1px solid #E0E0E0;border-radius:0 0 12px 12px;border-left:none;border-right:none;border-bottom:none;padding-top:8px;">
+          <input class="ci-field" value="Hey, Sara looks great" readonly />
+          <button class="ci-btn ci-btn-active">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="state-props">TextInput: filled<br>Send: enabled (sends as you)<br>SendAsOther: enabled (sends as Sarah)</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     FULL CHAT PREVIEW
+     ══════════════════════════════════════════════════════ -->
+<h2>Full Chat Preview</h2>
+<div class="chat-preview">
+  <div class="chat-topbar" style="justify-content:space-between;">
+    <button style="background:none;border:none;font-size:20px;cursor:pointer;color:#1A1A1A;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;">‹</button>
+    <div style="display:flex;align-items:center;gap:10px;flex:1;margin-left:4px;">
+      <div class="avatar">S</div>
+      <span style="font-size:16px;font-weight:600;">Sarah</span>
+    </div>
+    <button style="background:none;border:none;font-size:20px;cursor:pointer;color:#9E9E9E;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;">⋮</button>
+  </div>
+  <div class="chat-body">
+    <div class="preview-section-header">Thursday 11:59</div>
+    <div class="msg-row recv"><div class="pbubble recv">Wowsa sounds fun</div></div>
+    <div class="msg-row recv grouped"><div class="pbubble recv g">Yeh for sure that works. What time do you think?</div></div>
+    <div class="msg-row sent"><div class="pbubble sent">Does 7pm work for you? I've got to go pick up my little brother first from a party</div></div>
+    <div class="msg-row recv"><div class="pbubble recv">Ok cool!</div></div>
+    <div class="msg-row sent"><div class="pbubble sent">What are you up to today?</div></div>
+    <div class="msg-row recv"><div class="pbubble recv">Nothing much</div></div>
+    <div class="msg-row recv grouped"><div class="pbubble recv g">Actually just about to go shopping, got any recommendations for a good shoe shop?</div></div>
+    <div class="msg-row recv grouped"><div class="pbubble recv g">The last one went on for hours</div></div>
+  </div>
+  <div class="preview-input-row">
+    <input class="preview-input" placeholder="Message…" />
+    <button class="preview-send">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+    </button>
+  </div>
+</div>
+
+</body>
+</html>
