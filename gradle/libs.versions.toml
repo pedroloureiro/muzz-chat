@@ -9,6 +9,7 @@ composeBom = "2026.02.01"
 room = "2.8.5"
 koin = "4.2.2"
 kotlinxSerialization = "1.9.0"
+kotlinxCoroutines = "1.9.0"
 ksp = "2.3.13"
 robolectric = "4.17"
 androidxTestCore = "1.7.0"
@@ -30,6 +31,7 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 koin-android = { group = "io.insert-koin", name = "koin-android", version.ref = "koin" }
 koin-androidx-compose = { group = "io.insert-koin", name = "koin-androidx-compose", version.ref = "koin" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlinxCoroutines" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-test-core = { group = "androidx.test", name = "core", version.ref = "androidxTestCore" }
 

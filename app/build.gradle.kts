@@ -38,6 +38,13 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+            // Robolectric's SDK 36 sandbox reads JDK internals that the module system hides by default.
+            all { it.jvmArgs("--add-exports=java.base/jdk.internal.access=ALL-UNNAMED") }
+        }
+    }
 }
 
 dependencies {
@@ -56,6 +63,7 @@ dependencies {
     implementation(libs.koin.androidx.compose)
     implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)
     debugImplementation(libs.androidx.compose.ui.tooling)
