@@ -1,7 +1,6 @@
 package com.pedroloureiro.muzzchat.chat.data
 
 import com.pedroloureiro.muzzchat.chat.data.local.ChatLocalDataSource
-import com.pedroloureiro.muzzchat.chat.data.mock.MockData
 import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
@@ -11,8 +10,7 @@ import kotlinx.coroutines.flow.map
 
 class ChatRepositoryImpl(
     private val local: ChatLocalDataSource,
-    private val remote: ChatRemoteDataSource,
-    private val mockData: MockData
+    private val remote: ChatRemoteDataSource
 ) : ChatRepository {
 
     override fun getMessages(): Flow<List<Message>> =
@@ -31,8 +29,10 @@ class ChatRepositoryImpl(
             // TODO: .onFailure { local.updateStatus(message.messageId, MessageDeliveryStatus.FAILED) }
     }
 
-    override suspend fun loadSampleData() {
-        mockData.loadSeedMessages().forEach { local.insertMessage(it.toEntity()) }
+    override suspend fun loadMessages() {
+        remote.fetchMessages()
+            .onSuccess { messages -> messages.forEach { local.insertMessage(it.toEntity()) } }
+            // TODO: .onFailure { surface the error to the UI }
     }
 
     override suspend fun clearMessages() = local.clearAll()

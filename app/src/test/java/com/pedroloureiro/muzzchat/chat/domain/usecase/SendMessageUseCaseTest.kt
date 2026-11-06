@@ -77,7 +77,7 @@ class SendMessageUseCaseTest {
             sent += message
         }
         override suspend fun syncIncomingMessages() = Unit
-        override suspend fun loadSampleData() = Unit
+        override suspend fun loadMessages() = Unit
         override suspend fun clearMessages() = Unit
     }
 }

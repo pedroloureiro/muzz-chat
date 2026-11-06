@@ -19,12 +19,12 @@ private val localModule = module {
 }
 
 private val mockBackendModule = module {
-    single<ChatRemoteDataSource> { MockChatRemoteDataSource() }
+    single<ChatRemoteDataSource> { MockChatRemoteDataSource(get()) }
     single { MockData(androidContext()) }
 }
 
 val chatModule = module {
     includes(localModule, mockBackendModule)
-    single<ChatRepository> { ChatRepositoryImpl(local = get(), remote = get(), mockData = get()) }
+    single<ChatRepository> { ChatRepositoryImpl(local = get(), remote = get()) }
     factory { SendMessageUseCase(get()) }
 }

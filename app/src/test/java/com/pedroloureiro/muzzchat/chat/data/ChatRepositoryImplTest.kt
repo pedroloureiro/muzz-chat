@@ -21,10 +21,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
@@ -94,7 +95,7 @@ class ChatRepositoryImplTest {
 
     @Test
     fun `sent message moves from SENDING to SENT after the mock echo delay`() = runTest {
-        val repository = repository(remote = MockChatRemoteDataSource())
+        val repository = repository(remote = MockChatRemoteDataSource(mockData()))
         startSync(repository)
 
         launch { repository.sendMessage(message) }
@@ -124,11 +125,33 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `loadSampleData stores every seed message as SENT`() = runTest {
-        repository().loadSampleData()
+    fun `loadMessages stores fetched messages as SENT`() = runTest {
+        remote.fetched = Result.success(listOf(dto))
 
-        assertEquals(mockData().loadSeedMessages().map { it.toEntity() }, local.stored.value)
-        assertFalse(local.stored.value.isEmpty())
+        repository().loadMessages()
+
+        assertEquals(listOf(dto.toEntity(MessageDeliveryStatus.SENT)), local.stored.value)
+    }
+
+    @Test
+    fun `loadMessages stores nothing when the remote fails`() = runTest {
+        remote.fetched = Result.failure(IllegalStateException("unavailable"))
+
+        repository().loadMessages()
+
+        assertEquals(emptyList<MessageEntity>(), local.stored.value)
+    }
+
+    @Test
+    fun `loadMessages restores a sent message after it was cleared`() = runTest {
+        val repository = repository(remote = MockChatRemoteDataSource(mockData()))
+        launch { repository.sendMessage(message) }
+        advanceUntilIdle()
+        repository.clearMessages()
+
+        repository.loadMessages()
+
+        assertTrue(local.stored.value.any { it.messageId == message.messageId })
     }
 
     @Test
@@ -143,7 +166,7 @@ class ChatRepositoryImplTest {
     private fun mockData() = MockData(ApplicationProvider.getApplicationContext())
 
     private fun repository(remote: ChatRemoteDataSource = this.remote) =
-        ChatRepositoryImpl(local = local, remote = remote, mockData = mockData())
+        ChatRepositoryImpl(local = local, remote = remote)
 
     private fun TestScope.startSync(repository: ChatRepositoryImpl) =
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.syncIncomingMessages() }
@@ -174,6 +197,9 @@ class ChatRepositoryImplTest {
         val incoming = MutableSharedFlow<MessageDto>()
         val sent = mutableListOf<MessageDto>()
         var onSend: suspend (MessageDto) -> Result<MessageDto> = { Result.success(it) }
+        var fetched: Result<List<MessageDto>> = Result.success(emptyList())
+
+        override suspend fun fetchMessages() = fetched
 
         override suspend fun sendMessage(dto: MessageDto): Result<MessageDto> {
             sent += dto
