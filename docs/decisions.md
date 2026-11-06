@@ -91,3 +91,17 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 **To support a real backend:**
 1. Run sends where they outlive the screen, in an application scope or WorkManager.
 2. When the app starts, resend or fail any message still marked `SENDING`.
+
+---
+
+## "Clear messages" only clears the device
+
+**Decision:** `clearMessages()` deletes from Room and leaves the mock backend untouched. `MockData` keeps sent messages in memory, so `fetchMessages()` returns them after the seed messages.
+
+**Limitation:** Sent messages come back when "Load sample data" runs after "Clear messages", as they would from a real server. The mock forgets them when the process dies, so after a restart they survive only in Room, and clearing then removes them for good.
+
+**Trade-off:** This makes the mock behave like a server without adding storage to a fake one.
+
+**To support a real backend:**
+1. Replace `mockBackendModule`. The server then owns history and it survives restarts.
+2. Decide whether clearing should also delete on the server, which ties in with clearing during a send above.
