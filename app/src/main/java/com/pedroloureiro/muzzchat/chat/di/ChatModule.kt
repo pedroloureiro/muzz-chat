@@ -12,12 +12,19 @@ import com.pedroloureiro.muzzchat.chat.domain.usecase.SendMessageUseCase
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 
-val chatModule = module {
+private val localModule = module {
     single { MessageDatabase.create(androidContext()) }
     single { get<MessageDatabase>().messageDao() }
     single<ChatLocalDataSource> { RoomChatLocalDataSource(get()) }
+}
+
+private val mockBackendModule = module {
     single<ChatRemoteDataSource> { MockChatRemoteDataSource() }
     single { MockData(androidContext()) }
+}
+
+val chatModule = module {
+    includes(localModule, mockBackendModule)
     single<ChatRepository> { ChatRepositoryImpl(local = get(), remote = get(), mockData = get()) }
     factory { SendMessageUseCase(get()) }
 }
