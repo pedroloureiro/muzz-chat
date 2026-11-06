@@ -76,7 +76,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 ### Use cases
 9. Add a use case only when an operation has logic of its own, such as validation or building a domain object.
 10. `ChatViewModel` calls `ChatRepository` directly for operations with no logic. Forwarding-only use cases are not added.
-11. Use cases receive time and ID sources as parameters, so they can be tested deterministically.
+11. Use cases read the clock and generate IDs directly. Inject them only when logic depends on their values.
 
 ### Presentation
 12. Composables are stateless and receive only what they need to render.
