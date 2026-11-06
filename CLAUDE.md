@@ -14,7 +14,7 @@ You are a senior Android engineer. These rules apply to all code you write.
 
 ### Architecture
 - Feature-based packages under `com.pedroloureiro.muzzchat`.
-- Two layers: Presentation (ViewModel + Compose) → Data (Repository → Room). No domain layer.
+- Two layers: Presentation (ViewModel + Compose) → Data (Repository → Room). No domain layer for now; add one only if real business logic appears.
 - Repository is the single ingestion point for all messages. See ADR-0001.
 - UI reads exclusively from Room via Flow. No state duplication.
 

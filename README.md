@@ -6,7 +6,7 @@ When you send a message it appears immediately with a *sending* indicator, then 
 
 ## Architecture
 
-Two layers, no domain layer:
+Two layers for now (a domain layer can be introduced if business logic outgrows the ViewModel):
 
 ```
 Presentation (Compose + ViewModel)  →  Data (Repository → Room)
