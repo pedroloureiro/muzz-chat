@@ -47,3 +47,18 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 1. Add `FAILED` to `MessageDeliveryStatus` and handle the failure branch in the repository, as described in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
 2. Render a retry affordance on failed messages.
 3. Add loading and connection error state to `ChatUiState`.
+
+---
+
+## Clearing messages does not cancel a send in flight
+
+**Decision:** `ChatRepositoryImpl` inserts every message from `incomingMessages()` without checking whether it was cleared in the meantime.
+
+**Limitation:** A message cleared during the ~200ms before its echo arrives comes back with status `SENT`, because the echo inserts it again.
+
+**Trade-off:** The window is small and the backend is a mock. Telling a late echo apart from a new message would add tracking to the repository, and the right rule depends on how a real server treats deletes.
+
+**To support a real backend:**
+1. Define what clearing means on the server, and whether it applies to messages in flight.
+2. Make the repository drop echoes of cleared messages, for example by remembering the time of the last clear and ignoring older messages.
+3. Cover clearing during a send in `ChatRepositoryImplTest`.
