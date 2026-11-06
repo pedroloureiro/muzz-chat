@@ -33,6 +33,7 @@ Under `com.pedroloureiro.muzzchat`:
 
 - [`CONTEXT.md`](CONTEXT.md) — domain glossary
 - [`docs/adr/`](docs/adr/) — architecture decision records
+- [`docs/decisions.md`](docs/decisions.md) — smaller decisions and known limitations
 - [`docs/design-system.md`](docs/design-system.md) — colours, spacing, shapes (visual reference: [`design-system.html`](docs/design-system.html))
 - [`CLAUDE.md`](CLAUDE.md) — project conventions
 

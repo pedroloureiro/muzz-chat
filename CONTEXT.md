@@ -4,7 +4,7 @@
 A participant in the conversation. Two fixed users exist: `ME` (the local user) and `SARAH` (the other participant). Each has a stable UUID and a display name. No authentication exists — users are hardcoded constants.
 
 ## Message
-A unit of communication between two Users. Contains a unique UUID (`messageId`), a `senderId` (UUID), a `Content`, and a `timestamp` (epoch millis). Has no delivery status, no edit flag, no delete flag — these are deliberate omissions for this scope.
+A unit of communication between two Users. Contains a unique UUID (`messageId`), a `senderId` (UUID), a `Content`, and a `timestamp` (epoch millis). Has no edit flag and no delete flag — these are deliberate omissions for this scope. Delivery state is tracked separately as `MessageDeliveryStatus`.
 
 ## Content
 The payload of a Message. Has a `ContentType` (currently `TEXT` only) and a `value` (String). Modelled as a data class to allow future content types without changing the Message schema.
@@ -34,7 +34,7 @@ The delivery state of an outgoing Message. `SENDING` means the message has been 
 The interface representing the remote messaging service. Exposes `sendMessage(dto): Result<MessageDto>` for outgoing messages and `incomingMessages(): Flow<MessageDto>` for the incoming stream (WebSocket in production). `MockChatRemoteDataSource` implements this by echoing sent messages back on `incomingMessages()` after a ~200ms simulated delay.
 
 ## ChatLocalDataSource
-The interface over Room. Exposes `insertMessage(entity)`, `updateStatus(messageId, status)`, and `getMessages(): Flow<List<MessageEntity>>`. The single source of truth for the UI.
+The interface over Room. Exposes `insertMessage(entity)`, `updateStatus(messageId, status)`, `getMessages(): Flow<List<MessageEntity>>`, and `clearAll()`. `getMessages()` emits the newest 500 messages in ascending timestamp order. The single source of truth for the UI.
 
 ## MockData
 Hardcoded seed content in `chat/data/mock/`. Contains the fixed `Users` constants and a pre-written conversation used by the "Load sample data" overflow menu action.
