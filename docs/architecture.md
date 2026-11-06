@@ -109,6 +109,7 @@ ChatViewModel
 | Code | Approach |
 |---|---|
 | Classes with logic: use cases, `ChatItemMapper`, `ChatRepositoryImpl`, `Converters` | Unit tests, written first |
+| DAO queries | `MessageDaoTest`, using Robolectric and an in-memory Room database, so no emulator is needed |
 | Forwarding code | Not tested directly |
 | Composables | Not tested |
 | Architecture rules 1–3 | `ArchitectureTest` scans imports (#11) |
