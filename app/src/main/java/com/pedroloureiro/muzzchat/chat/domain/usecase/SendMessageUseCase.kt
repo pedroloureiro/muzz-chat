@@ -6,11 +6,12 @@ import com.pedroloureiro.muzzchat.chat.domain.model.Message
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 import com.pedroloureiro.muzzchat.chat.domain.model.User
 import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
+import java.util.UUID
 
 class SendMessageUseCase(
     private val repository: ChatRepository,
-    private val currentTimeMillis: () -> Long,
-    private val generateMessageId: () -> String
+    private val currentTimeMillis: () -> Long = System::currentTimeMillis,
+    private val generateMessageId: () -> String = { UUID.randomUUID().toString() }
 ) {
     suspend operator fun invoke(text: String, sender: User) {
         val trimmedText = text.trim()
