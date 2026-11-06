@@ -1,8 +1,8 @@
-package com.pedroloureiro.muzzchat.chat.data.db
+package com.pedroloureiro.muzzchat.chat.data.local.db
 
 import androidx.room.TypeConverter
-import com.pedroloureiro.muzzchat.chat.data.db.models.ContentType
-import com.pedroloureiro.muzzchat.chat.data.db.models.MessageDeliveryStatus
+import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 
 class Converters {
     @TypeConverter
