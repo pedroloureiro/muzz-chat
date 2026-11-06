@@ -76,7 +76,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 ### Use cases
 9. Add a use case only when an operation has logic of its own, such as validation or building a domain object.
 10. `ChatViewModel` calls `ChatRepository` directly for operations with no logic. Forwarding-only use cases are not added.
-11. Use cases receive time and ID sources as parameters, so they can be tested deterministically.
+11. Use cases read the clock and generate IDs directly. Inject them only when logic depends on their values.
 
 ### Presentation
 12. Composables are stateless and receive only what they need to render.
@@ -86,7 +86,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 ### Dependency injection
 15. Koin wiring lives in `chat/di`. Classes receive dependencies through their constructors and never call Koin themselves.
 16. Android types stay out of `chat/domain` contracts. A `data` class that needs `Context` receives it through Koin.
-17. Long-running work uses the application `CoroutineScope` provided by Koin, not `GlobalScope`.
+17. Long-running work in `chat/data` is a `suspend` function whose caller owns its lifetime through a scope. Nothing uses `GlobalScope`.
 
 ---
 

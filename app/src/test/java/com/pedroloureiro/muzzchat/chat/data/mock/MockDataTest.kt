@@ -54,4 +54,14 @@ class MockDataTest {
     fun `every seed message maps to an entity`() {
         seed.forEach { it.toEntity() }
     }
+
+    @Test
+    fun `messages has the seed followed by added messages`() {
+        val mockData = MockData(ApplicationProvider.getApplicationContext())
+        val added = seed.first().copy(messageId = "added")
+
+        mockData.addMessage(added)
+
+        assertEquals(seed + added, mockData.messages())
+    }
 }

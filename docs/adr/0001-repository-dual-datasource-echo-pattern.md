@@ -17,7 +17,7 @@ Adding a simulated delay (~200ms) on the mock echo makes delivery status necessa
 ### Dual data source
 The repository coordinates two data sources:
 
-- `ChatRemoteDataSource` — handles outgoing sends and exposes `incomingMessages(): Flow<MessageDto>` (WebSocket in production)
+- `ChatRemoteDataSource` — handles outgoing sends, fetches message history, and exposes `incomingMessages(): Flow<MessageDto>` (WebSocket in production)
 - `ChatLocalDataSource` — Room; the single source of truth for the UI
 
 ### Optimistic insert with status tracking

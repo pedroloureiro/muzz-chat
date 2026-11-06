@@ -47,3 +47,61 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 1. Add `FAILED` to `MessageDeliveryStatus` and handle the failure branch in the repository, as described in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
 2. Render a retry affordance on failed messages.
 3. Add loading and connection error state to `ChatUiState`.
+
+---
+
+## Clearing messages does not cancel a send in flight
+
+**Decision:** `ChatRepositoryImpl` inserts every message from `incomingMessages()` without checking whether it was cleared in the meantime.
+
+**Limitation:** A message cleared during the ~200ms before its echo arrives comes back with status `SENT`, because the echo inserts it again.
+
+**Trade-off:** The window is small and the backend is a mock. Telling a late echo apart from a new message would add tracking to the repository, and the right rule depends on how a real server treats deletes.
+
+**To support a real backend:**
+1. Define what clearing means on the server, and whether it applies to messages in flight.
+2. Make the repository drop echoes of cleared messages, for example by remembering the time of the last clear and ignoring older messages.
+3. Cover clearing during a send in `ChatRepositoryImplTest`.
+
+---
+
+## `ChatViewModel` runs the incoming message sync
+
+**Decision:** `ChatViewModel` calls `ChatRepository.syncIncomingMessages()` in `viewModelScope`.
+
+**Limitation:** Incoming messages are stored only while the ViewModel is alive. The sync also keeps running when the app is in the background, and it stops when the user leaves the chat.
+
+**Trade-off:** The app has one screen and a mock that emits only after a send, so these gaps have no visible effect today. In exchange, the repository needs no injected scope and starts no work when it is created.
+
+**To support a real backend:**
+1. Call `syncIncomingMessages()` from an app-level owner, using `ProcessLifecycleOwner` and `repeatOnLifecycle(STARTED)` so it follows the foreground.
+2. Add reconnection, and a catch-up sync for messages missed while disconnected.
+3. Add push notifications for messages that arrive while the app is in the background.
+
+---
+
+## Leaving the chat can leave a send stuck
+
+**Decision:** `ChatViewModel` runs sends in `viewModelScope`.
+
+**Limitation:** If the ViewModel is cleared after the optimistic insert and before the send finishes, the send is cancelled and the message stays `SENDING` for good. Nothing retries it.
+
+**Trade-off:** The window is only ~200ms with the mock, and retrying a send needs the `FAILED` handling that is not built yet.
+
+**To support a real backend:**
+1. Run sends where they outlive the screen, in an application scope or WorkManager.
+2. When the app starts, resend or fail any message still marked `SENDING`.
+
+---
+
+## "Clear messages" only clears the device
+
+**Decision:** `clearMessages()` deletes from Room and leaves the mock backend untouched. `MockData` keeps sent messages in memory, so `fetchMessages()` returns them after the seed messages.
+
+**Limitation:** Sent messages come back when "Load sample data" runs after "Clear messages", as they would from a real server. The mock forgets them when the process dies, so after a restart they survive only in Room, and clearing then removes them for good.
+
+**Trade-off:** This makes the mock behave like a server without adding storage to a fake one.
+
+**To support a real backend:**
+1. Replace `mockBackendModule`. The server then owns history and it survives restarts.
+2. Decide whether clearing should also delete on the server, which ties in with clearing during a send above.
