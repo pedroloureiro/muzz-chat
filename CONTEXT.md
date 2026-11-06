@@ -43,4 +43,4 @@ The interface representing the remote messaging service. Exposes `sendMessage(dt
 The interface over Room. Exposes `insertMessage(entity)`, `updateStatus(messageId, status)`, `getMessages(): Flow<List<MessageEntity>>`, and `clearAll()`. `getMessages()` emits the newest 500 messages in ascending timestamp order. The single source of truth for the UI.
 
 ## MockData
-Hardcoded seed content in `chat/data/mock/`. Contains a pre-written conversation used by the "Load sample data" overflow menu action.
+The seed content loader in `chat/data/mock/`. Reads a pre-written conversation from `assets/mock_messages.json`, used by the "Load sample data" overflow menu action.
