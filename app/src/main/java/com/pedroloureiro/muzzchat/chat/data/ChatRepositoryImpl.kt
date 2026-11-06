@@ -19,6 +19,7 @@ class ChatRepositoryImpl(
 ) : ChatRepository {
 
     init {
+        // Listens to the remote stream (a WebSocket in production). Only stores what the remote emits, so nothing is inserted at startup.
         scope.launch {
             remote.incomingMessages().collect { dto ->
                 local.insertMessage(dto.toEntity(status = MessageDeliveryStatus.SENT))

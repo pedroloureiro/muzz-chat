@@ -51,6 +51,13 @@ class ChatRepositoryImplTest {
     )
 
     @Test
+    fun `creating the repository stores nothing`() = runTest {
+        repository()
+
+        assertEquals(emptyList<MessageEntity>(), local.stored.value)
+    }
+
+    @Test
     fun `getMessages maps stored entities to domain messages`() = runTest {
         local.insertMessage(message.toEntity())
 
