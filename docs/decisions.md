@@ -62,3 +62,32 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 1. Define what clearing means on the server, and whether it applies to messages in flight.
 2. Make the repository drop echoes of cleared messages, for example by remembering the time of the last clear and ignoring older messages.
 3. Cover clearing during a send in `ChatRepositoryImplTest`.
+
+---
+
+## `ChatViewModel` runs the incoming message sync
+
+**Decision:** `ChatViewModel` calls `ChatRepository.syncIncomingMessages()` in `viewModelScope`.
+
+**Limitation:** Incoming messages are stored only while the ViewModel is alive. The sync also keeps running when the app is in the background, and it stops when the user leaves the chat.
+
+**Trade-off:** The app has one screen and a mock that emits only after a send, so these gaps have no visible effect today. In exchange, the repository needs no injected scope and starts no work when it is created.
+
+**To support a real backend:**
+1. Call `syncIncomingMessages()` from an app-level owner, using `ProcessLifecycleOwner` and `repeatOnLifecycle(STARTED)` so it follows the foreground.
+2. Add reconnection, and a catch-up sync for messages missed while disconnected.
+3. Add push notifications for messages that arrive while the app is in the background.
+
+---
+
+## Leaving the chat can leave a send stuck
+
+**Decision:** `ChatViewModel` runs sends in `viewModelScope`.
+
+**Limitation:** If the ViewModel is cleared after the optimistic insert and before the send finishes, the send is cancelled and the message stays `SENDING` for good. Nothing retries it.
+
+**Trade-off:** The window is only ~200ms with the mock, and retrying a send needs the `FAILED` handling that is not built yet.
+
+**To support a real backend:**
+1. Run sends where they outlive the screen, in an application scope or WorkManager.
+2. When the app starts, resend or fail any message still marked `SENDING`.

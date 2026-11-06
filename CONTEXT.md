@@ -31,7 +31,7 @@ The single state object the ViewModel exposes to the UI via `StateFlow`. Contain
 The delivery state of an outgoing Message. `SENDING` means the message has been optimistically inserted into Room and the server echo is pending. `SENT` means the echo was received and the message is confirmed. `FAILED` and `RETRYING` are reserved for future error handling and retry logic. Only applies to outgoing messages — incoming messages from SARAH are always inserted with `SENT`.
 
 ## ChatRepository
-The domain interface for working with messages. Exposes `getMessages(): Flow<List<Message>>`, `sendMessage(message)`, `loadSampleData()`, and `clearMessages()`. `ChatRepositoryImpl` in `chat/data` implements it and is the single ingestion point for all messages.
+The domain interface for working with messages. Exposes `getMessages(): Flow<List<Message>>`, `syncIncomingMessages()`, `sendMessage(message)`, `loadSampleData()`, and `clearMessages()`. `syncIncomingMessages()` stores messages from `ChatRemoteDataSource` until its caller cancels it. `ChatRepositoryImpl` in `chat/data` implements it and is the single ingestion point for all messages.
 
 ## SendMessageUseCase
 Trims and validates message text, ignores blank input, and builds a `Message` with status `SENDING` before passing it to `ChatRepository`. The only use case, because the other operations have no logic of their own.

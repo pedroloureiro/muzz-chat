@@ -86,7 +86,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 ### Dependency injection
 15. Koin wiring lives in `chat/di`. Classes receive dependencies through their constructors and never call Koin themselves.
 16. Android types stay out of `chat/domain` contracts. A `data` class that needs `Context` receives it through Koin.
-17. Long-running work uses the application `CoroutineScope` provided by Koin, not `GlobalScope`.
+17. Long-running work in `chat/data` is a `suspend` function whose caller owns its lifetime through a scope. Nothing uses `GlobalScope`.
 
 ---
 
