@@ -1,7 +1,7 @@
 # ADR-0001: Repository dual data source with mock echo pattern and optimistic delivery status
 
 ## Status
-Accepted
+Accepted. [ADR-0002](0002-chat-domain-layer.md) adds `SendMessageUseCase` ahead of the repository in the send flow.
 
 ## Context
 The exercise is local-only with no real server. However, the architecture should mirror how a production chat system works so that swapping in a real backend requires minimal change.
