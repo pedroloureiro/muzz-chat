@@ -1,5 +1,6 @@
 package com.pedroloureiro.muzzchat.chat.data.remote
 
+import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

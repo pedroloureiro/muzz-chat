@@ -46,7 +46,8 @@ com.pedroloureiro.muzzchat
     │   │       ├── MessageDatabase, Converters
     │   │       ├── dao       MessageDao
     │   │       └── entity    MessageEntity
-    │   ├── remote            ChatRemoteDataSource, MockChatRemoteDataSource, MessageDto
+    │   ├── remote            ChatRemoteDataSource, MockChatRemoteDataSource
+    │   │   └── model         MessageDto, ContentDto
     │   └── mock              MockData
     └── ui
         ├── ChatScreen, ChatViewModel, ChatUiState, ChatItemMapper

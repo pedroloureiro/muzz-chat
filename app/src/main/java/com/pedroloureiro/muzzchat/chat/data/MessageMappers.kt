@@ -1,7 +1,7 @@
 package com.pedroloureiro.muzzchat.chat.data
 
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import com.pedroloureiro.muzzchat.chat.data.remote.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 

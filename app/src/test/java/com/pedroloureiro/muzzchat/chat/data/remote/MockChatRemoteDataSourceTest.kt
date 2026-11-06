@@ -1,5 +1,7 @@
 package com.pedroloureiro.muzzchat.chat.data.remote
 
+import com.pedroloureiro.muzzchat.chat.data.remote.model.ContentDto
+import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch

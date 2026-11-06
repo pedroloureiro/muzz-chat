@@ -1,7 +1,7 @@
 package com.pedroloureiro.muzzchat.chat.data.mock
 
 import androidx.test.core.app.ApplicationProvider
-import com.pedroloureiro.muzzchat.chat.data.remote.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
 import com.pedroloureiro.muzzchat.chat.data.toEntity
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
 import org.junit.Assert.assertEquals

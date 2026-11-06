@@ -1,4 +1,4 @@
-package com.pedroloureiro.muzzchat.chat.data.remote
+package com.pedroloureiro.muzzchat.chat.data.remote.model
 
 import kotlinx.serialization.Serializable
 
