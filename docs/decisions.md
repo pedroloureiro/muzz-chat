@@ -28,6 +28,25 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Room orders messages by timestamp
+
+**Decision:** The server owns message order through each message's `timestampMillis`. `MessageDao` sorts by it, and the order in which messages arrive from `ChatRemoteDataSource` or `MockData` does not matter.
+
+**Limitation:**
+- For sent messages, `timestampMillis` comes from the device clock in `SendMessageUseCase`, and the mock echoes it back unchanged, so the server never sets their order.
+- Messages with the same `timestampMillis` have no defined order between them.
+- A `SENDING` message has no server order yet. It sorts by its device time until the echo arrives.
+
+**Trade-off:** Room has to sort, because SQLite returns rows in no guaranteed order, and messages are not inserted in the order the server holds them. Older pages arrive after newer messages, and an echo written with `REPLACE` is inserted again. With a mock backend and one device, the device clock is close enough to a server order.
+
+**To support a real backend:**
+1. Have the server assign each message an ordering key, either a server timestamp or a sequence number, and return it on the echo.
+2. Store it when the echo arrives, replacing the device time, and have `MessageDao` sort by it.
+3. Add `messageId` as a tie-breaker, or rely on the sequence number being unique.
+4. With Paging 3, have the `RemoteMediator` write each page into Room, and let the `PagingSource` query sort by the same key.
+
+---
+
 ## Room schema is not exported
 
 **Decision:** `MessageDatabase` sets `exportSchema = false`.
