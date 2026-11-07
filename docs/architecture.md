@@ -1,8 +1,8 @@
 # Architecture
 
-The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
+The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), paging in [ADR-0003](adr/0003-cursor-paging.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
 
-Issues #4–#11 build out the parts of this structure that do not exist yet.
+Issues #18 and #19, then #7–#11, build out the parts of this structure that do not exist yet.
 
 ---
 
@@ -17,9 +17,9 @@ di ──> ui, domain, data
 
 | Layer | Responsibility | May depend on |
 |---|---|---|
-| `domain` | Business models, repository contracts, use cases | Kotlin, `kotlinx.coroutines`, `java.util` |
-| `data` | Implements `domain` contracts using Room and the remote service | `domain`, Android, Room, serialization |
-| `ui` | Compose screens, ViewModel, UI state, display rules | `domain`, Android, Compose, top-level `ui` |
+| `domain` | Business models, repository contracts, use cases | Kotlin, `kotlinx.coroutines`, `paging-common`, `java.util` |
+| `data` | Implements `domain` contracts using Room, Paging and the remote service | `domain`, Android, Room, Paging, serialization |
+| `ui` | Compose screens, ViewModel, UI state, display rules | `domain`, Android, Compose, Paging, top-level `ui` |
 | `di` | Creates objects and wires the layers together | All layers |
 | `utils` (top-level) | Static utility functions that know nothing about the app. Any layer may use them | Kotlin, the JDK |
 
@@ -37,7 +37,8 @@ com.pedroloureiro.muzzchat
 └── chat
     ├── di                    ChatModule
     ├── domain
-    │   ├── model             Message, Content, ContentType, User + Users, MessageDeliveryStatus
+    │   ├── model             Message (Pending, Confirmed), MessageWithNext, Content, ContentType,
+    │   │                     User + Users, MessageDeliveryStatus
     │   ├── repository        ChatRepository (interface)
     │   └── usecase           SendMessageUseCase
     ├── data
@@ -48,6 +49,7 @@ com.pedroloureiro.muzzchat
     │   │       ├── MessageDatabase, Converters
     │   │       ├── dao       MessageDao
     │   │       └── entity    MessageEntity
+    │   ├── paging            MessageRemoteMediator
     │   ├── remote            ChatRemoteDataSource, MockChatRemoteDataSource
     │   │   └── model         MessageDto, ContentDto
     │   └── mock              MockData
@@ -64,7 +66,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 ## Rules
 
 ### Dependencies
-1. `chat/domain` imports no Android, Room, serialization, `chat/data` or `chat/ui` code.
+1. `chat/domain` imports no Android, Room, serialization, `chat/data` or `chat/ui` code. The one `androidx` package it may import is `androidx.paging`, from the plain Kotlin `paging-common` library.
 2. `chat/ui` imports nothing from `chat/data`.
 3. `chat/data` imports nothing from `chat/ui`.
 4. Only `chat/di` may see every layer.
@@ -90,20 +92,39 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 16. Android types stay out of `chat/domain` contracts. A `data` class that needs `Context` receives it through Koin.
 17. Long-running work in `chat/data` is a `suspend` function whose caller owns its lifetime through a scope. Nothing uses `GlobalScope`.
 
+### Ordering and paging
+18. Confirmed messages are ordered by `sequenceId` and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
+19. An echo replaces its pending message by `localId` in one Room transaction. Every write of server messages, whether a history page or an incoming message, goes through the same insert.
+20. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
+
 ---
 
 ## Sending a message
 
 ```text
 ChatViewModel
-  → SendMessageUseCase          trims and validates text, builds Message(SENDING)
+  → SendMessageUseCase          trims and validates text, builds Message.Pending(localId, device time)
   → ChatRepository.sendMessage
-  → ChatRepositoryImpl          inserts into Room, then calls the remote data source
-  → Echo received               status becomes SENT in Room
-  → Room Flow                   mapped to List<Message> by the repository
-  → ChatItemMapper              mapped to List<ChatItem>
-  → ChatUiState                 rendered by ChatScreen
+  → ChatRepositoryImpl          inserts the pending row into Room, then calls the remote data source
+  → Echo received               one transaction: delete the row with that localId, insert the confirmed message
+  → Room PagingSource           invalidated, reloads PagingData<MessageWithNext>
+  → ChatItemMapper              map → ChatItem.Message, insertSeparators → TimestampHeader
+  → Flow<PagingData<ChatItem>>  rendered by ChatScreen
 ```
+
+---
+
+## Loading history
+
+```text
+ChatScreen scrolls past the oldest stored message
+  → MessageRemoteMediator APPEND   fetchMessages(beforeSequenceId = smallest stored sequenceId, limit)
+  → ChatRepositoryImpl             writes the page into Room in one transaction
+  → Room PagingSource              invalidated, loads the older rows
+  → ChatItemMapper                 same rules as above
+```
+
+History is complete once `sequenceId` 1 is stored. "Load sample data" calls `ChatRepository.loadMessages()`, which refreshes from the newest page.
 
 ---
 
@@ -111,8 +132,8 @@ ChatViewModel
 
 | Code | Approach |
 |---|---|
-| Classes with logic: use cases, `ChatItemMapper`, `ChatRepositoryImpl`, `Converters` | Unit tests, written first |
-| DAO queries | `MessageDaoTest`, using Robolectric and an in-memory Room database, so no emulator is needed |
+| Classes with logic: use cases, `ChatItemMapper`, `ChatRepositoryImpl`, `MessageRemoteMediator`, `Converters` | Unit tests, written first. `ChatItemMapper`'s rules are tested directly and its paging wiring with `asSnapshot()` |
+| DAO queries, including the paged `MessageWithNext` query | `MessageDaoTest`, using Robolectric and an in-memory Room database, so no emulator is needed |
 | Forwarding code | Not tested directly |
 | Composables | Not tested |
 | Architecture rules 1–3 | `ArchitectureTest` scans imports (#11) |
@@ -134,6 +155,6 @@ These are the places where the app knowingly departs from strict Clean Architect
 | 1 | `ChatViewModel` calls `ChatRepository` directly for observe, load and clear, with no use case in between | Those use cases would only forward the call | Add a use case when an operation gains logic, or add all of them if a uniform rule becomes worth the code |
 | 2 | Layers are packages in one Gradle module, so boundaries are checked by a test and not the compiler | With one feature, separate modules would add build setup without enough benefit | Split into `:feature:chat:domain`, `:feature:chat:data` and `:feature:chat:presentation`, with `domain` as a plain Kotlin module and `:app` as the wiring point |
 | 3 | `Users.ME` is a global constant, so `ChatItemMapper` has the current user hardcoded | The app has no authentication and its users are fixed by design | Add a `CurrentUser` abstraction when login exists, and inject it into the mapper |
-| 4 | The 500-message limit is a product rule that lives in `MessageDao`'s SQL | It keeps the query simple, and one screen uses it. See [`decisions.md`](decisions.md) | Pass the limit from the domain through `ChatRepository`, or replace it with paging |
+| 4 | `chat/domain` has `MessageWithNext`, a row model shaped by the paged list's needs | Paging maps one row at a time, and the bubble tail needs the next message. See [ADR-0003](adr/0003-cursor-paging.md) | Move the type into `chat/data` and map it to a UI-facing row in the ViewModel, if the domain should stay free of display concerns |
 | 5 | `MessageEntity` stores the domain `ContentType` and `MessageDeliveryStatus` enums by name, so renaming a value changes what is stored | A separate set of enums for storage would duplicate them for little benefit | Add storage-only enums or stable codes, and map them in `chat/data` |
-| 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` | It has no Android dependency, and it is how the UI observes Room | Define a domain stream abstraction, which is not worth doing unless the library must go |
+| 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
