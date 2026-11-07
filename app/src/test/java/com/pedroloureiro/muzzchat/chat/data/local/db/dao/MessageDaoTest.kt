@@ -44,7 +44,7 @@ class MessageDaoTest {
     fun `getMessages returns the newest 500 messages in ascending order`() = runBlocking {
         (600L downTo 1L).forEach { timestamp -> dao.insert(message("$timestamp", timestamp)) }
 
-        val timestamps = dao.getMessages().first().map { it.timestamp }
+        val timestamps = dao.getMessages().first().map { it.timestampMillis }
 
         assertEquals((101L..600L).toList(), timestamps)
     }
@@ -105,7 +105,7 @@ class MessageDaoTest {
         senderId = "sender",
         contentType = ContentType.TEXT,
         contentValue = "text",
-        timestamp = timestamp,
+        timestampMillis = timestamp,
         deliveryStatus = MessageDeliveryStatus.SENDING
     )
 

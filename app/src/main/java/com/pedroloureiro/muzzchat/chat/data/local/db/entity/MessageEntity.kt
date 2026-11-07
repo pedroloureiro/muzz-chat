@@ -1,5 +1,6 @@
 package com.pedroloureiro.muzzchat.chat.data.local.db.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
@@ -11,6 +12,6 @@ data class MessageEntity(
     val senderId: String,
     val contentType: ContentType,
     val contentValue: String,
-    val timestamp: Long,
+    @ColumnInfo(name = "timestamp") val timestampMillis: Long,
     val deliveryStatus: MessageDeliveryStatus
 )

@@ -50,7 +50,7 @@ class SendMessageUseCaseTest {
 
         sendMessage("hello", Users.ME)
 
-        assertTrue(repository.sent.single().timestamp in before..System.currentTimeMillis())
+        assertTrue(repository.sent.single().timestampMillis in before..System.currentTimeMillis())
     }
 
     @Test

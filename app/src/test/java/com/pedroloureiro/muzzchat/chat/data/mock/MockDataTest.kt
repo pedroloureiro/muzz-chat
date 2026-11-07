@@ -33,20 +33,20 @@ class MockDataTest {
 
     @Test
     fun `seed is in ascending timestamp order`() {
-        assertEquals(seed.sortedBy { it.timestamp }, seed)
+        assertEquals(seed.sortedBy { it.timestampMillis }, seed)
     }
 
     @Test
     fun `seed has consecutive messages from the same sender within 20 seconds`() {
         assertTrue(seed.zipWithNext().any { (previous, next) ->
-            previous.senderId == next.senderId && next.timestamp - previous.timestamp < 20_000
+            previous.senderId == next.senderId && next.timestampMillis - previous.timestampMillis < 20_000
         })
     }
 
     @Test
     fun `seed has a gap of more than one hour`() {
         assertTrue(seed.zipWithNext().any { (previous, next) ->
-            next.timestamp - previous.timestamp > 3_600_000
+            next.timestampMillis - previous.timestampMillis > 3_600_000
         })
     }
 

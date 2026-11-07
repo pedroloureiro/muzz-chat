@@ -23,14 +23,14 @@ class ChatItemMapper {
         zoneId: ZoneId = ZoneId.systemDefault(),
         locale: Locale = Locale.getDefault()
     ): List<ChatItem> {
-        val sorted = messages.sortedBy { it.timestamp }
+        val sorted = messages.sortedBy { it.timestampMillis }
         return sorted.flatMapIndexed { index, message ->
             val previous = sorted.getOrNull(index - 1)
             val next = sorted.getOrNull(index + 1)
             buildList {
-                if (previous == null || message.timestamp - previous.timestamp > SECTION_GAP_MS) {
-                    val format = headerFormat(message.timestamp, now, zoneId)
-                    add(ChatItem.TimestampHeader(formatUtc(message.timestamp, zoneId, locale, format)))
+                if (previous == null || message.timestampMillis - previous.timestampMillis > SECTION_GAP_MS) {
+                    val format = headerFormat(message.timestampMillis, now, zoneId)
+                    add(ChatItem.TimestampHeader(formatUtc(message.timestampMillis, zoneId, locale, format)))
                 }
                 add(message.toChatItem(isGrouped = next != null && isGrouped(message, next)))
             }
@@ -38,7 +38,7 @@ class ChatItemMapper {
     }
 
     private fun isGrouped(message: Message, next: Message) =
-        next.senderId == message.senderId && next.timestamp - message.timestamp < GROUPING_WINDOW_MS
+        next.senderId == message.senderId && next.timestampMillis - message.timestampMillis < GROUPING_WINDOW_MS
 
     private fun headerFormat(timestamp: Long, now: Long, zoneId: ZoneId): TimestampFormat {
         val daysAgo = ChronoUnit.DAYS.between(localDate(timestamp, zoneId), localDate(now, zoneId))
@@ -56,7 +56,7 @@ class ChatItemMapper {
         messageId = messageId,
         direction = if (senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
         content = content.value,
-        timestamp = timestamp,
+        timestampMillis = timestampMillis,
         isGrouped = isGrouped,
         deliveryStatus = deliveryStatus
     )

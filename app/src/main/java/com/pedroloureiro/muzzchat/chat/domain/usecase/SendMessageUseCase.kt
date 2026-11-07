@@ -17,7 +17,7 @@ class SendMessageUseCase(private val repository: ChatRepository) {
                 messageId = UUID.randomUUID().toString(),
                 senderId = sender.id,
                 content = Content(ContentType.TEXT, trimmedText),
-                timestamp = System.currentTimeMillis(),
+                timestampMillis = System.currentTimeMillis(),
                 deliveryStatus = MessageDeliveryStatus.SENDING
             )
         )

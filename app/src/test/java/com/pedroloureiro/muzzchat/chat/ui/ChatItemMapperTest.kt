@@ -53,7 +53,7 @@ class ChatItemMapperTest {
                     messageId = "1",
                     direction = MessageDirection.OUTGOING,
                     content = "text 1",
-                    timestamp = t0,
+                    timestampMillis = t0,
                     isGrouped = false,
                     deliveryStatus = MessageDeliveryStatus.SENT
                 )
@@ -157,7 +157,7 @@ class ChatItemMapperTest {
         messageId = id,
         senderId = sender.id,
         content = Content(ContentType.TEXT, "text $id"),
-        timestamp = timestamp,
+        timestampMillis = timestamp,
         deliveryStatus = status
     )
 

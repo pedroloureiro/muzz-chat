@@ -26,7 +26,7 @@ class MockChatRemoteDataSourceTest {
         messageId = "id",
         senderId = "sender",
         content = ContentDto(type = "TEXT", value = "text"),
-        timestamp = 1L
+        timestampMillis = 1L
     )
 
     @Test

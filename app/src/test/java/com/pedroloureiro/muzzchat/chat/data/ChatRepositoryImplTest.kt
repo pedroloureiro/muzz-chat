@@ -40,14 +40,14 @@ class ChatRepositoryImplTest {
         messageId = "id",
         senderId = "sender",
         content = Content(ContentType.TEXT, "text"),
-        timestamp = 1L,
+        timestampMillis = 1L,
         deliveryStatus = MessageDeliveryStatus.SENDING
     )
     private val dto = MessageDto(
         messageId = "id",
         senderId = "sender",
         content = ContentDto(type = "TEXT", value = "text"),
-        timestamp = 1L
+        timestampMillis = 1L
     )
 
     @Test

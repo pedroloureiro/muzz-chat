@@ -7,7 +7,7 @@ sealed class ChatItem {
         val messageId: String,
         val direction: MessageDirection,
         val content: String,
-        val timestamp: Long,
+        val timestampMillis: Long,
         val isGrouped: Boolean,
         val deliveryStatus: MessageDeliveryStatus
     ) : ChatItem()
