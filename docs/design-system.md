@@ -155,16 +155,16 @@ Bubble shell — receives text, background colour, and tail direction.
 ### MessageItem
 Wraps MessageBubble — handles alignment, spacing, and delivery status.
 
-| State | Alignment | Top padding | Notes |
+| State | Alignment | Bottom padding (gap to the next bubble) | Notes |
 |---|---|---|---|
 | Sent — separated | end | msgSeparated (8dp) | status: SENT |
 | Sent — grouped | end | msgGrouped (2dp) | status: SENT |
-| Sent — sending | end | msgSeparated (8dp) | status: SENDING, opacity 0.5 + pulsing dots |
+| Sent — sending | end | msgGrouped or msgSeparated, as above | status: SENDING, opacity 0.5 + pulsing dots |
 | Sent — confirmed | end | — | status transitions SENDING → SENT on echo (~200ms) |
 | Received — separated | start | msgSeparated (8dp) | — |
 | Received — grouped | start | msgGrouped (2dp) | — |
 
-Grouped = next message is same user AND sent <20s later.
+Grouped = next message is same user AND sent <20s later. A grouped bubble has no tail, and the small gap below it joins it to the next bubble.
 
 ---
 
@@ -172,7 +172,7 @@ Grouped = next message is same user AND sent <20s later.
 Centred timestamp divider. Single state.
 
 - Style: `labelSmall`, colour: `textSecondary`, alignment: centre
-- Shown when gap from previous message >1h, or first message
+- Shown above a message when the gap from the older message is >1h, or above the oldest message
 - Format: today `11:59`, 1–6 days ago `Thursday 11:59`, otherwise `12 Mar 2026 11:59`
 
 ---
