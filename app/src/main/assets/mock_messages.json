@@ -3,48 +3,48 @@
     "messageId": "10000000-0000-0000-0000-000000000001",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Wowsa sounds fun" },
-    "timestamp": 1768473000000
+    "timestampMillis": 1768473000000
   },
   {
     "messageId": "10000000-0000-0000-0000-000000000002",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Yeh for sure that works. What time do you think?" },
-    "timestamp": 1768478340000
+    "timestampMillis": 1768478340000
   },
   {
     "messageId": "10000000-0000-0000-0000-000000000003",
     "senderId": "00000000-0000-0000-0000-000000000001",
     "content": { "type": "TEXT", "value": "Does 7pm work for you? I've got to go pick up my little brother first from a party" },
-    "timestamp": 1768478400000
+    "timestampMillis": 1768478400000
   },
   {
     "messageId": "10000000-0000-0000-0000-000000000004",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Ok cool!" },
-    "timestamp": 1768478415000
+    "timestampMillis": 1768478415000
   },
   {
     "messageId": "10000000-0000-0000-0000-000000000005",
     "senderId": "00000000-0000-0000-0000-000000000001",
     "content": { "type": "TEXT", "value": "What are you up to today?" },
-    "timestamp": 1768478460000
+    "timestampMillis": 1768478460000
   },
   {
     "messageId": "10000000-0000-0000-0000-000000000006",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Nothing much" },
-    "timestamp": 1768478520000
+    "timestampMillis": 1768478520000
   },
   {
     "messageId": "10000000-0000-0000-0000-000000000007",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Actually just about to go shopping, got any recommendations for a good shoe shop? I'm a fashion disaster" },
-    "timestamp": 1768478530000
+    "timestampMillis": 1768478530000
   },
   {
     "messageId": "10000000-0000-0000-0000-000000000008",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "The last one went on for hours" },
-    "timestamp": 1768478545000
+    "timestampMillis": 1768478545000
   }
 ]

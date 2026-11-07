@@ -17,7 +17,7 @@ interface MessageDao {
     suspend fun updateStatus(id: String, status: MessageDeliveryStatus)
 
     // The inner DESC makes LIMIT keep the newest rows; ASC alone would hide new messages past 500.
-    @Query("SELECT * FROM (SELECT * FROM messages ORDER BY timestamp DESC LIMIT 500) ORDER BY timestamp ASC")
+    @Query("SELECT * FROM (SELECT * FROM messages ORDER BY timestampMillis DESC LIMIT 500) ORDER BY timestampMillis ASC")
     fun getMessages(): Flow<List<MessageEntity>>
 
     @Query("DELETE FROM messages")

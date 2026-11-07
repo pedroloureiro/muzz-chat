@@ -4,6 +4,6 @@ data class Message(
     val messageId: String,
     val senderId: String,
     val content: Content,
-    val timestamp: Long,
+    val timestampMillis: Long,
     val deliveryStatus: MessageDeliveryStatus
 )

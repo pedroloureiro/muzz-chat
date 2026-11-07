@@ -13,7 +13,7 @@ fun MessageDto.toEntity(status: MessageDeliveryStatus = MessageDeliveryStatus.SE
     senderId = senderId,
     contentType = ContentType.valueOf(content.type),
     contentValue = content.value,
-    timestamp = timestamp,
+    timestampMillis = timestampMillis,
     deliveryStatus = status
 )
 
@@ -21,7 +21,7 @@ fun MessageEntity.toMessage() = Message(
     messageId = messageId,
     senderId = senderId,
     content = Content(contentType, contentValue),
-    timestamp = timestamp,
+    timestampMillis = timestampMillis,
     deliveryStatus = deliveryStatus
 )
 
@@ -30,7 +30,7 @@ fun Message.toEntity() = MessageEntity(
     senderId = senderId,
     contentType = content.type,
     contentValue = content.value,
-    timestamp = timestamp,
+    timestampMillis = timestampMillis,
     deliveryStatus = deliveryStatus
 )
 
@@ -38,5 +38,5 @@ fun Message.toDto() = MessageDto(
     messageId = messageId,
     senderId = senderId,
     content = ContentDto(type = content.type.name, value = content.value),
-    timestamp = timestamp
+    timestampMillis = timestampMillis
 )

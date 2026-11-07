@@ -4,63 +4,103 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## Room schema is not exported
+## Minimum SDK is 26
 
-**Decision:** `MessageDatabase` sets `exportSchema = false`.
+**Decision:** `minSdk` is 26 (Android 8.0), raised from the template's 24.
 
-**Limitation:** The repo holds no record of past schemas, so Room cannot generate auto-migrations and migrations cannot be tested with `MigrationTestHelper`. There are also no migrations today: raising the database version without one crashes the app on upgrade, for anyone with existing data.
+**Limitation:** The app does not install on Android 7.0 and 7.1 (API 24–25).
 
-**Trade-off:** The app has a single schema version and its data is disposable, so we skip the Room Gradle plugin and generated schema files we would not yet use. The cost is that the first schema change has to set all of this up.
+**Trade-off:** Nothing requires the app to support API 24 or 25. API 26 includes `java.time`, the standard library for dates and times, so `utils/DateTimeUtils` uses it with no core library desugaring and no legacy `SimpleDateFormat`.
 
-**To support schema changes:**
-1. Apply the `androidx.room` Gradle plugin and set `room { schemaDirectory("$projectDir/schemas") }`.
-2. Remove `exportSchema = false` and commit the generated version 1 schema, before changing any entity.
-3. Make the entity change, raise `version`, and add an `AutoMigration` or a manual `Migration`.
-4. Add instrumented test dependencies and cover the migration with `MigrationTestHelper`.
+**To support API 24–25:**
+1. Set `minSdk = 24` and enable `isCoreLibraryDesugaringEnabled` in `compileOptions`.
+2. Add the `desugar_jdk_libs` dependency with `coreLibraryDesugaring(...)`.
 
 ---
 
-## Only the newest 500 messages are shown
+## Message timestamps are epoch millis
 
-**Decision:** `MessageDao.getMessages()` returns the newest 500 messages, in ascending timestamp order.
+**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer, including the Room column and the JSON field. It is used for display and grouping, and never for order, which the message `id` decides.
 
-**Limitation:** Older messages stay in Room but cannot be reached from the UI. Nothing deletes them, so the table keeps growing until "Clear messages" is used.
+**Limitation:** The value cannot be read by eye in the database or in JSON.
 
-**Trade-off:** A fixed limit keeps the query and the list simple, and bounds how many rows each Room emission has to load and map. A single local conversation is unlikely to reach the limit.
-
-**To support full history:**
-1. Add Paging 3 (`room-paging` and `paging-compose`) and return a `PagingSource` from the DAO.
-2. Replace `List<ChatItem>` in `ChatUiState` with paged data, inserting `TimestampHeader` items and computing `isGrouped` across page boundaries.
-3. Load older pages as the user scrolls up.
+**Trade-off:** Epoch millis are already UTC, convert exactly to any zone, and subtract as plain numbers. An ISO-8601 string would need parsing on every mapping and take more space. Tests stay readable by building values with `Instant.parse()`.
 
 ---
 
-## `ChatUiState` has no loading or error state
+## The server orders messages by a time-ordered ID
 
-**Decision:** `ChatUiState` contains only `messages` and `inputText`.
+**Decision:** The server generates each confirmed message's `id` as a UUIDv7, whose leading bits are its creation time in milliseconds, stored as a lowercase string. Room orders confirmed messages by it, and pending messages after them by device timestamp. The order in which messages arrive from `ChatRemoteDataSource` does not matter. See [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
 
-**Limitation:** The UI cannot show a loading indicator or report a failure. A failed send would have no visible feedback.
+**Limitation:**
+- A message missed while the incoming stream was down is not fetched. IDs are not consecutive, so a missing message cannot be detected from the IDs around it.
+- Two messages stored in the same millisecond by different server instances have an arbitrary order, though it is stable.
+- IDs only sort correctly as text when they all use the same case.
+- Timestamps can go backwards between neighbours while a message is pending, because a pending message has the device time. The display rules treat a negative gap as no gap.
 
-**Trade-off:** There is no network connection, only a mocked one that always succeeds, so there are no slow requests or failures to display. Modelling those states now would add UI paths that never run.
+**Trade-off:** A server-generated time-ordered ID makes order independent of device clocks, gives paging a unique cursor, and needs no per-conversation counter on the server. A gap-free sequence number would detect missed messages, but every write to a conversation would have to go through one counter. The mock's stream never drops, so there is nothing to catch up on.
 
 **To support a real backend:**
-1. Add `FAILED` to `MessageDeliveryStatus` and handle the failure branch in the repository, as described in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
+1. Add `fetchMessages(afterId, limit)` to `ChatRemoteDataSource`.
+2. After every reconnect, fetch the messages after the newest stored `id`.
+---
+
+## Room schema is not exported
+
+**Decision:** `MessageDatabase` sets `exportSchema = false`, and the database stays at version 1. A schema change edits the entities in place, with no version bump and no migration.
+
+**Limitation:** The repo holds no record of past schemas, so Room cannot generate auto-migrations. A build with a changed schema crashes on a device that has the old database, until the app is reinstalled or its data is cleared.
+
+**Trade-off:** The app is not in production and is installed on no devices, so there is no data to keep. Local messages are a copy of the server's, so a real install would fetch them again. We skip version bumps, the Room Gradle plugin, generated schema files and migrations until real installs exist.
+
+**Once real installs exist:**
+1. Apply the `androidx.room` Gradle plugin and set `room { schemaDirectory("$projectDir/schemas") }`.
+2. Remove `exportSchema = false` and commit the current schema, before changing any entity.
+3. Make each entity change with a raised `version` and an `AutoMigration` or a manual `Migration`.
+4. Add instrumented test dependencies and cover each migration with `MigrationTestHelper`.
+
+---
+
+## Message history pages from Room
+
+**Decision:** The message list is paged with Paging 3. Room is the paging source, and `MessageRemoteMediator` fetches older pages from the server by `id`. See [ADR-0003](adr/0003-cursor-paging.md).
+
+**Limitation:** Nothing deletes old messages from Room, so the table grows with the history the user has scrolled through, until "Clear messages" is used. Room's generated `PagingSource` uses `LIMIT/OFFSET`, which gets slower on very large local tables.
+
+**Trade-off:** Keeping what was loaded makes scrolling back instant and works offline. A local offset over indexed rows stays fast at the sizes a single conversation reaches.
+
+**To support very large histories:**
+1. Evict the oldest stored pages beyond a limit, and let the `RemoteMediator` fetch them again.
+2. Replace the generated `PagingSource` with one keyed by `id`.
+
+---
+
+## The UI shows no loading or error state
+
+**Decision:** `ChatUiState` contains only `inputText`, and the screen does not render the paged list's `LoadState`.
+
+**Limitation:** The UI cannot show a loading indicator while a page is fetched, or report a failure. A failed send or page load would have no visible feedback.
+
+**Trade-off:** There is no network connection, only a mocked one that always succeeds at once, so there are no slow requests or failures to display. Modelling those states now would add UI paths that never run.
+
+**To support a real backend:**
+1. Add `FAILED` as a state of a pending message and handle the failure branch in the repository, as described in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
 2. Render a retry affordance on failed messages.
-3. Add loading and connection error state to `ChatUiState`.
+3. Render the paged list's `LoadState` for page loading and errors, and add connection state to `ChatUiState`.
 
 ---
 
 ## Clearing messages does not cancel a send in flight
 
-**Decision:** `ChatRepositoryImpl` inserts every message from `incomingMessages()` without checking whether it was cleared in the meantime.
+**Decision:** `ChatRepositoryImpl` inserts every echo from `incomingMessages()` without checking whether its message was cleared in the meantime.
 
-**Limitation:** A message cleared during the ~200ms before its echo arrives comes back with status `SENT`, because the echo inserts it again.
+**Limitation:** A message cleared during the ~200ms before its echo arrives comes back as confirmed, because the echo inserts it again.
 
 **Trade-off:** The window is small and the backend is a mock. Telling a late echo apart from a new message would add tracking to the repository, and the right rule depends on how a real server treats deletes.
 
 **To support a real backend:**
 1. Define what clearing means on the server, and whether it applies to messages in flight.
-2. Make the repository drop echoes of cleared messages, for example by remembering the time of the last clear and ignoring older messages.
+2. Make the repository drop echoes of cleared messages, for example by remembering the `localId`s that were cleared.
 3. Cover clearing during a send in `ChatRepositoryImplTest`.
 
 ---
@@ -80,23 +120,36 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Timestamp headers update only when messages change
+
+**Decision:** `ChatItemMapper` reads the current time, time zone and locale each time it maps, and paging maps again when Room is invalidated.
+
+**Limitation:** Header labels are not recomputed while the messages are unchanged. A header showing `11:59` still shows it after midnight, when it should read `Thursday 11:59`. A change of time zone or locale also shows only after the next message.
+
+**Trade-off:** The labels catch up at the next send or receive, and a chat is rarely left open across these changes. Refreshing on a timer or on system broadcasts would add work to the ViewModel for a rare case.
+
+**To keep labels current:**
+1. Invalidate the paged list at each midnight, on `ACTION_TIMEZONE_CHANGED` and on locale changes.
+
+---
+
 ## Leaving the chat can leave a send stuck
 
 **Decision:** `ChatViewModel` runs sends in `viewModelScope`.
 
-**Limitation:** If the ViewModel is cleared after the optimistic insert and before the send finishes, the send is cancelled and the message stays `SENDING` for good. Nothing retries it.
+**Limitation:** If the ViewModel is cleared after the pending row is inserted and before the send finishes, the send is cancelled and the message stays pending for good. Nothing resends it.
 
-**Trade-off:** The window is only ~200ms with the mock, and retrying a send needs the `FAILED` handling that is not built yet.
+**Trade-off:** The window is only ~200ms with the mock, and resending needs the failure handling that is not built yet.
 
 **To support a real backend:**
 1. Run sends where they outlive the screen, in an application scope or WorkManager.
-2. When the app starts, resend or fail any message still marked `SENDING`.
+2. When the app starts, resend every pending message with its `localId`. The server recognises the `localId`, so a message it already stored is returned, not stored twice.
 
 ---
 
 ## "Clear messages" only clears the device
 
-**Decision:** `clearMessages()` deletes from Room and leaves the mock backend untouched. `MockData` keeps sent messages in memory, so `fetchMessages()` returns them after the seed messages.
+**Decision:** `clearMessages()` deletes from Room and leaves the mock backend untouched. `MockData` keeps sent messages in memory, after the seed messages.
 
 **Limitation:** Sent messages come back when "Load sample data" runs after "Clear messages", as they would from a real server. The mock forgets them when the process dies, so after a restart they survive only in Room, and clearing then removes them for good.
 

@@ -87,7 +87,7 @@
   .msg-row { display: flex; }
   .msg-row.sent { justify-content: flex-end; }
   .msg-row.recv { justify-content: flex-start; }
-  .msg-row.grouped { margin-top: 2px; }
+  .msg-row.grouped { margin-bottom: -6px; } /* 8px wrap gap − 6px = msgGrouped 2px below */
 
   /* ── SectionHeader ── */
   .section-header-demo { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 4px 16px; letter-spacing: 0; }
@@ -461,22 +461,22 @@
       <div class="msg-item-wrap" style="border:none;padding:0;">
         <div class="msg-row sent"><span class="bubble bubble-sent">Does 7pm work?</span></div>
       </div>
-      <div class="state-props">align: end<br>topPadding: msgSeparated (8dp)</div>
+      <div class="state-props">align: end<br>bottomPadding: msgSeparated (8dp)</div>
     </div>
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Sent — grouped (same user, &lt;20s)</div>
       <div class="msg-item-wrap" style="border:none;padding:0;">
-        <div class="msg-row sent"><span class="bubble bubble-sent">Does 7pm work?</span></div>
-        <div class="msg-row sent grouped"><span class="bubble bubble-sent-grouped">Or maybe 8pm?</span></div>
+        <div class="msg-row sent grouped"><span class="bubble bubble-sent-grouped">Does 7pm work?</span></div>
+        <div class="msg-row sent"><span class="bubble bubble-sent">Or maybe 8pm?</span></div>
       </div>
-      <div class="state-props">align: end<br>topPadding: msgGrouped (2dp)</div>
+      <div class="state-props">align: end<br>bottomPadding: msgGrouped (2dp), no tail</div>
     </div>
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Received — separated</div>
       <div class="msg-item-wrap" style="border:none;padding:0;">
         <div class="msg-row recv"><span class="bubble bubble-recv">Ok cool!</span></div>
       </div>
-      <div class="state-props">align: start<br>topPadding: msgSeparated (8dp)</div>
+      <div class="state-props">align: start<br>bottomPadding: msgSeparated (8dp)</div>
     </div>
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Sent — sending (status: SENDING)</div>
@@ -500,10 +500,10 @@
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Received — grouped</div>
       <div class="msg-item-wrap" style="border:none;padding:0;">
-        <div class="msg-row recv"><span class="bubble bubble-recv">Nothing much</span></div>
-        <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Just about to go shopping</span></div>
+        <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Nothing much</span></div>
+        <div class="msg-row recv"><span class="bubble bubble-recv">Just about to go shopping</span></div>
       </div>
-      <div class="state-props">align: start<br>topPadding: msgGrouped (2dp)</div>
+      <div class="state-props">align: start<br>bottomPadding: msgGrouped (2dp), no tail</div>
     </div>
   </div>
 </div>

@@ -11,6 +11,6 @@ data class MessageEntity(
     val senderId: String,
     val contentType: ContentType,
     val contentValue: String,
-    val timestamp: Long,
+    val timestampMillis: Long,
     val deliveryStatus: MessageDeliveryStatus
 )
