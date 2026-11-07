@@ -31,7 +31,7 @@ The payload of a Message. Has a `ContentType` (currently `TEXT` only) and a `val
 Whether a rendered message is `OUTGOING` (sent by ME) or `INCOMING` (sent by SARAH). A UI-layer concept derived from comparing `senderId` to `Users.ME.id`. Not to be confused with delivery status.
 
 ## ChatItem
-A UI-layer model representing one renderable row in the message list. Either a `Message` (with `key`, `direction`, `content: String`, `timestampMillis`, `isGrouped`, `deliveryStatus`) or a `TimestampHeader` (with a pre-formatted `label` and a `key`). A message's `key` is its `localId` when it has one, and otherwise its server `id`. A header's `key` is derived from the message below it. Built by `ChatItemMapper`.
+A UI-layer model representing one renderable row in the message list. Either a `Message` (with `messageId`, `direction`, `content: String`, `timestampMillis`, `isGrouped`, `deliveryStatus`) or a `TimestampHeader` (with a pre-formatted `label` and a `key`). A message's `messageId` is its `localId` when it has one, and otherwise its server `id`. A header's `key` is derived from the message below it. Built by `ChatItemMapper`.
 
 ## TimestampHeader
 A `ChatItem` variant rendered as a centred date/time divider. Inserted above a message when the gap from the older message exceeds one hour, or when it is the oldest message in the conversation. The format depends on how many calendar days ago the message was sent, in the device's time zone: today `11:59`, 1–6 days ago `Thursday 11:59`, otherwise `12 Mar 2026 11:59`.
