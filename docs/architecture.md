@@ -33,7 +33,7 @@ com.pedroloureiro.muzzchat
 ├── ui
 │   ├── theme                 Colours, typography, spacing, theme
 │   └── components            Generic composables: Button, TextInput
-├── utils                     Static utility functions: TimestampFormat, formatUtc
+├── utils                     Static utility functions: DateTimeUtils
 └── chat
     ├── di                    ChatModule
     ├── domain

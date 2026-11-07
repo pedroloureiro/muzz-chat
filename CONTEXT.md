@@ -4,7 +4,7 @@
 A participant in the conversation. Two fixed users exist: `ME` (the local user) and `SARAH` (the other participant). Each has a stable UUID and a display name. No authentication exists — users are hardcoded constants in `chat/domain/model`.
 
 ## Message
-A unit of communication between two Users. Contains a unique UUID (`messageId`), a `senderId` (UUID), a `Content`, a `timestamp` (epoch millis), and a `MessageDeliveryStatus`. Has no edit flag and no delete flag — these are deliberate omissions for this scope. A domain model, stored as `MessageEntity` in `chat/data`.
+A unit of communication between two Users. Contains a unique UUID (`messageId`), a `senderId` (UUID), a `Content`, a `timestampMillis` (epoch millis, so always UTC), and a `MessageDeliveryStatus`. Has no edit flag and no delete flag — these are deliberate omissions for this scope. A domain model, stored as `MessageEntity` in `chat/data`.
 
 ## Content
 The payload of a Message. Has a `ContentType` (currently `TEXT` only) and a `value` (String). Modelled as a data class to allow future content types without changing the Message schema.
@@ -13,7 +13,7 @@ The payload of a Message. Has a `ContentType` (currently `TEXT` only) and a `val
 Whether a rendered message is `OUTGOING` (sent by ME) or `INCOMING` (sent by SARAH). A UI-layer concept derived from comparing `senderId` to `Users.ME.id`. Not to be confused with delivery status.
 
 ## ChatItem
-A UI-layer model representing one renderable row in the message list. Either a `Message` (with `messageId`, `direction`, `content: String`, `timestamp`, `isGrouped`, `deliveryStatus`) or a `TimestampHeader` (with a pre-formatted `label`). Built by `ChatItemMapper`.
+A UI-layer model representing one renderable row in the message list. Either a `Message` (with `messageId`, `direction`, `content: String`, `timestampMillis`, `isGrouped`, `deliveryStatus`) or a `TimestampHeader` (with a pre-formatted `label`). Built by `ChatItemMapper`.
 
 ## TimestampHeader
 A `ChatItem` variant rendered as a centred date/time divider. Inserted before a message when the gap from the previous message exceeds one hour, or when it is the first message in the list. The format depends on how many calendar days ago the message was sent, in the device's time zone: today `11:59`, 1–6 days ago `Thursday 11:59`, otherwise `12 Mar 2026 11:59`.
@@ -22,7 +22,7 @@ A `ChatItem` variant rendered as a centred date/time divider. Inserted before a 
 A `ChatItem.Message` where `isGrouped = true`. Occurs when the following message is sent by the same User AND within 20 seconds. Rendered with reduced top spacing and no tail on the bubble.
 
 ## ChatItemMapper
-A pure Kotlin class (no Android dependencies) responsible for transforming `List<Message>` into `List<ChatItem>`. Inserts `TimestampHeader` items, chooses their `TimestampFormat`, and computes `isGrouped` flags. Formatting itself is done by `formatUtc` in `utils`. The primary unit under TDD.
+A pure Kotlin object (no Android dependencies) responsible for transforming `List<Message>` into `List<ChatItem>`. Expects messages in ascending timestamp order, as `ChatRepository` emits them, and does not sort. Inserts `TimestampHeader` items, chooses their `DateTimeFormat`, and computes `isGrouped` flags. Date arithmetic and formatting are done by `calendarDaysBetween` and `formatUtc` in `utils`. The primary unit under TDD.
 
 ## ChatUiState
 The single state object the ViewModel exposes to the UI via `StateFlow`. Contains `messages: List<ChatItem>` and `inputText: String`. No loading or error state — deliberate trade-off documented in decisions log.
