@@ -4,53 +4,54 @@ import com.pedroloureiro.muzzchat.chat.domain.model.Message
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
 import com.pedroloureiro.muzzchat.chat.ui.model.ChatItem
 import com.pedroloureiro.muzzchat.chat.ui.model.MessageDirection
-import com.pedroloureiro.muzzchat.utils.TimestampFormat
+import com.pedroloureiro.muzzchat.utils.DateTimeFormat
+import com.pedroloureiro.muzzchat.utils.calendarDaysBetween
 import com.pedroloureiro.muzzchat.utils.formatUtc
-import java.time.Instant
 import java.time.ZoneId
-import java.time.temporal.ChronoUnit
 import java.util.Locale
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.seconds
 
-private const val SECTION_GAP_MS = 3_600_000L
-private const val GROUPING_WINDOW_MS = 20_000L
+private val SECTION_GAP_MILLIS = 1.hours.inWholeMilliseconds
+private val GROUPING_WINDOW_MILLIS = 20.seconds.inWholeMilliseconds
 
-class ChatItemMapper {
+private const val TODAY = 0L
+private val WITHIN_A_WEEK = 1L..6L
 
-    // Zone and locale are read on every call so a change on the device applies at the next mapping.
+object ChatItemMapper {
+
+    // Expects messages in ascending timestamp order, as ChatRepository emits them.
+    // Now, zone and locale are read on every call so a change on the device applies at the next mapping.
     fun map(
         messages: List<Message>,
-        now: Long = System.currentTimeMillis(),
+        nowMillis: Long = System.currentTimeMillis(),
         zoneId: ZoneId = ZoneId.systemDefault(),
         locale: Locale = Locale.getDefault()
-    ): List<ChatItem> {
-        val sorted = messages.sortedBy { it.timestampMillis }
-        return sorted.flatMapIndexed { index, message ->
-            val previous = sorted.getOrNull(index - 1)
-            val next = sorted.getOrNull(index + 1)
-            buildList {
-                if (previous == null || message.timestampMillis - previous.timestampMillis > SECTION_GAP_MS) {
-                    val format = headerFormat(message.timestampMillis, now, zoneId)
-                    add(ChatItem.TimestampHeader(formatUtc(message.timestampMillis, zoneId, locale, format)))
-                }
-                add(message.toChatItem(isGrouped = next != null && isGrouped(message, next)))
+    ): List<ChatItem> = messages.flatMapIndexed { index, message ->
+        val previous = messages.getOrNull(index - 1)
+        val next = messages.getOrNull(index + 1)
+        buildList {
+            if (previous == null || message.timestampMillis - previous.timestampMillis > SECTION_GAP_MILLIS) {
+                val format = headerFormat(message.timestampMillis, nowMillis, zoneId)
+                add(ChatItem.TimestampHeader(formatUtc(message.timestampMillis, zoneId, locale, format)))
             }
+            add(message.toChatItem(isGrouped = next != null && isGrouped(message, next)))
         }
     }
 
     private fun isGrouped(message: Message, next: Message) =
-        next.senderId == message.senderId && next.timestampMillis - message.timestampMillis < GROUPING_WINDOW_MS
+        next.senderId == message.senderId &&
+            next.timestampMillis - message.timestampMillis < GROUPING_WINDOW_MILLIS
 
-    private fun headerFormat(timestamp: Long, now: Long, zoneId: ZoneId): TimestampFormat {
-        val daysAgo = ChronoUnit.DAYS.between(localDate(timestamp, zoneId), localDate(now, zoneId))
-        return when (daysAgo) {
-            0L -> TimestampFormat.HOUR_MIN
-            in 1L..6L -> TimestampFormat.DAY_OF_WEEK_HOUR_MIN
-            else -> TimestampFormat.DAY_ABR_MONTH_YEAR_HOUR_MIN
+    private fun headerFormat(timestampMillis: Long, nowMillis: Long, zoneId: ZoneId): DateTimeFormat {
+        val daysAgo = calendarDaysBetween(timestampMillis, nowMillis, zoneId)
+        return when {
+            daysAgo < TODAY -> DateTimeFormat.DAY_ABR_MONTH_YEAR_HOUR_MIN // dated after today, e.g. a clock ahead of the device
+            daysAgo == TODAY -> DateTimeFormat.HOUR_MIN
+            daysAgo in WITHIN_A_WEEK -> DateTimeFormat.DAY_OF_WEEK_HOUR_MIN
+            else -> DateTimeFormat.DAY_ABR_MONTH_YEAR_HOUR_MIN
         }
     }
-
-    private fun localDate(utcMillis: Long, zoneId: ZoneId) =
-        Instant.ofEpochMilli(utcMillis).atZone(zoneId).toLocalDate()
 
     private fun Message.toChatItem(isGrouped: Boolean) = ChatItem.Message(
         messageId = messageId,

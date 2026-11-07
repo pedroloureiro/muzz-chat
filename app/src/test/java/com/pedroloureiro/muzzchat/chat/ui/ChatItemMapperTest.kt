@@ -17,7 +17,6 @@ import org.junit.Test
 
 class ChatItemMapperTest {
 
-    private val mapper = ChatItemMapper()
     private val now = millis("2026-03-12T18:00:00Z")
     private val t0 = millis("2026-03-12T11:59:00Z")
 
@@ -94,13 +93,6 @@ class ChatItemMapperTest {
     }
 
     @Test
-    fun messages_sortedByTimestamp() {
-        val items = map(message("2", Users.ME, t0 + 1_000), message("1", Users.ME, t0))
-
-        assertEquals(listOf("header", "1", "2"), items.shape())
-    }
-
-    @Test
     fun headerFormat_today_showsTime() {
         assertEquals("11:59", headerFor("2026-03-12T11:59:00Z"))
     }
@@ -118,6 +110,14 @@ class ChatItemMapperTest {
     @Test
     fun headerFormat_sevenDaysAgo_showsFullDate() {
         assertEquals("5 Mar 2026 11:59", headerFor("2026-03-05T11:59:00Z"))
+    }
+
+    @Test
+    fun headerFormat_laterDayThanNow_showsFullDate() {
+        assertEquals(
+            "13 Mar 2026 00:01",
+            headerFor("2026-03-13T00:01:00Z", now = millis("2026-03-12T23:59:00Z"))
+        )
     }
 
     @Test
@@ -141,10 +141,10 @@ class ChatItemMapperTest {
     }
 
     private fun map(vararg messages: Message) =
-        mapper.map(messages.toList(), now, ZoneOffset.UTC, Locale.UK)
+        ChatItemMapper.map(messages.toList(), now, ZoneOffset.UTC, Locale.UK)
 
     private fun headerFor(timestamp: String, now: Long = this.now, zoneId: ZoneId = ZoneOffset.UTC): String {
-        val items = mapper.map(listOf(message("1", Users.ME, millis(timestamp))), now, zoneId, Locale.UK)
+        val items = ChatItemMapper.map(listOf(message("1", Users.ME, millis(timestamp))), now, zoneId, Locale.UK)
         return (items.first() as ChatItem.TimestampHeader).label
     }
 
