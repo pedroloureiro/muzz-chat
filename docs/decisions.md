@@ -80,6 +80,19 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Timestamp headers update only when messages change
+
+**Decision:** `ChatItemMapper.map()` reads the current time, time zone and locale on each call, and `ChatViewModel` calls it when Room emits.
+
+**Limitation:** Header labels are not recomputed while the message list is unchanged. A header showing `11:59` still shows it after midnight, when it should read `Thursday 11:59`. A change of time zone or locale also shows only after the next message.
+
+**Trade-off:** The labels catch up at the next send or receive, and a chat is rarely left open across these changes. Remapping on a timer or on system broadcasts would add work to the ViewModel for a rare case.
+
+**To keep labels current:**
+1. Combine the Room Flow with a ticker that emits at each midnight, and with `ACTION_TIMEZONE_CHANGED` and locale changes, and map again on each emission.
+
+---
+
 ## Leaving the chat can leave a send stuck
 
 **Decision:** `ChatViewModel` runs sends in `viewModelScope`.
