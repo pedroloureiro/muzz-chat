@@ -173,7 +173,7 @@ Centred timestamp divider. Single state.
 
 - Style: `labelSmall`, colour: `textSecondary`, alignment: centre
 - Shown when gap from previous message >1h, or first message
-- Format: `{day} {HH:mm}` e.g. `Thursday 11:59`
+- Format: today `11:59`, 1–6 days ago `Thursday 11:59`, otherwise `12 Mar 2026 11:59`
 
 ---
 

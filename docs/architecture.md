@@ -21,6 +21,7 @@ di ──> ui, domain, data
 | `data` | Implements `domain` contracts using Room and the remote service | `domain`, Android, Room, serialization |
 | `ui` | Compose screens, ViewModel, UI state, display rules | `domain`, Android, Compose, top-level `ui` |
 | `di` | Creates objects and wires the layers together | All layers |
+| `utils` (top-level) | Static utility functions that know nothing about the app. Any layer may use them | Kotlin, the JDK |
 
 ---
 
@@ -32,6 +33,7 @@ com.pedroloureiro.muzzchat
 ├── ui
 │   ├── theme                 Colours, typography, spacing, theme
 │   └── components            Generic composables: Button, TextInput
+├── utils                     Static utility functions: TimestampFormat, formatUtc
 └── chat
     ├── di                    ChatModule
     ├── domain

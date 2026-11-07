@@ -16,13 +16,13 @@ Whether a rendered message is `OUTGOING` (sent by ME) or `INCOMING` (sent by SAR
 A UI-layer model representing one renderable row in the message list. Either a `Message` (with `messageId`, `direction`, `content: String`, `timestamp`, `isGrouped`, `deliveryStatus`) or a `TimestampHeader` (with a pre-formatted `label`). Built by `ChatItemMapper`.
 
 ## TimestampHeader
-A `ChatItem` variant rendered as a centred date/time divider. Inserted before a message when the gap from the previous message exceeds one hour, or when it is the first message in the list. Format: `{day} {HH:mm}` e.g. `Thursday 11:59`.
+A `ChatItem` variant rendered as a centred date/time divider. Inserted before a message when the gap from the previous message exceeds one hour, or when it is the first message in the list. The format depends on how many calendar days ago the message was sent, in the device's time zone: today `11:59`, 1–6 days ago `Thursday 11:59`, otherwise `12 Mar 2026 11:59`.
 
 ## Grouped Message
 A `ChatItem.Message` where `isGrouped = true`. Occurs when the following message is sent by the same User AND within 20 seconds. Rendered with reduced top spacing and no tail on the bubble.
 
 ## ChatItemMapper
-A pure Kotlin class (no Android dependencies) responsible for transforming `List<Message>` into `List<ChatItem>`. Inserts `TimestampHeader` items and computes `isGrouped` flags. The primary unit under TDD.
+A pure Kotlin class (no Android dependencies) responsible for transforming `List<Message>` into `List<ChatItem>`. Inserts `TimestampHeader` items, chooses their `TimestampFormat`, and computes `isGrouped` flags. Formatting itself is done by `formatUtc` in `utils`. The primary unit under TDD.
 
 ## ChatUiState
 The single state object the ViewModel exposes to the UI via `StateFlow`. Contains `messages: List<ChatItem>` and `inputText: String`. No loading or error state — deliberate trade-off documented in decisions log.
