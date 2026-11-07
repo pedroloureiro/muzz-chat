@@ -7,16 +7,16 @@ A participant in the conversation. Two fixed users exist: `ME` (the local user) 
 A unit of communication between two Users. A sealed class with two kinds, `Message.Pending` and `Message.Confirmed`. Both have a `senderId` (UUID), a `Content` and a `timestampMillis` (epoch millis, so always UTC). Has no edit flag and no delete flag — these are deliberate omissions for this scope. A domain model, stored as `MessageEntity` in one Room table in `chat/data`. See [ADR-0001](docs/adr/0001-repository-dual-datasource-echo-pattern.md).
 
 ## Pending Message
-A `Message.Pending`: a message this device has sent that the server has not confirmed yet. Identified by its `localId`. Its `timestampMillis` is the device time. It has no server `id` and no `sequenceId`, so it sorts after every confirmed message. Shown as `SENDING`.
+A `Message.Pending`: a message this device has sent that the server has not confirmed yet. Identified by its `localId`. Its `timestampMillis` is the device time. It has no server `id`, so it sorts after every confirmed message. Shown as `SENDING`.
 
 ## Confirmed Message
-A `Message.Confirmed`: a message the server has stored. Has the server's `id`, `sequenceId` and `timestampMillis`. When this device sent it, it also keeps the `localId` it was sent with. Shown as `SENT`.
+A `Message.Confirmed`: a message the server has stored. Has the server's `id` and `timestampMillis`. When this device sent it, it also keeps the `localId` it was sent with. Shown as `SENT`.
 
 ## localId
 A UUID generated on the device for each message it sends. It matches the server's echo to the pending message it replaces, keeps the message's key stable in the UI, and lets a resend be recognised by the server instead of stored twice.
 
-## sequenceId
-The server-assigned position of a confirmed message in the conversation. It starts at 1 and increases by one with no gaps. It alone decides the order of confirmed messages, and it is the paging cursor. `timestampMillis` is never used for order.
+## Message id
+The server-generated ID of a confirmed message: a UUIDv7, whose leading bits are its creation time, stored as a lowercase string. It sorts in the order the server stored messages, so it alone decides the order of confirmed messages, and it is the paging cursor. The device never generates it. `timestampMillis` is never used for order.
 
 ## Echo
 The server's stored copy of a message this device sent, returned with its `localId`. In one Room transaction, the repository deletes the pending message with that `localId` and inserts the confirmed one.
@@ -55,13 +55,13 @@ The domain interface for working with messages. Exposes `getMessages(): Flow<Pag
 Trims and validates message text, ignores blank input, and builds a `Message.Pending` with a new `localId` and the device time before passing it to `ChatRepository`. The only use case, because the other operations have no logic of their own.
 
 ## ChatRemoteDataSource
-The interface representing the remote messaging service. Exposes `sendMessage(dto): Result<MessageDto>` for outgoing messages, `fetchMessages(beforeSequenceId: Long?, limit: Int): Result<List<MessageDto>>` for history pages (newest first), and `incomingMessages(): Flow<MessageDto>` for the incoming stream (WebSocket in production). The order it delivers messages in does not matter, because Room orders them. `MockChatRemoteDataSource` implements this using `MockData`, echoing sent messages back on `incomingMessages()` after a ~200ms simulated delay.
+The interface representing the remote messaging service. Exposes `sendMessage(dto): Result<MessageDto>` for outgoing messages, `fetchMessages(beforeId: String?, limit: Int): Result<List<MessageDto>>` for history pages (newest first), and `incomingMessages(): Flow<MessageDto>` for the incoming stream (WebSocket in production). The order it delivers messages in does not matter, because Room orders them. `MockChatRemoteDataSource` implements this using `MockData`, echoing sent messages back on `incomingMessages()` after a ~200ms simulated delay.
 
 ## ChatLocalDataSource
-The interface over Room, and the single source of truth for the UI. Stores pending and confirmed messages in one table, replaces a pending message with its echo in one transaction, and exposes the paged `MessageWithNext` query, newest first: confirmed messages by `sequenceId`, then pending messages by device timestamp.
+The interface over Room, and the single source of truth for the UI. Stores pending and confirmed messages in one table, replaces a pending message with its echo in one transaction, and exposes the paged `MessageWithNext` query, newest first: confirmed messages by `id`, then pending messages by device timestamp.
 
 ## MessageRemoteMediator
-The Paging 3 `RemoteMediator` in `chat/data`. When the user scrolls past the stored history, it fetches the page before the smallest stored `sequenceId` and writes it into Room. History is complete once `sequenceId` 1 is stored. See [ADR-0003](docs/adr/0003-cursor-paging.md).
+The Paging 3 `RemoteMediator` in `chat/data`. When the user scrolls past the stored history, it fetches the page before the smallest stored `id` and writes it into Room. History is complete when a page comes back with fewer than the requested number of messages. See [ADR-0003](docs/adr/0003-cursor-paging.md).
 
 ## MockData
-The fake server's messages, in `chat/data/mock/`. Holds a pre-written conversation from `assets/mock_messages.json`, large enough to fill several pages, plus any messages sent since the app started. It assigns each sent message the next `sequenceId`, a server `id` and the server time, and returns history pages by `sequenceId`. Only `MockChatRemoteDataSource` uses it. The "Load sample data" overflow menu action reaches it through `ChatRepository.loadMessages()`.
+The fake server's messages, in `chat/data/mock/`. Holds a pre-written conversation from `assets/mock_messages.json`, with its UUIDv7 IDs filled in and large enough to fill several pages, plus any messages sent since the app started. It generates a UUIDv7 `id` and the server time for each sent message, and returns history pages by `id`. Only `MockChatRemoteDataSource` uses it. The "Load sample data" overflow menu action reaches it through `ChatRepository.loadMessages()`.

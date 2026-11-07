@@ -1,12 +1,12 @@
 # ADR-0001: Repository dual data source, with optimistic pending messages swapped for the server's copy
 
 ## Status
-Accepted, revised. The first version updated a message's status in place when its echo arrived. This version replaces the pending message with the server's copy, matched by `localId`, so that the server owns each message's identity and order. [ADR-0002](0002-chat-domain-layer.md) adds `SendMessageUseCase` ahead of the repository in the send flow, and [ADR-0003](0003-cursor-paging.md) adds paging on top of this flow.
+Accepted, revised. The first version updated a message's status in place when its echo arrived. This version replaces the pending message with the server's copy, matched by `localId`, so that the server owns each message's identity and order. The server's `id` is a UUIDv7, which sorts in creation order, so it also decides the order. [ADR-0002](0002-chat-domain-layer.md) adds `SendMessageUseCase` ahead of the repository in the send flow, and [ADR-0003](0003-cursor-paging.md) adds paging on top of this flow.
 
 ## Context
 The exercise is local-only with no real server. The architecture should still mirror how a production chat system works, so that a real backend can replace the mock with minimal change.
 
-In production chat apps, the server is the authority on every message. It assigns the message's ID, its position in the conversation and its timestamp, and it sends the stored copy back to the sender, usually over a WebSocket. The sender's device only proposes a message.
+In production chat apps, the server is the authority on every message. It assigns the message's ID, which also fixes its position in the conversation, and its timestamp, and it sends the stored copy back to the sender, usually over a WebSocket. The sender's device only proposes a message.
 
 The user still needs immediate feedback, so the app shows the message before the server confirms it. That leaves two copies of one message: the device's proposal and the server's confirmed copy. They need a shared key, so the app can replace one with the other.
 
@@ -21,8 +21,8 @@ The repository coordinates two data sources:
 ### Two kinds of message
 `Message` is a sealed class:
 
-- `Message.Pending` is a message this device has sent that the server has not confirmed. It has a `localId` generated on the device and a device `timestampMillis`, and no server `id` or `sequenceId`.
-- `Message.Confirmed` is a message the server has stored. It has the server's `id`, `sequenceId` and `timestampMillis`. When this device sent it, it also keeps the `localId` it was sent with.
+- `Message.Pending` is a message this device has sent that the server has not confirmed. It has a `localId` generated on the device and a device `timestampMillis`, and no server `id`.
+- `Message.Confirmed` is a message the server has stored. It has the server's `id` and `timestampMillis`. When this device sent it, it also keeps the `localId` it was sent with.
 
 Both are stored in one Room table. A row with no server `id` is pending.
 
@@ -40,7 +40,7 @@ User taps send
     → Repository inserts the pending row into Room
     → UI shows the message at the end of the list with the SENDING indicator
     → Repository calls RemoteDataSource.sendMessage(dto)   ← returns Result<MessageDto>
-    → The server (the mock) stores it, assigns id, sequenceId and timestamp,
+    → The server (the mock) stores it, generates its UUIDv7 id and timestamp,
       and echoes it with the localId after ~200ms
     → Repository, in one transaction: delete the row with that localId, insert the confirmed message
     → Room invalidates the paged query → ChatItemMapper → UI shows it as SENT, in its server position
@@ -61,7 +61,9 @@ RemoteDataSource.incomingMessages() emits MessageDto
 An echo can arrive twice, once as the `sendMessage` result and once on `incomingMessages()`. The second copy is harmless: no pending row is left to delete, and the insert replaces the confirmed row with the same server `id`.
 
 ### Ordering
-Confirmed messages are ordered by `sequenceId`, which the server assigns per conversation, increasing by one with no gaps. Pending messages have no `sequenceId`. They sort after every confirmed message, by device timestamp. `timestampMillis` is used only for display and grouping, never for order.
+Confirmed messages are ordered by their `id`. The server generates it as a UUIDv7 (RFC 9562), whose leading 48 bits are its creation time in milliseconds, so IDs sort in the order the server stored the messages. IDs are stored as lowercase canonical strings, which sort the same way as text. Pending messages have no `id`. They sort after every confirmed message, by device timestamp. `timestampMillis` is used only for display and grouping, never for order.
+
+The device never generates server IDs. If it did, a device clock that is wrong would place its messages out of order.
 
 ### Error handling seam
 `ChatRemoteDataSource.sendMessage()` returns `Result<MessageDto>`, not `Unit`. The failure branch exists in the repository with a `// TODO` marking where failure and retry are wired in.

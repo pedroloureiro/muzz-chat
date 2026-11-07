@@ -93,7 +93,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 17. Long-running work in `chat/data` is a `suspend` function whose caller owns its lifetime through a scope. Nothing uses `GlobalScope`.
 
 ### Ordering and paging
-18. Confirmed messages are ordered by `sequenceId` and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
+18. Confirmed messages are ordered by their server-generated UUIDv7 `id`, and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
 19. An echo replaces its pending message by `localId` in one Room transaction. Every write of server messages, whether a history page or an incoming message, goes through the same insert.
 20. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
 
@@ -118,13 +118,13 @@ ChatViewModel
 
 ```text
 ChatScreen scrolls past the oldest stored message
-  → MessageRemoteMediator APPEND   fetchMessages(beforeSequenceId = smallest stored sequenceId, limit)
+  → MessageRemoteMediator APPEND   fetchMessages(beforeId = smallest stored id, limit)
   → ChatRepositoryImpl             writes the page into Room in one transaction
   → Room PagingSource              invalidated, loads the older rows
   → ChatItemMapper                 same rules as above
 ```
 
-History is complete once `sequenceId` 1 is stored. "Load sample data" calls `ChatRepository.loadMessages()`, which refreshes from the newest page.
+History is complete when a page comes back with fewer than `limit` messages. "Load sample data" calls `ChatRepository.loadMessages()`, which refreshes from the newest page.
 
 ---
 

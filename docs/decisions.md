@@ -20,7 +20,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## Message timestamps are epoch millis
 
-**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer. The Room column and the JSON field keep the name `timestamp`. It is used for display and grouping, and never for order, which `sequenceId` decides.
+**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer. The Room column and the JSON field keep the name `timestamp`. It is used for display and grouping, and never for order, which the message `id` decides.
 
 **Limitation:** The value cannot be read by eye in the database or in JSON.
 
@@ -28,20 +28,21 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The server orders messages by `sequenceId`
+## The server orders messages by a time-ordered ID
 
-**Decision:** The server assigns each confirmed message a `sequenceId`, starting at 1 and increasing by one with no gaps. Room orders confirmed messages by it, and pending messages after them by device timestamp. The order in which messages arrive from `ChatRemoteDataSource` does not matter. See [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
+**Decision:** The server generates each confirmed message's `id` as a UUIDv7, whose leading bits are its creation time in milliseconds, stored as a lowercase string. Room orders confirmed messages by it, and pending messages after them by device timestamp. The order in which messages arrive from `ChatRemoteDataSource` does not matter. See [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
 
 **Limitation:**
-- A gap in the stored sequence, such as a message missed while the incoming stream was down, is not detected or fetched. The message after the gap is shown as the end of a run, with a tail.
+- A message missed while the incoming stream was down is not fetched. IDs are not consecutive, so a missing message cannot be detected from the IDs around it.
+- Two messages stored in the same millisecond by different server instances have an arbitrary order, though it is stable.
+- IDs only sort correctly as text when they all use the same case.
 - Timestamps can go backwards between neighbours while a message is pending, because a pending message has the device time. The display rules treat a negative gap as no gap.
 
-**Trade-off:** A server sequence makes order independent of device clocks and gives paging a unique cursor. Gap detection needs a catch-up request that the mock has no reason to need, because its stream never drops.
+**Trade-off:** A server-generated time-ordered ID makes order independent of device clocks, gives paging a unique cursor, and needs no per-conversation counter on the server. A gap-free sequence number would detect missed messages, but every write to a conversation would have to go through one counter. The mock's stream never drops, so there is nothing to catch up on.
 
 **To support a real backend:**
-1. Add `fetchMessages(afterSequenceId, limit)` to `ChatRemoteDataSource`.
-2. When a stored `sequenceId` is not one more than the one before it, or after reconnecting, fetch the messages after the last one stored.
-
+1. Add `fetchMessages(afterId, limit)` to `ChatRemoteDataSource`.
+2. After every reconnect, fetch the messages after the newest stored `id`.
 ---
 
 ## Room schema is not exported
@@ -62,7 +63,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## Message history pages from Room
 
-**Decision:** The message list is paged with Paging 3. Room is the paging source, and `MessageRemoteMediator` fetches older pages from the server by `sequenceId`. See [ADR-0003](adr/0003-cursor-paging.md).
+**Decision:** The message list is paged with Paging 3. Room is the paging source, and `MessageRemoteMediator` fetches older pages from the server by `id`. See [ADR-0003](adr/0003-cursor-paging.md).
 
 **Limitation:** Nothing deletes old messages from Room, so the table grows with the history the user has scrolled through, until "Clear messages" is used. Room's generated `PagingSource` uses `LIMIT/OFFSET`, which gets slower on very large local tables.
 
@@ -70,7 +71,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 **To support very large histories:**
 1. Evict the oldest stored pages beyond a limit, and let the `RemoteMediator` fetch them again.
-2. Replace the generated `PagingSource` with one keyed by `sequenceId`.
+2. Replace the generated `PagingSource` with one keyed by `id`.
 
 ---
 
