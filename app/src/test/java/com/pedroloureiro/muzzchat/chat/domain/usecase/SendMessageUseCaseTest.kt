@@ -3,7 +3,6 @@ package com.pedroloureiro.muzzchat.chat.domain.usecase
 import com.pedroloureiro.muzzchat.chat.domain.model.Content
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
 import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
 import java.util.UUID
@@ -24,7 +23,7 @@ class SendMessageUseCaseTest {
     fun blankText_sendsNothing() = runTest {
         sendMessage("  \n\t ", Users.ME)
 
-        assertEquals(emptyList<Message>(), repository.sent)
+        assertEquals(emptyList<Message.Pending>(), repository.sent)
     }
 
     @Test
@@ -35,17 +34,17 @@ class SendMessageUseCaseTest {
     }
 
     @Test
-    fun message_idIsAUniqueUuid() = runTest {
+    fun message_localIdIsAUniqueUuid() = runTest {
         sendMessage("hello", Users.ME)
         sendMessage("hello", Users.ME)
 
-        val (first, second) = repository.sent.map { it.messageId }
+        val (first, second) = repository.sent.map { it.localId }
         assertEquals(first, UUID.fromString(first).toString())
         assertNotEquals(first, second)
     }
 
     @Test
-    fun message_timestampIsTheCurrentTime() = runTest {
+    fun message_timestampIsTheDeviceTime() = runTest {
         val before = System.currentTimeMillis()
 
         sendMessage("hello", Users.ME)
@@ -61,19 +60,17 @@ class SendMessageUseCaseTest {
     }
 
     @Test
-    fun message_isTextWithSendingStatus() = runTest {
+    fun message_isText() = runTest {
         sendMessage("hello", Users.ME)
 
-        val message = repository.sent.single()
-        assertEquals(Content(ContentType.TEXT, "hello"), message.content)
-        assertEquals(MessageDeliveryStatus.SENDING, message.deliveryStatus)
+        assertEquals(Content(ContentType.TEXT, "hello"), repository.sent.single().content)
     }
 
     private class FakeChatRepository : ChatRepository {
-        val sent = mutableListOf<Message>()
+        val sent = mutableListOf<Message.Pending>()
 
         override fun getMessages(): Flow<List<Message>> = emptyFlow()
-        override suspend fun sendMessage(message: Message) {
+        override suspend fun sendMessage(message: Message.Pending) {
             sent += message
         }
         override suspend fun syncIncomingMessages() = Unit

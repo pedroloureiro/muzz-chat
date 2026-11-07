@@ -1,9 +1,12 @@
 package com.pedroloureiro.muzzchat.chat.data.mock
 
 import androidx.test.core.app.ApplicationProvider
+import com.pedroloureiro.muzzchat.chat.data.remote.model.ContentDto
 import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
 import com.pedroloureiro.muzzchat.chat.data.toEntity
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
+import java.util.UUID
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -14,11 +17,12 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class MockDataTest {
 
+    private val mockData = MockData(ApplicationProvider.getApplicationContext())
     private lateinit var seed: List<MessageDto>
 
     @Before
     fun loadSeed() {
-        seed = MockData(ApplicationProvider.getApplicationContext()).loadSeedMessages()
+        seed = mockData.loadSeedMessages()
     }
 
     @Test
@@ -28,12 +32,20 @@ class MockDataTest {
 
     @Test
     fun `seed has unique ids so reloading replaces rather than duplicates`() {
-        assertEquals(seed.size, seed.map { it.messageId }.toSet().size)
+        assertEquals(seed.size, seed.map { it.id }.toSet().size)
     }
 
     @Test
-    fun `seed is in ascending timestamp order`() {
-        assertEquals(seed.sortedBy { it.timestampMillis }, seed)
+    fun `seed ids are lowercase UUIDv7s matching their timestamps`() {
+        seed.forEach {
+            assertUuidV7(it.id)
+            assertEquals(it.timestampMillis, uuidMillis(it.id))
+        }
+    }
+
+    @Test
+    fun `seed ids sort in timestamp order`() {
+        assertEquals(seed.sortedBy { it.timestampMillis }, seed.sortedBy { it.id })
     }
 
     @Test
@@ -56,12 +68,54 @@ class MockDataTest {
     }
 
     @Test
-    fun `messages has the seed followed by added messages`() {
-        val mockData = MockData(ApplicationProvider.getApplicationContext())
-        val added = seed.first().copy(messageId = "added")
+    fun `store gives the message a UUIDv7 id and the server time, and keeps its localId`() {
+        val before = System.currentTimeMillis()
 
-        mockData.addMessage(added)
+        val stored = mockData.store(outgoing("local", timestampMillis = 1L))
 
-        assertEquals(seed + added, mockData.messages())
+        assertUuidV7(stored.id)
+        assertTrue(stored.timestampMillis in before..System.currentTimeMillis())
+        assertEquals("local", stored.localId)
+        assertEquals(ContentDto(type = "TEXT", value = "text"), stored.content)
     }
+
+    @Test
+    fun `store generates increasing ids, including within the same millisecond`() {
+        val ids = (1..1_000).map { mockData.store(outgoing("local-$it")).id }
+
+        assertTrue(ids.groupBy(::uuidMillis).values.any { it.size > 1 })
+        assertEquals(ids.sorted(), ids)
+        assertEquals(ids.size, ids.toSet().size)
+    }
+
+    @Test
+    fun `store recognises a resend by its localId and returns the stored message`() {
+        val first = mockData.store(outgoing("local"))
+
+        val resent = mockData.store(outgoing("local"))
+
+        assertEquals(first, resent)
+        assertEquals(seed + first, mockData.messages())
+    }
+
+    @Test
+    fun `messages has the seed followed by stored messages`() {
+        val stored = mockData.store(outgoing("local"))
+
+        assertEquals(seed + stored, mockData.messages())
+    }
+
+    private fun outgoing(localId: String, timestampMillis: Long = 1L) = OutgoingMessageDto(
+        localId = localId,
+        senderId = Users.ME.id,
+        content = ContentDto(type = "TEXT", value = "text"),
+        timestampMillis = timestampMillis
+    )
+
+    private fun assertUuidV7(id: String) {
+        assertEquals(id.lowercase(), id)
+        assertEquals(7, UUID.fromString(id).version())
+    }
+
+    private fun uuidMillis(id: String) = UUID.fromString(id).mostSignificantBits ushr 16
 }

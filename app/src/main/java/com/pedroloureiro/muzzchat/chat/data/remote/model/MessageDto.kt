@@ -7,7 +7,16 @@ data class ContentDto(val type: String, val value: String)
 
 @Serializable
 data class MessageDto(
-    val messageId: String,
+    val id: String,
+    val localId: String? = null,
+    val senderId: String,
+    val content: ContentDto,
+    val timestampMillis: Long
+)
+
+@Serializable
+data class OutgoingMessageDto(
+    val localId: String,
     val senderId: String,
     val content: ContentDto,
     val timestampMillis: Long

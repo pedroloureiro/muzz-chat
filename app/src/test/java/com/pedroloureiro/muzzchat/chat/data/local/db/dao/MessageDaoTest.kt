@@ -6,7 +6,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.first
@@ -41,12 +40,20 @@ class MessageDaoTest {
     }
 
     @Test
+    fun `getMessages orders confirmed messages by id whatever their timestamps, then pending messages by timestamp`() = runBlocking {
+        dao.insertPending(pending("late", timestamp = 2L))
+        dao.insertPending(pending("early", timestamp = 1L))
+        dao.confirm(confirmed("b", timestamp = 10L))
+        dao.confirm(confirmed("a", timestamp = 20L))
+
+        assertEquals(listOf("a", "b", "early", "late"), storedKeys())
+    }
+
+    @Test
     fun `getMessages returns the newest 500 messages in ascending order`() = runBlocking {
-        (600L downTo 1L).forEach { timestamp -> dao.insert(message("$timestamp", timestamp)) }
+        (600 downTo 1).forEach { dao.confirm(confirmed("%03d".format(it), timestamp = 0L)) }
 
-        val timestamps = dao.getMessages().first().map { it.timestampMillis }
-
-        assertEquals((101L..600L).toList(), timestamps)
+        assertEquals((101..600).map { "%03d".format(it) }, storedKeys())
     }
 
     @Test
@@ -55,58 +62,90 @@ class MessageDaoTest {
         val collector = launch(Dispatchers.Default) {
             dao.getMessages().collect { emissions.send(it) }
         }
-        val inserted = message("1", 1L)
 
         assertEquals(emptyList<MessageEntity>(), withTimeout(TIMEOUT_MILLIS) { emissions.receive() })
-        dao.insert(inserted)
+        dao.insertPending(pending("local", timestamp = 1L))
 
-        assertEquals(listOf(inserted), withTimeout(TIMEOUT_MILLIS) { emissions.receive() })
+        assertEquals(listOf("local"), withTimeout(TIMEOUT_MILLIS) { emissions.receive() }.map { it.localId })
         collector.cancel()
     }
 
     @Test
-    fun `updateStatus changes only the targeted message`() = runBlocking {
-        val target = message("target", 1L)
-        val other = message("other", 2L)
-        dao.insert(target)
-        dao.insert(other)
+    fun `confirm replaces the pending message with the same localId`() = runBlocking {
+        dao.insertPending(pending("local", timestamp = 1L))
 
-        dao.updateStatus("target", MessageDeliveryStatus.SENT)
+        dao.confirm(confirmed("server", timestamp = 2L, localId = "local"))
 
-        assertEquals(
-            listOf(target.copy(deliveryStatus = MessageDeliveryStatus.SENT), other),
-            dao.getMessages().first()
-        )
+        assertEquals(listOf(confirmed("server", timestamp = 2L, localId = "local")), stored())
     }
 
     @Test
-    fun `inserting an existing id replaces the message`() = runBlocking {
-        val original = message("1", 1L)
-        val replacement = original.copy(deliveryStatus = MessageDeliveryStatus.SENT)
-        dao.insert(original)
+    fun `confirm is one transaction, so a failed insert keeps the pending message`() = runBlocking {
+        dao.insertPending(pending("local", timestamp = 1L))
+        database.openHelper.writableDatabase.execSQL(
+            "CREATE TRIGGER reject_confirmed BEFORE INSERT ON messages WHEN NEW.id IS NOT NULL " +
+                "BEGIN SELECT RAISE(ABORT, 'rejected'); END"
+        )
 
-        dao.insert(replacement)
+        runCatching { dao.confirm(confirmed("server", timestamp = 2L, localId = "local")) }
 
-        assertEquals(listOf(replacement), dao.getMessages().first())
+        assertEquals(listOf(pending("local", timestamp = 1L)), stored())
+    }
+
+    @Test
+    fun `an echo that arrives twice leaves one confirmed message`() = runBlocking {
+        val echo = confirmed("server", timestamp = 2L, localId = "local")
+        dao.insertPending(pending("local", timestamp = 1L))
+
+        dao.confirm(echo)
+        dao.confirm(echo)
+
+        assertEquals(listOf(echo), stored())
+    }
+
+    @Test
+    fun `confirm inserts a server message whose localId is not stored`() = runBlocking {
+        dao.insertPending(pending("mine", timestamp = 1L))
+
+        dao.confirm(confirmed("other-device", timestamp = 2L, localId = "theirs"))
+
+        assertEquals(listOf("other-device", null), stored().map { it.id })
+    }
+
+    @Test
+    fun `confirm replaces a confirmed message with the same id`() = runBlocking {
+        dao.confirm(confirmed("server", timestamp = 1L))
+
+        dao.confirm(confirmed("server", timestamp = 2L))
+
+        assertEquals(listOf(confirmed("server", timestamp = 2L)), stored())
     }
 
     @Test
     fun `clearAll removes every message`() = runBlocking {
-        dao.insert(message("1", 1L))
-        dao.insert(message("2", 2L))
+        dao.insertPending(pending("local", timestamp = 1L))
+        dao.confirm(confirmed("server", timestamp = 2L))
 
         dao.clearAll()
 
-        assertEquals(emptyList<MessageEntity>(), dao.getMessages().first())
+        assertEquals(emptyList<MessageEntity>(), stored())
     }
 
-    private fun message(id: String, timestamp: Long) = MessageEntity(
-        messageId = id,
+    private suspend fun stored() = dao.getMessages().first().map { it.copy(rowId = 0) }
+
+    private suspend fun storedKeys() = dao.getMessages().first().map { it.id ?: it.localId }
+
+    private fun pending(localId: String, timestamp: Long) = message(id = null, localId = localId, timestamp)
+
+    private fun confirmed(id: String, timestamp: Long, localId: String? = null) = message(id, localId, timestamp)
+
+    private fun message(id: String?, localId: String?, timestamp: Long) = MessageEntity(
+        id = id,
+        localId = localId,
         senderId = "sender",
         contentType = ContentType.TEXT,
         contentValue = "text",
-        timestampMillis = timestamp,
-        deliveryStatus = MessageDeliveryStatus.SENDING
+        timestampMillis = timestamp
     )
 
     private companion object {
