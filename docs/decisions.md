@@ -20,7 +20,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## Message timestamps are epoch millis
 
-**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer. The Room column and the JSON field keep the name `timestamp`. It is used for display and grouping, and never for order, which the message `id` decides.
+**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer, including the Room column and the JSON field. It is used for display and grouping, and never for order, which the message `id` decides.
 
 **Limitation:** The value cannot be read by eye in the database or in JSON.
 
@@ -47,11 +47,11 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## Room schema is not exported
 
-**Decision:** `MessageDatabase` sets `exportSchema = false`. A schema change raises the database version and uses a destructive fallback, with no migration.
+**Decision:** `MessageDatabase` sets `exportSchema = false`, and the database stays at version 1. A schema change edits the entities in place, with no version bump and no migration.
 
-**Limitation:** The repo holds no record of past schemas, so Room cannot generate auto-migrations, and a schema change deletes all local messages.
+**Limitation:** The repo holds no record of past schemas, so Room cannot generate auto-migrations. A build with a changed schema crashes on a device that has the old database, until the app is reinstalled or its data is cleared.
 
-**Trade-off:** The app is not in production and is installed on no devices, so there is no data to keep. Local messages are a copy of the server's, so a real install would fetch them again. We skip the Room Gradle plugin, generated schema files and migrations until real installs exist.
+**Trade-off:** The app is not in production and is installed on no devices, so there is no data to keep. Local messages are a copy of the server's, so a real install would fetch them again. We skip version bumps, the Room Gradle plugin, generated schema files and migrations until real installs exist.
 
 **Once real installs exist:**
 1. Apply the `androidx.room` Gradle plugin and set `room { schemaDirectory("$projectDir/schemas") }`.
