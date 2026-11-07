@@ -67,10 +67,33 @@ class ChatItemMapperTest {
     }
 
     @Test
-    fun deliveryStatus_passthrough() {
-        val item = ChatItemMapper.toMessageItem(message("1", Users.ME, t0, MessageDeliveryStatus.SENDING), newer = null)
+    fun deliveryStatus_pendingIsSending() {
+        assertEquals(MessageDeliveryStatus.SENDING, toItem(pending("local")).deliveryStatus)
+    }
 
-        assertEquals(MessageDeliveryStatus.SENDING, item.deliveryStatus)
+    @Test
+    fun deliveryStatus_confirmedIsSent() {
+        assertEquals(MessageDeliveryStatus.SENT, toItem(message("1", Users.ME, t0)).deliveryStatus)
+    }
+
+    @Test
+    fun messageId_pendingUsesLocalId() {
+        assertEquals("local", toItem(pending("local")).messageId)
+    }
+
+    @Test
+    fun messageId_confirmedSentByThisDeviceUsesLocalId() {
+        assertEquals("local", toItem(message("1", Users.ME, t0, localId = "local")).messageId)
+    }
+
+    @Test
+    fun messageId_confirmedFromAnotherDeviceUsesId() {
+        assertEquals("1", toItem(message("1", Users.SARAH, t0)).messageId)
+    }
+
+    @Test
+    fun messageId_unchangedWhenPendingIsConfirmed() {
+        assertEquals(toItem(pending("local")).messageId, toItem(message("1", Users.ME, t0, localId = "local")).messageId)
     }
 
     @Test
@@ -151,17 +174,21 @@ class ChatItemMapperTest {
     private fun headerFor(timestamp: String, now: Long = this.now, zoneId: ZoneId = ZoneOffset.UTC): String? =
         headerAbove(item(Users.ME, millis(timestamp)), older = null, now, zoneId)?.label
 
-    private fun message(
-        id: String,
-        sender: User,
-        timestamp: Long,
-        status: MessageDeliveryStatus = MessageDeliveryStatus.SENT
-    ) = Message(
-        messageId = id,
+    private fun toItem(message: Message) = ChatItemMapper.toMessageItem(message, newer = null)
+
+    private fun message(id: String, sender: User, timestamp: Long, localId: String? = null) = Message.Confirmed(
+        id = id,
+        localId = localId,
         senderId = sender.id,
         content = Content(ContentType.TEXT, "text $id"),
-        timestampMillis = timestamp,
-        deliveryStatus = status
+        timestampMillis = timestamp
+    )
+
+    private fun pending(localId: String) = Message.Pending(
+        localId = localId,
+        senderId = Users.ME.id,
+        content = Content(ContentType.TEXT, "text"),
+        timestampMillis = t0
     )
 
     private fun millis(instant: String) = Instant.parse(instant).toEpochMilli()

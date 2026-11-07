@@ -2,18 +2,32 @@ package com.pedroloureiro.muzzchat.chat.data.mock
 
 import android.content.Context
 import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.serialization.json.Json
 
 private const val SEED_MESSAGES_ASSET = "mock_messages.json"
 
 class MockData(private val context: Context) {
-    private val addedMessages = MutableStateFlow(emptyList<MessageDto>())
+    private val storedMessages = MutableStateFlow(emptyList<MessageDto>())
 
-    fun messages(): List<MessageDto> = loadSeedMessages() + addedMessages.value
+    fun messages(): List<MessageDto> = loadSeedMessages() + storedMessages.value
 
-    fun addMessage(message: MessageDto) = addedMessages.update { it + message }
+    @OptIn(ExperimentalUuidApi::class)
+    fun store(outgoing: OutgoingMessageDto): MessageDto =
+        storedMessages.updateAndGet { stored ->
+            if (stored.any { it.localId == outgoing.localId }) return@updateAndGet stored
+            stored + MessageDto(
+                id = Uuid.generateV7().toString(),
+                localId = outgoing.localId,
+                senderId = outgoing.senderId,
+                content = outgoing.content,
+                timestampMillis = System.currentTimeMillis()
+            )
+        }.single { it.localId == outgoing.localId }
 
     fun loadSeedMessages(): List<MessageDto> =
         context.assets.open(SEED_MESSAGES_ASSET).bufferedReader().use { reader ->

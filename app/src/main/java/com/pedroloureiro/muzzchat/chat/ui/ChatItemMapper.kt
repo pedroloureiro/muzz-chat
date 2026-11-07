@@ -1,6 +1,7 @@
 package com.pedroloureiro.muzzchat.chat.ui
 
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
 import com.pedroloureiro.muzzchat.chat.ui.model.ChatItem
 import com.pedroloureiro.muzzchat.chat.ui.model.MessageDirection
@@ -21,12 +22,18 @@ private val WITHIN_A_WEEK = 1L..6L
 object ChatItemMapper {
 
     fun toMessageItem(message: Message, newer: Message?) = ChatItem.Message(
-        messageId = message.messageId,
+        messageId = when (message) {
+            is Message.Pending -> message.localId
+            is Message.Confirmed -> message.localId ?: message.id
+        },
         direction = if (message.senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
         content = message.content.value,
         timestampMillis = message.timestampMillis,
         isGrouped = newer != null && isGrouped(message, newer),
-        deliveryStatus = message.deliveryStatus
+        deliveryStatus = when (message) {
+            is Message.Pending -> MessageDeliveryStatus.SENDING
+            is Message.Confirmed -> MessageDeliveryStatus.SENT
+        }
     )
 
     fun headerAbove(

@@ -1,48 +1,48 @@
 [
   {
-    "messageId": "10000000-0000-0000-0000-000000000001",
+    "id": "019bc134-7840-7000-8000-000000000001",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Wowsa sounds fun" },
     "timestampMillis": 1768473000000
   },
   {
-    "messageId": "10000000-0000-0000-0000-000000000002",
+    "id": "019bc185-f3a0-7000-8000-000000000002",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Yeh for sure that works. What time do you think?" },
     "timestampMillis": 1768478340000
   },
   {
-    "messageId": "10000000-0000-0000-0000-000000000003",
+    "id": "019bc186-de00-7000-8000-000000000003",
     "senderId": "00000000-0000-0000-0000-000000000001",
     "content": { "type": "TEXT", "value": "Does 7pm work for you? I've got to go pick up my little brother first from a party" },
     "timestampMillis": 1768478400000
   },
   {
-    "messageId": "10000000-0000-0000-0000-000000000004",
+    "id": "019bc187-1898-7000-8000-000000000004",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Ok cool!" },
     "timestampMillis": 1768478415000
   },
   {
-    "messageId": "10000000-0000-0000-0000-000000000005",
+    "id": "019bc187-c860-7000-8000-000000000005",
     "senderId": "00000000-0000-0000-0000-000000000001",
     "content": { "type": "TEXT", "value": "What are you up to today?" },
     "timestampMillis": 1768478460000
   },
   {
-    "messageId": "10000000-0000-0000-0000-000000000006",
+    "id": "019bc188-b2c0-7000-8000-000000000006",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Nothing much" },
     "timestampMillis": 1768478520000
   },
   {
-    "messageId": "10000000-0000-0000-0000-000000000007",
+    "id": "019bc188-d9d0-7000-8000-000000000007",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "Actually just about to go shopping, got any recommendations for a good shoe shop? I'm a fashion disaster" },
     "timestampMillis": 1768478530000
   },
   {
-    "messageId": "10000000-0000-0000-0000-000000000008",
+    "id": "019bc189-1468-7000-8000-000000000008",
     "senderId": "00000000-0000-0000-0000-000000000002",
     "content": { "type": "TEXT", "value": "The last one went on for hours" },
     "timestampMillis": 1768478545000

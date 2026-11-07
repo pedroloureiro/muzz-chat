@@ -4,6 +4,7 @@ import androidx.test.core.app.ApplicationProvider
 import com.pedroloureiro.muzzchat.chat.data.mock.MockData
 import com.pedroloureiro.muzzchat.chat.data.remote.model.ContentDto
 import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
@@ -22,31 +23,34 @@ class MockChatRemoteDataSourceTest {
 
     private val mockData = MockData(ApplicationProvider.getApplicationContext())
     private val remote = MockChatRemoteDataSource(mockData)
-    private val dto = MessageDto(
-        messageId = "id",
+    private val outgoing = OutgoingMessageDto(
+        localId = "local",
         senderId = "sender",
         content = ContentDto(type = "TEXT", value = "text"),
         timestampMillis = 1L
     )
 
     @Test
-    fun `sendMessage echoes the dto on incomingMessages after 200ms`() = runTest {
+    fun `sendMessage echoes the stored message on incomingMessages after 200ms`() = runTest {
         val received = mutableListOf<MessageDto>()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) {
             remote.incomingMessages().toList(received)
         }
 
-        launch { remote.sendMessage(dto) }
+        launch { remote.sendMessage(outgoing) }
 
         advanceTimeBy(200)
         assertEquals(emptyList<MessageDto>(), received)
         runCurrent()
-        assertEquals(listOf(dto), received)
+        assertEquals(listOf(mockData.messages().last()), received)
     }
 
     @Test
-    fun `sendMessage returns the dto`() = runTest {
-        assertEquals(Result.success(dto), remote.sendMessage(dto))
+    fun `sendMessage returns the stored message with its localId`() = runTest {
+        val result = remote.sendMessage(outgoing).getOrThrow()
+
+        assertEquals(mockData.messages().last(), result)
+        assertEquals("local", result.localId)
     }
 
     @Test
@@ -56,8 +60,8 @@ class MockChatRemoteDataSourceTest {
 
     @Test
     fun `fetchMessages includes sent messages`() = runTest {
-        remote.sendMessage(dto)
+        val sent = remote.sendMessage(outgoing).getOrThrow()
 
-        assertEquals(Result.success(mockData.loadSeedMessages() + dto), remote.fetchMessages())
+        assertEquals(Result.success(mockData.loadSeedMessages() + sent), remote.fetchMessages())
     }
 }
