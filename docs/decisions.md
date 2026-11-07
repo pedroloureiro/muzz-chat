@@ -4,6 +4,30 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Minimum SDK is 26
+
+**Decision:** `minSdk` is 26 (Android 8.0), raised from the template's 24.
+
+**Limitation:** The app does not install on Android 7.0 and 7.1 (API 24–25).
+
+**Trade-off:** Nothing requires the app to support API 24 or 25. API 26 includes `java.time`, the standard library for dates and times, so `utils/DateTimeUtils` uses it with no core library desugaring and no legacy `SimpleDateFormat`.
+
+**To support API 24–25:**
+1. Set `minSdk = 24` and enable `isCoreLibraryDesugaringEnabled` in `compileOptions`.
+2. Add the `desugar_jdk_libs` dependency with `coreLibraryDesugaring(...)`.
+
+---
+
+## Message timestamps are epoch millis
+
+**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer. The Room column and the JSON field keep the name `timestamp`.
+
+**Limitation:** The value cannot be read by eye in the database or in JSON.
+
+**Trade-off:** Epoch millis are already UTC, convert exactly to any zone, and sort and subtract as plain numbers. An ISO-8601 string would need parsing on every mapping, take more space, and only sort correctly if every value used the same offset and precision. Tests stay readable by building values with `Instant.parse()`. Keeping the stored names avoids a Room migration and a change to the API contract.
+
+---
+
 ## Room schema is not exported
 
 **Decision:** `MessageDatabase` sets `exportSchema = false`.
