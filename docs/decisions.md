@@ -18,6 +18,33 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Refreshing does not fill a gap in stored history
+
+**Decision:** `MessageRemoteMediator` REFRESH writes the newest page over what Room already holds, and APPEND continues from the smallest stored `id`.
+
+**Limitation:** If more than a page of messages arrived on the server while the app was closed, the newest page does not reach the messages already stored. The messages in between are never fetched, because APPEND starts below the oldest stored message.
+
+**Trade-off:** The mock server only gains messages this device sends, and their echoes are stored as they arrive, so a gap cannot happen here. Detecting one needs either a full page that does not overlap what is stored or a sync token from the server.
+
+**To support a real backend:**
+1. On REFRESH, when the newest page does not overlap the stored messages, delete the stored confirmed messages in the same transaction, so APPEND fetches them again.
+
+---
+
+## Paged history has no memory or storage cap
+
+**Decision:** `PagingConfig` keeps its default `maxSize`, and nothing deletes old messages from Room. Paging replaced the window of the newest 500 messages.
+
+**Limitation:** Every page the user scrolls past stays in memory until the list is recreated, and the `messages` table grows with every page fetched.
+
+**Trade-off:** Paging already reads from Room only the pages near the screen, which was the reason for the old cap. The seed has 200 messages, so neither limit is reached, and dropping pages can make scrolling back less smooth.
+
+**To support long histories:**
+1. Set `PagingConfig.maxSize` so pages far from the screen are dropped. It must be at least `pageSize + 2 * prefetchDistance`.
+2. Trim the oldest confirmed messages when storage runs low. Scrolling back to them fetches them again through `MessageRemoteMediator`.
+
+---
+
 ## Message timestamps are epoch millis
 
 **Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer, including the Room column and the JSON field. It is used for display and grouping, and never for order, which the message `id` decides.

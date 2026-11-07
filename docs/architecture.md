@@ -2,7 +2,7 @@
 
 The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), paging in [ADR-0003](adr/0003-cursor-paging.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
 
-Issues #18 and #19, then #7–#11, build out the parts of this structure that do not exist yet.
+Issues #7–#11 build out the parts of this structure that do not exist yet.
 
 ---
 
@@ -124,7 +124,7 @@ ChatScreen scrolls past the oldest stored message
   → ChatItemMapper                 same rules as above
 ```
 
-History is complete when a page comes back with fewer than `limit` messages. "Load sample data" calls `ChatRepository.loadMessages()`, which refreshes from the newest page.
+Opening the chat runs a REFRESH, which fetches the newest page. History is complete when a page comes back with fewer than `limit` messages. "Load sample data" calls `ChatRepository.loadMessages()`, which refreshes from the newest page.
 
 ---
 

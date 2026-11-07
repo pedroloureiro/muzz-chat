@@ -18,10 +18,11 @@ A cursor must be unique and strictly ordered. Timestamps are neither: two messag
 ### Room is the paging source, with a `RemoteMediator`
 Paging 3 reads from Room, and a `RemoteMediator` fetches from the server into Room when the user scrolls past what is stored. This keeps Room the single source of truth: the paged list, optimistic sends and echoes all go through the same table.
 
-- **REFRESH** fetches the newest page.
-- **APPEND** (scrolling up into older history) fetches the page before the smallest `id` stored in Room.
+- **REFRESH** fetches the newest page. Paging runs it when the list is first collected, so opening the chat fetches the newest messages, as a real chat app does.
+- **APPEND** (scrolling up into older history) fetches the page before the smallest `id` stored in Room. With no confirmed message stored, for example right after "Clear messages", it fetches nothing and does not mark history complete, so paging resumes once messages are stored again.
 - **PREPEND** ends at once. New messages arrive through `syncIncomingMessages()`, not through paging.
 - History is complete when a page comes back with fewer than `limit` messages. The cursor is read from Room, so no separate table of paging keys is needed.
+- The page size is `MESSAGE_PAGE_SIZE` in `chat/data/paging`, beside the mediator, and is also the `limit` sent to the server. It is 20, so the seed's history spans several pages and paging can be seen while scrolling.
 
 Each page is written in one transaction, using the same insert as incoming messages.
 

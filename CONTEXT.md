@@ -61,7 +61,7 @@ The interface representing the remote messaging service. Exposes `sendMessage(dt
 The interface over Room, and the single source of truth for the UI. Stores pending and confirmed messages in one table, replaces a pending message with its echo in one transaction, and exposes the paged `MessageWithNext` query, newest first: confirmed messages by `id`, then pending messages by device timestamp.
 
 ## MessageRemoteMediator
-The Paging 3 `RemoteMediator` in `chat/data`. When the user scrolls past the stored history, it fetches the page before the smallest stored `id` and writes it into Room. History is complete when a page comes back with fewer than the requested number of messages. See [ADR-0003](docs/adr/0003-cursor-paging.md).
+The Paging 3 `RemoteMediator` in `chat/data`. When the chat opens, it fetches the newest page. When the user scrolls past the stored history, it fetches the page before the smallest stored `id` and writes it into Room. History is complete when a page comes back with fewer than the requested number of messages. See [ADR-0003](docs/adr/0003-cursor-paging.md).
 
 ## MockData
 The fake server's messages, in `chat/data/mock/`. Holds a pre-written conversation from `assets/mock_messages.json`, with its UUIDv7 IDs filled in and large enough to fill several pages, plus any messages sent since the app started. It generates a UUIDv7 `id` and the server time for each sent message, and returns history pages by `id`. Only `MockChatRemoteDataSource` uses it. The "Load sample data" overflow menu action reaches it through `ChatRepository.loadMessages()`.
