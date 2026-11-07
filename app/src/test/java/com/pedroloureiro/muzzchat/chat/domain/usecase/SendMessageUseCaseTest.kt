@@ -1,8 +1,10 @@
 package com.pedroloureiro.muzzchat.chat.domain.usecase
 
+import androidx.paging.PagingData
 import com.pedroloureiro.muzzchat.chat.domain.model.Content
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
 import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
 import java.util.UUID
@@ -69,7 +71,7 @@ class SendMessageUseCaseTest {
     private class FakeChatRepository : ChatRepository {
         val sent = mutableListOf<Message.Pending>()
 
-        override fun getMessages(): Flow<List<Message>> = emptyFlow()
+        override fun getMessages(): Flow<PagingData<MessageWithNext>> = emptyFlow()
         override suspend fun sendMessage(message: Message.Pending) {
             sent += message
         }

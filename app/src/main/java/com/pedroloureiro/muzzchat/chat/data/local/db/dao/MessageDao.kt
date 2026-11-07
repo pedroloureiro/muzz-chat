@@ -1,12 +1,13 @@
 package com.pedroloureiro.muzzchat.chat.data.local.db.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import kotlinx.coroutines.flow.Flow
+import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
 
 @Dao
 interface MessageDao {
@@ -25,13 +26,36 @@ interface MessageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertReplacingId(entity: MessageEntity)
 
-    // The inner DESC makes LIMIT keep the newest rows; ASC alone would hide new messages past 500.
-    // Pending rows have a null id, so `id IS NULL` puts them after every confirmed row.
+    @Transaction
+    suspend fun confirmAll(entities: List<MessageEntity>) {
+        entities.forEach { confirm(it) }
+    }
+
+    @Query("SELECT MIN(id) FROM messages")
+    suspend fun oldestId(): String?
+
+    // Newest first. Pending rows have a null id, so `id IS NULL DESC` puts them before every confirmed row.
+    // The next message in conversation order: for a confirmed row the next confirmed id, else the oldest
+    // pending row; for a pending row the next pending row by device time.
     @Query(
-        "SELECT * FROM (SELECT * FROM messages ORDER BY id IS NULL DESC, id DESC, timestampMillis DESC LIMIT 500) " +
-            "ORDER BY id IS NULL, id, timestampMillis"
+        """
+        SELECT m.*, n.senderId AS nextSenderId, n.timestampMillis AS nextTimestampMillis
+        FROM messages m
+        LEFT JOIN messages n ON n.rowId = CASE
+            WHEN m.id IS NOT NULL THEN COALESCE(
+                (SELECT rowId FROM messages WHERE id > m.id ORDER BY id LIMIT 1),
+                (SELECT rowId FROM messages WHERE id IS NULL ORDER BY timestampMillis LIMIT 1)
+            )
+            ELSE (
+                SELECT rowId FROM messages
+                WHERE id IS NULL AND timestampMillis > m.timestampMillis
+                ORDER BY timestampMillis LIMIT 1
+            )
+        END
+        ORDER BY m.id IS NULL DESC, m.id DESC, m.timestampMillis DESC
+        """
     )
-    fun getMessages(): Flow<List<MessageEntity>>
+    fun pagingSource(): PagingSource<Int, MessageWithNextRow>
 
     @Query("DELETE FROM messages")
     suspend fun clearAll()

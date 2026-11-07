@@ -16,6 +16,12 @@ class MockData(private val context: Context) {
 
     fun messages(): List<MessageDto> = loadSeedMessages() + storedMessages.value
 
+    fun page(beforeId: String?, limit: Int): List<MessageDto> =
+        messages()
+            .filter { beforeId == null || it.id < beforeId }
+            .sortedByDescending { it.id }
+            .take(limit)
+
     @OptIn(ExperimentalUuidApi::class)
     fun store(outgoing: OutgoingMessageDto): MessageDto =
         storedMessages.updateAndGet { stored ->

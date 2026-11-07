@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface ChatRemoteDataSource {
     suspend fun sendMessage(outgoing: OutgoingMessageDto): Result<MessageDto>
-    suspend fun fetchMessages(): Result<List<MessageDto>>
+    // Up to `limit` messages older than `beforeId`, newest first. A null `beforeId` means the newest messages.
+    suspend fun fetchMessages(beforeId: String?, limit: Int): Result<List<MessageDto>>
     fun incomingMessages(): Flow<MessageDto>
 }

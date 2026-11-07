@@ -54,14 +54,16 @@ class MockChatRemoteDataSourceTest {
     }
 
     @Test
-    fun `fetchMessages returns the seed messages`() = runTest {
-        assertEquals(Result.success(mockData.loadSeedMessages()), remote.fetchMessages())
+    fun `fetchMessages returns the mock's page before the cursor`() = runTest {
+        val cursor = mockData.page(beforeId = null, limit = 1).single().id
+
+        assertEquals(Result.success(mockData.page(cursor, limit = 3)), remote.fetchMessages(cursor, limit = 3))
     }
 
     @Test
-    fun `fetchMessages includes sent messages`() = runTest {
+    fun `fetchMessages puts sent messages in the newest page`() = runTest {
         val sent = remote.sendMessage(outgoing).getOrThrow()
 
-        assertEquals(Result.success(mockData.loadSeedMessages() + sent), remote.fetchMessages())
+        assertEquals(sent, remote.fetchMessages(beforeId = null, limit = 1).getOrThrow().single())
     }
 }

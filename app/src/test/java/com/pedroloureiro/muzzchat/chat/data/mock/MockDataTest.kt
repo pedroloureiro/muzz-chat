@@ -105,6 +105,33 @@ class MockDataTest {
         assertEquals(seed + stored, mockData.messages())
     }
 
+    @Test
+    fun `seed fills several pages`() {
+        assertTrue(seed.size >= 200)
+    }
+
+    @Test
+    fun `page without a cursor returns the newest messages, newest first`() {
+        assertEquals(seed.sortedByDescending { it.id }.take(3), mockData.page(beforeId = null, limit = 3))
+    }
+
+    @Test
+    fun `page returns the messages before the cursor, newest first`() {
+        val newestFirst = seed.sortedByDescending { it.id }
+
+        assertEquals(newestFirst.subList(5, 8), mockData.page(beforeId = newestFirst[4].id, limit = 3))
+    }
+
+    @Test
+    fun `paging by id returns every message once, with no repeats and no gaps`() {
+        val stored = mockData.store(outgoing("local"))
+        val pages = generateSequence(mockData.page(beforeId = null, limit = 20)) { previous ->
+            if (previous.size < 20) null else mockData.page(beforeId = previous.last().id, limit = 20)
+        }.toList()
+
+        assertEquals((seed + stored).sortedByDescending { it.id }, pages.flatten())
+    }
+
     private fun outgoing(localId: String, timestampMillis: Long = 1L) = OutgoingMessageDto(
         localId = localId,
         senderId = Users.ME.id,

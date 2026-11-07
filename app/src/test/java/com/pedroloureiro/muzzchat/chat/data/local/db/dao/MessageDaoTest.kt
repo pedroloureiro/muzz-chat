@@ -1,19 +1,17 @@
 package com.pedroloureiro.muzzchat.chat.data.local.db.dao
 
 import android.content.Context
+import androidx.paging.PagingSource
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withTimeout
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,34 +38,52 @@ class MessageDaoTest {
     }
 
     @Test
-    fun `getMessages orders confirmed messages by id whatever their timestamps, then pending messages by timestamp`() = runBlocking {
+    fun `pagingSource returns pending messages newest first, then confirmed messages by id descending whatever their timestamps`() = runBlocking {
         dao.insertPending(pending("late", timestamp = 2L))
         dao.insertPending(pending("early", timestamp = 1L))
         dao.confirm(confirmed("b", timestamp = 10L))
         dao.confirm(confirmed("a", timestamp = 20L))
 
-        assertEquals(listOf("a", "b", "early", "late"), storedKeys())
+        assertEquals(listOf("late", "early", "b", "a"), storedKeys())
     }
 
     @Test
-    fun `getMessages returns the newest 500 messages in ascending order`() = runBlocking {
-        (600 downTo 1).forEach { dao.confirm(confirmed("%03d".format(it), timestamp = 0L)) }
-
-        assertEquals((101..600).map { "%03d".format(it) }, storedKeys())
-    }
-
-    @Test
-    fun `getMessages emits again after an insert`() = runBlocking {
-        val emissions = Channel<List<MessageEntity>>(Channel.UNLIMITED)
-        val collector = launch(Dispatchers.Default) {
-            dao.getMessages().collect { emissions.send(it) }
-        }
-
-        assertEquals(emptyList<MessageEntity>(), withTimeout(TIMEOUT_MILLIS) { emissions.receive() })
+    fun `pagingSource gives a confirmed message the confirmed message with the next id`() = runBlocking {
+        dao.confirm(confirmed("c", timestamp = 30L, sender = "third"))
+        dao.confirm(confirmed("a", timestamp = 10L, sender = "first"))
+        dao.confirm(confirmed("b", timestamp = 20L, sender = "second"))
         dao.insertPending(pending("local", timestamp = 1L))
 
-        assertEquals(listOf("local"), withTimeout(TIMEOUT_MILLIS) { emissions.receive() }.map { it.localId })
-        collector.cancel()
+        assertEquals(Next("second", 20L), nextOf("a"))
+        assertEquals(Next("third", 30L), nextOf("b"))
+    }
+
+    @Test
+    fun `pagingSource gives the newest confirmed message the oldest pending message`() = runBlocking {
+        dao.confirm(confirmed("a", timestamp = 10L))
+        dao.insertPending(pending("late", timestamp = 3L, sender = "late-sender"))
+        dao.insertPending(pending("early", timestamp = 2L, sender = "early-sender"))
+
+        assertEquals(Next("early-sender", 2L), nextOf("a"))
+    }
+
+    @Test
+    fun `pagingSource gives the newest confirmed message no next message when none is pending`() = runBlocking {
+        dao.confirm(confirmed("a", timestamp = 10L))
+        dao.confirm(confirmed("b", timestamp = 20L))
+
+        assertEquals(Next(null, null), nextOf("b"))
+    }
+
+    @Test
+    fun `pagingSource gives a pending message the next pending message by timestamp`() = runBlocking {
+        dao.insertPending(pending("third", timestamp = 3L, sender = "third-sender"))
+        dao.insertPending(pending("first", timestamp = 1L, sender = "first-sender"))
+        dao.insertPending(pending("second", timestamp = 2L, sender = "second-sender"))
+
+        assertEquals(Next("second-sender", 2L), nextOf("first"))
+        assertEquals(Next("third-sender", 3L), nextOf("second"))
+        assertEquals(Next(null, null), nextOf("third"))
     }
 
     @Test
@@ -82,10 +98,7 @@ class MessageDaoTest {
     @Test
     fun `confirm is one transaction, so a failed insert keeps the pending message`() = runBlocking {
         dao.insertPending(pending("local", timestamp = 1L))
-        database.openHelper.writableDatabase.execSQL(
-            "CREATE TRIGGER reject_confirmed BEFORE INSERT ON messages WHEN NEW.id IS NOT NULL " +
-                "BEGIN SELECT RAISE(ABORT, 'rejected'); END"
-        )
+        rejectInsertsOf(id = "server")
 
         runCatching { dao.confirm(confirmed("server", timestamp = 2L, localId = "local")) }
 
@@ -109,7 +122,7 @@ class MessageDaoTest {
 
         dao.confirm(confirmed("other-device", timestamp = 2L, localId = "theirs"))
 
-        assertEquals(listOf("other-device", null), stored().map { it.id })
+        assertEquals(listOf(null, "other-device"), stored().map { it.id })
     }
 
     @Test
@@ -122,6 +135,40 @@ class MessageDaoTest {
     }
 
     @Test
+    fun `confirmAll replaces the pending message each echo carries the localId of`() = runBlocking {
+        dao.insertPending(pending("local", timestamp = 1L))
+
+        dao.confirmAll(listOf(confirmed("b", timestamp = 2L, localId = "local"), confirmed("a", timestamp = 1L)))
+
+        assertEquals(listOf(confirmed("b", timestamp = 2L, localId = "local"), confirmed("a", timestamp = 1L)), stored())
+    }
+
+    @Test
+    fun `confirmAll is one transaction, so a failed insert stores none of the page`() = runBlocking {
+        rejectInsertsOf(id = "b")
+
+        runCatching { dao.confirmAll(listOf(confirmed("a", timestamp = 1L), confirmed("b", timestamp = 2L))) }
+
+        assertEquals(emptyList<MessageEntity>(), stored())
+    }
+
+    @Test
+    fun `oldestId returns the smallest confirmed id, ignoring pending messages`() = runBlocking {
+        dao.insertPending(pending("local", timestamp = 0L))
+        dao.confirm(confirmed("b", timestamp = 1L))
+        dao.confirm(confirmed("a", timestamp = 2L))
+
+        assertEquals("a", dao.oldestId())
+    }
+
+    @Test
+    fun `oldestId is null when no confirmed message is stored`() = runBlocking {
+        dao.insertPending(pending("local", timestamp = 0L))
+
+        assertNull(dao.oldestId())
+    }
+
+    @Test
     fun `clearAll removes every message`() = runBlocking {
         dao.insertPending(pending("local", timestamp = 1L))
         dao.confirm(confirmed("server", timestamp = 2L))
@@ -131,24 +178,40 @@ class MessageDaoTest {
         assertEquals(emptyList<MessageEntity>(), stored())
     }
 
-    private suspend fun stored() = dao.getMessages().first().map { it.copy(rowId = 0) }
+    private data class Next(val senderId: String?, val timestampMillis: Long?)
 
-    private suspend fun storedKeys() = dao.getMessages().first().map { it.id ?: it.localId }
+    private suspend fun rows(): List<MessageWithNextRow> {
+        val params = PagingSource.LoadParams.Refresh<Int>(key = null, loadSize = 100, placeholdersEnabled = false)
+        return (dao.pagingSource().load(params) as PagingSource.LoadResult.Page).data
+    }
 
-    private fun pending(localId: String, timestamp: Long) = message(id = null, localId = localId, timestamp)
+    private suspend fun stored() = rows().map { it.message.copy(rowId = 0) }
 
-    private fun confirmed(id: String, timestamp: Long, localId: String? = null) = message(id, localId, timestamp)
+    private suspend fun storedKeys() = rows().map { it.message.id ?: it.message.localId }
 
-    private fun message(id: String?, localId: String?, timestamp: Long) = MessageEntity(
+    private suspend fun nextOf(key: String) = rows()
+        .single { (it.message.id ?: it.message.localId) == key }
+        .let { Next(it.nextSenderId, it.nextTimestampMillis) }
+
+    private fun rejectInsertsOf(id: String) {
+        database.openHelper.writableDatabase.execSQL(
+            "CREATE TRIGGER reject_$id BEFORE INSERT ON messages WHEN NEW.id = '$id' " +
+                "BEGIN SELECT RAISE(ABORT, 'rejected'); END"
+        )
+    }
+
+    private fun pending(localId: String, timestamp: Long, sender: String = "sender") =
+        message(id = null, localId = localId, timestamp, sender)
+
+    private fun confirmed(id: String, timestamp: Long, localId: String? = null, sender: String = "sender") =
+        message(id, localId, timestamp, sender)
+
+    private fun message(id: String?, localId: String?, timestamp: Long, sender: String) = MessageEntity(
         id = id,
         localId = localId,
-        senderId = "sender",
+        senderId = sender,
         contentType = ContentType.TEXT,
         contentValue = "text",
         timestampMillis = timestamp
     )
-
-    private companion object {
-        const val TIMEOUT_MILLIS = 5_000L
-    }
 }

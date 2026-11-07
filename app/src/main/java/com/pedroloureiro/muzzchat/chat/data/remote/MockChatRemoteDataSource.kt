@@ -21,5 +21,6 @@ class MockChatRemoteDataSource(private val mockData: MockData) : ChatRemoteDataS
         return Result.success(stored)
     }
 
-    override suspend fun fetchMessages(): Result<List<MessageDto>> = Result.success(mockData.messages())
+    override suspend fun fetchMessages(beforeId: String?, limit: Int): Result<List<MessageDto>> =
+        Result.success(mockData.page(beforeId, limit))
 }

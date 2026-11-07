@@ -1,9 +1,14 @@
 package com.pedroloureiro.muzzchat.chat.data
 
+import androidx.paging.PagingSource
+import androidx.paging.testing.asPagingSourceFactory
+import androidx.paging.testing.asSnapshot
 import androidx.test.core.app.ApplicationProvider
 import com.pedroloureiro.muzzchat.chat.data.local.ChatLocalDataSource
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
 import com.pedroloureiro.muzzchat.chat.data.mock.MockData
+import com.pedroloureiro.muzzchat.chat.data.paging.MESSAGE_PAGE_SIZE
 import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.MockChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.model.ContentDto
@@ -12,11 +17,11 @@ import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
 import com.pedroloureiro.muzzchat.chat.domain.model.Content
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
@@ -52,13 +57,26 @@ class ChatRepositoryImplTest {
     private val otherDeviceMessage = echo.copy(id = "other", localId = null)
 
     @Test
-    fun `getMessages maps stored entities to domain messages`() = runTest {
+    fun `getMessages pages stored rows as domain rows`() = runTest {
         local.insertPending(message.toEntity())
         local.confirm(otherDeviceMessage.toEntity())
 
         assertEquals(
-            listOf(message, otherDeviceMessage.toEntity().toMessage()),
-            repository().getMessages().first()
+            listOf(MessageWithNext(message, null, null), MessageWithNext(otherDeviceMessage.toEntity().toMessage(), null, null)),
+            repository().getMessages().asSnapshot()
+        )
+    }
+
+    @Test
+    fun `getMessages fetches the newest page, then the page before the oldest stored id`() = runTest {
+        local.confirm(otherDeviceMessage.toEntity())
+        remote.fetched = Result.success(List(MESSAGE_PAGE_SIZE) { otherDeviceMessage })
+
+        repository().getMessages().asSnapshot()
+
+        assertEquals(
+            listOf(FetchRequest(null, MESSAGE_PAGE_SIZE), FetchRequest(otherDeviceMessage.id, MESSAGE_PAGE_SIZE)),
+            remote.fetchRequests.take(2)
         )
     }
 
@@ -142,6 +160,13 @@ class ChatRepositoryImplTest {
     }
 
     @Test
+    fun `loadMessages fetches the newest page`() = runTest {
+        repository().loadMessages()
+
+        assertEquals(listOf(FetchRequest(null, MESSAGE_PAGE_SIZE)), remote.fetchRequests)
+    }
+
+    @Test
     fun `loadMessages stores fetched messages as confirmed`() = runTest {
         local.insertPending(message.toEntity())
         remote.fetched = Result.success(listOf(echo, otherDeviceMessage))
@@ -202,20 +227,33 @@ class ChatRepositoryImplTest {
             } + entity
         }
 
-        override fun getMessages(): Flow<List<MessageEntity>> = stored
+        override suspend fun confirmAll(entities: List<MessageEntity>) {
+            entities.forEach { confirm(it) }
+        }
+
+        override suspend fun oldestId(): String? = stored.value.mapNotNull { it.id }.minOrNull()
+
+        override fun pagingSource(): PagingSource<Int, MessageWithNextRow> =
+            stored.value.map { MessageWithNextRow(it, null, null) }.asPagingSourceFactory().invoke()
 
         override suspend fun clearAll() {
             stored.value = emptyList()
         }
     }
 
+    private data class FetchRequest(val beforeId: String?, val limit: Int)
+
     private inner class FakeChatRemoteDataSource : ChatRemoteDataSource {
         val incoming = MutableSharedFlow<MessageDto>()
         val sent = mutableListOf<OutgoingMessageDto>()
         var onSend: suspend (OutgoingMessageDto) -> Result<MessageDto> = { Result.success(echo) }
         var fetched: Result<List<MessageDto>> = Result.success(emptyList())
+        val fetchRequests = mutableListOf<FetchRequest>()
 
-        override suspend fun fetchMessages() = fetched
+        override suspend fun fetchMessages(beforeId: String?, limit: Int): Result<List<MessageDto>> {
+            fetchRequests += FetchRequest(beforeId, limit)
+            return fetched
+        }
 
         override suspend fun sendMessage(outgoing: OutgoingMessageDto): Result<MessageDto> {
             sent += outgoing

@@ -1,12 +1,14 @@
 package com.pedroloureiro.muzzchat.chat.data
 
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
 import com.pedroloureiro.muzzchat.chat.data.remote.model.ContentDto
 import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
 import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
 import com.pedroloureiro.muzzchat.chat.domain.model.Content
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -56,6 +58,13 @@ class MessageMappersTest {
         )
 
         assertEquals(expected, confirmedEntity.toMessage())
+    }
+
+    @Test
+    fun `row toMessageWithNext keeps the next message's sender and timestamp`() {
+        val row = MessageWithNextRow(pendingEntity, nextSenderId = "next", nextTimestampMillis = 3L)
+
+        assertEquals(MessageWithNext(pending, nextSenderId = "next", nextTimestampMillis = 3L), row.toMessageWithNext())
     }
 
     @Test

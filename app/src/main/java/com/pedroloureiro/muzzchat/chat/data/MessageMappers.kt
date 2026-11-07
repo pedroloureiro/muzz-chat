@@ -1,12 +1,14 @@
 package com.pedroloureiro.muzzchat.chat.data
 
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
 import com.pedroloureiro.muzzchat.chat.data.remote.model.ContentDto
 import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
 import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
 import com.pedroloureiro.muzzchat.chat.domain.model.Content
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 
 fun MessageDto.toEntity() = MessageEntity(
     id = id,
@@ -25,6 +27,8 @@ fun MessageEntity.toMessage(): Message {
         Message.Confirmed(id, localId, senderId, content, timestampMillis)
     }
 }
+
+fun MessageWithNextRow.toMessageWithNext() = MessageWithNext(message.toMessage(), nextSenderId, nextTimestampMillis)
 
 fun Message.Pending.toEntity() = MessageEntity(
     id = null,
