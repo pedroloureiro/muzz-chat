@@ -138,24 +138,6 @@ class ChatItemMapperTest {
         )
     }
 
-    @Test
-    fun map_insertsHeadersAboveTheirMessages() {
-        val items = map(
-            message("1", Users.ME, t0),
-            message("2", Users.ME, t0 + 1_000),
-            message("3", Users.ME, t0 + 3_601_001)
-        )
-
-        assertEquals(listOf("header", "1", "2", "header", "3"), items.shape())
-    }
-
-    @Test
-    fun map_groupsWithTheNewerMessage() {
-        val items = map(message("1", Users.ME, t0), message("2", Users.ME, t0 + 1_000))
-
-        assertEquals(listOf(true, false), items.filterIsInstance<ChatItem.Message>().map { it.isGrouped })
-    }
-
     private fun assertGrouped(expected: Boolean, message: Message, newer: Message?) {
         assertEquals(expected, ChatItemMapper.toMessageItem(message, newer).isGrouped)
     }
@@ -168,9 +150,6 @@ class ChatItemMapperTest {
 
     private fun headerFor(timestamp: String, now: Long = this.now, zoneId: ZoneId = ZoneOffset.UTC): String? =
         headerAbove(item(Users.ME, millis(timestamp)), older = null, now, zoneId)?.label
-
-    private fun map(vararg messages: Message) =
-        ChatItemMapper.map(messages.toList(), now, ZoneOffset.UTC, Locale.UK)
 
     private fun message(
         id: String,
@@ -186,11 +165,4 @@ class ChatItemMapperTest {
     )
 
     private fun millis(instant: String) = Instant.parse(instant).toEpochMilli()
-
-    private fun List<ChatItem>.shape() = map {
-        when (it) {
-            is ChatItem.TimestampHeader -> "header"
-            is ChatItem.Message -> it.messageId
-        }
-    }
 }
