@@ -18,30 +18,47 @@ private val GROUPING_WINDOW_MILLIS = 20.seconds.inWholeMilliseconds
 private const val TODAY = 0L
 private val WITHIN_A_WEEK = 1L..6L
 
+// Each rule looks only at a message and one neighbour, so the same rules can drive a paged list.
 object ChatItemMapper {
 
-    // Expects messages in ascending timestamp order, as ChatRepository emits them.
+    // Expects messages oldest first in conversation order, as ChatRepository emits them.
     // Now, zone and locale are read on every call so a change on the device applies at the next mapping.
     fun map(
         messages: List<Message>,
         nowMillis: Long = System.currentTimeMillis(),
         zoneId: ZoneId = ZoneId.systemDefault(),
         locale: Locale = Locale.getDefault()
-    ): List<ChatItem> = messages.flatMapIndexed { index, message ->
-        val previous = messages.getOrNull(index - 1)
-        val next = messages.getOrNull(index + 1)
-        buildList {
-            if (previous == null || message.timestampMillis - previous.timestampMillis > SECTION_GAP_MILLIS) {
-                val format = headerFormat(message.timestampMillis, nowMillis, zoneId)
-                add(ChatItem.TimestampHeader(formatUtc(message.timestampMillis, zoneId, locale, format)))
-            }
-            add(message.toChatItem(isGrouped = next != null && isGrouped(message, next)))
+    ): List<ChatItem> {
+        val items = messages.mapIndexed { index, message -> toMessageItem(message, newer = messages.getOrNull(index + 1)) }
+        return items.flatMapIndexed { index, item ->
+            listOfNotNull(headerAbove(item, older = items.getOrNull(index - 1), nowMillis, zoneId, locale), item)
         }
     }
 
-    private fun isGrouped(message: Message, next: Message) =
-        next.senderId == message.senderId &&
-            next.timestampMillis - message.timestampMillis < GROUPING_WINDOW_MILLIS
+    fun toMessageItem(message: Message, newer: Message?) = ChatItem.Message(
+        messageId = message.messageId,
+        direction = if (message.senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
+        content = message.content.value,
+        timestampMillis = message.timestampMillis,
+        isGrouped = newer != null && isGrouped(message, newer),
+        deliveryStatus = message.deliveryStatus
+    )
+
+    fun headerAbove(
+        message: ChatItem.Message,
+        older: ChatItem.Message?,
+        nowMillis: Long,
+        zoneId: ZoneId,
+        locale: Locale
+    ): ChatItem.TimestampHeader? {
+        if (older != null && message.timestampMillis - older.timestampMillis <= SECTION_GAP_MILLIS) return null
+        val format = headerFormat(message.timestampMillis, nowMillis, zoneId)
+        return ChatItem.TimestampHeader(formatUtc(message.timestampMillis, zoneId, locale, format))
+    }
+
+    private fun isGrouped(message: Message, newer: Message) =
+        newer.senderId == message.senderId &&
+            newer.timestampMillis - message.timestampMillis < GROUPING_WINDOW_MILLIS
 
     private fun headerFormat(timestampMillis: Long, nowMillis: Long, zoneId: ZoneId): DateTimeFormat {
         val daysAgo = calendarDaysBetween(timestampMillis, nowMillis, zoneId)
@@ -52,13 +69,4 @@ object ChatItemMapper {
             else -> DateTimeFormat.DAY_ABR_MONTH_YEAR_HOUR_MIN
         }
     }
-
-    private fun Message.toChatItem(isGrouped: Boolean) = ChatItem.Message(
-        messageId = messageId,
-        direction = if (senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
-        content = content.value,
-        timestampMillis = timestampMillis,
-        isGrouped = isGrouped,
-        deliveryStatus = deliveryStatus
-    )
 }

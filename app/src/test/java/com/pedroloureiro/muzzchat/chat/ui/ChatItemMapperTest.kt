@@ -13,6 +13,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Locale
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class ChatItemMapperTest {
@@ -21,75 +22,72 @@ class ChatItemMapperTest {
     private val t0 = millis("2026-03-12T11:59:00Z")
 
     @Test
-    fun grouping_sameUser_within20s() {
-        val items = map(message("1", Users.ME, t0), message("2", Users.ME, t0 + 19_999))
-
-        assertEquals(listOf(true, false), items.messages().map { it.isGrouped })
-    }
-
-    @Test
-    fun grouping_sameUser_over20s() {
-        val items = map(message("1", Users.ME, t0), message("2", Users.ME, t0 + 20_000))
-
-        assertEquals(listOf(false, false), items.messages().map { it.isGrouped })
-    }
-
-    @Test
-    fun grouping_differentUser() {
-        val items = map(message("1", Users.ME, t0), message("2", Users.SARAH, t0 + 1_000))
-
-        assertEquals(listOf(false, false), items.messages().map { it.isGrouped })
-    }
-
-    @Test
-    fun sectionHeader_firstMessage() {
-        val items = map(message("1", Users.ME, t0))
-
+    fun toMessageItem_mapsAllFields() {
         assertEquals(
-            listOf(
-                ChatItem.TimestampHeader("11:59"),
-                ChatItem.Message(
-                    messageId = "1",
-                    direction = MessageDirection.OUTGOING,
-                    content = "text 1",
-                    timestampMillis = t0,
-                    isGrouped = false,
-                    deliveryStatus = MessageDeliveryStatus.SENT
-                )
+            ChatItem.Message(
+                messageId = "1",
+                direction = MessageDirection.OUTGOING,
+                content = "text 1",
+                timestampMillis = t0,
+                isGrouped = false,
+                deliveryStatus = MessageDeliveryStatus.SENT
             ),
-            items
+            ChatItemMapper.toMessageItem(message("1", Users.ME, t0), newer = null)
         )
     }
 
     @Test
-    fun sectionHeader_gapOver1h() {
-        val items = map(message("1", Users.ME, t0), message("2", Users.ME, t0 + 3_600_001))
-
-        assertEquals(listOf("header", "1", "header", "2"), items.shape())
+    fun grouping_sameUser_within20s() {
+        assertGrouped(true, message("1", Users.ME, t0), newer = message("2", Users.ME, t0 + 19_999))
     }
 
     @Test
-    fun sectionHeader_gapUnder1h() {
-        val items = map(message("1", Users.ME, t0), message("2", Users.ME, t0 + 3_600_000))
+    fun grouping_sameUser_over20s() {
+        assertGrouped(false, message("1", Users.ME, t0), newer = message("2", Users.ME, t0 + 20_000))
+    }
 
-        assertEquals(listOf("header", "1", "2"), items.shape())
+    @Test
+    fun grouping_differentUser() {
+        assertGrouped(false, message("1", Users.ME, t0), newer = message("2", Users.SARAH, t0 + 1_000))
+    }
+
+    @Test
+    fun grouping_newestMessage() {
+        assertGrouped(false, message("1", Users.ME, t0), newer = null)
     }
 
     @Test
     fun direction_meSender() {
-        assertEquals(MessageDirection.OUTGOING, map(message("1", Users.ME, t0)).messages().single().direction)
+        assertEquals(MessageDirection.OUTGOING, item(Users.ME, t0).direction)
     }
 
     @Test
     fun direction_sarahSender() {
-        assertEquals(MessageDirection.INCOMING, map(message("1", Users.SARAH, t0)).messages().single().direction)
+        assertEquals(MessageDirection.INCOMING, item(Users.SARAH, t0).direction)
     }
 
     @Test
     fun deliveryStatus_passthrough() {
-        val items = map(message("1", Users.ME, t0, MessageDeliveryStatus.SENDING))
+        val item = ChatItemMapper.toMessageItem(message("1", Users.ME, t0, MessageDeliveryStatus.SENDING), newer = null)
 
-        assertEquals(MessageDeliveryStatus.SENDING, items.messages().single().deliveryStatus)
+        assertEquals(MessageDeliveryStatus.SENDING, item.deliveryStatus)
+    }
+
+    @Test
+    fun sectionHeader_firstMessage() {
+        assertEquals(ChatItem.TimestampHeader("11:59"), headerAbove(item(Users.ME, t0), older = null))
+    }
+
+    @Test
+    fun sectionHeader_gapOver1h() {
+        val header = headerAbove(item(Users.ME, t0 + 3_600_001), older = item(Users.ME, t0))
+
+        assertEquals(ChatItem.TimestampHeader("12:59"), header)
+    }
+
+    @Test
+    fun sectionHeader_gapUnder1h() {
+        assertNull(headerAbove(item(Users.ME, t0 + 3_600_000), older = item(Users.ME, t0)))
     }
 
     @Test
@@ -140,13 +138,39 @@ class ChatItemMapperTest {
         )
     }
 
+    @Test
+    fun map_insertsHeadersAboveTheirMessages() {
+        val items = map(
+            message("1", Users.ME, t0),
+            message("2", Users.ME, t0 + 1_000),
+            message("3", Users.ME, t0 + 3_601_001)
+        )
+
+        assertEquals(listOf("header", "1", "2", "header", "3"), items.shape())
+    }
+
+    @Test
+    fun map_groupsWithTheNewerMessage() {
+        val items = map(message("1", Users.ME, t0), message("2", Users.ME, t0 + 1_000))
+
+        assertEquals(listOf(true, false), items.filterIsInstance<ChatItem.Message>().map { it.isGrouped })
+    }
+
+    private fun assertGrouped(expected: Boolean, message: Message, newer: Message?) {
+        assertEquals(expected, ChatItemMapper.toMessageItem(message, newer).isGrouped)
+    }
+
+    private fun item(sender: User, timestamp: Long) =
+        ChatItemMapper.toMessageItem(message("1", sender, timestamp), newer = null)
+
+    private fun headerAbove(item: ChatItem.Message, older: ChatItem.Message?, now: Long = this.now, zoneId: ZoneId = ZoneOffset.UTC) =
+        ChatItemMapper.headerAbove(item, older, now, zoneId, Locale.UK)
+
+    private fun headerFor(timestamp: String, now: Long = this.now, zoneId: ZoneId = ZoneOffset.UTC): String? =
+        headerAbove(item(Users.ME, millis(timestamp)), older = null, now, zoneId)?.label
+
     private fun map(vararg messages: Message) =
         ChatItemMapper.map(messages.toList(), now, ZoneOffset.UTC, Locale.UK)
-
-    private fun headerFor(timestamp: String, now: Long = this.now, zoneId: ZoneId = ZoneOffset.UTC): String {
-        val items = ChatItemMapper.map(listOf(message("1", Users.ME, millis(timestamp))), now, zoneId, Locale.UK)
-        return (items.first() as ChatItem.TimestampHeader).label
-    }
 
     private fun message(
         id: String,
@@ -162,8 +186,6 @@ class ChatItemMapperTest {
     )
 
     private fun millis(instant: String) = Instant.parse(instant).toEpochMilli()
-
-    private fun List<ChatItem>.messages() = filterIsInstance<ChatItem.Message>()
 
     private fun List<ChatItem>.shape() = map {
         when (it) {
