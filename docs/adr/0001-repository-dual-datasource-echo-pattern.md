@@ -1,7 +1,7 @@
 # ADR-0001: Repository dual data source, with optimistic pending messages confirmed in place by the server's copy
 
 ## Status
-Accepted, revised. The first version updated a message's status in place when its echo arrived. The second replaced the pending message with the server's copy, matched by a `localId` only the sending device knew, so that the server owns each message's order. A later revision moved order from a UUIDv7 `id` to a per-Chat `seq` with no holes, so that gaps can be detected. This version gives every message one key from the moment it is sent, its `senderId` and `clientMessageId`, which the server returns on every message from any sender, and confirms the pending row in place. [ADR-0002](0002-chat-domain-layer.md) adds `SendMessageUseCase` ahead of the repository in the send flow, and [ADR-0003](0003-cursor-paging.md) adds paging on top of this flow.
+Accepted, revised. The first version updated a message's status in place when its echo arrived. The second replaced the pending message with the server's copy, matched by an id only the sending device knew, so that the server owns each message's order. A later revision moved order from a UUIDv7 `id` to a per-Chat `seq` with no holes, so that gaps can be detected. This version gives every message one key from the moment it is sent, its `senderId` and `clientMessageId`, which the server returns on every message from any sender, and confirms the pending row in place. [ADR-0002](0002-chat-domain-layer.md) adds `SendMessageUseCase` ahead of the repository in the send flow, and [ADR-0003](0003-cursor-paging.md) adds paging on top of this flow.
 
 ## Context
 The exercise is local-only with no real server. The architecture should still mirror how a production chat system works, so that a real backend can replace the mock with minimal change.
@@ -75,7 +75,7 @@ The device never assigns `seq`. If it did, a device clock or a second device cou
 `ChatRemoteDataSource.sendMessage()` returns `Result<MessageDto>`, not `Unit`. The failure branch exists in the repository with a `// TODO` marking where failure and retry are wired in.
 
 ## Alternatives
-- **Delete the pending row and insert the confirmed one**, matched by a `localId` only the sender knew (the previous version): messages from other devices had no `localId`, so the UI key fell back to the server id, and confirming took two writes in a transaction.
+- **Delete the pending row and insert the confirmed one**, matched by an id only the sender knew (the previous version): messages from other devices had no such id, so the UI key fell back to the server's id, and confirming took two writes in a transaction.
 - **`clientMessageId` alone as the key**, with the server rejecting a reuse by another sender: one column instead of two, but the client's key would depend on a server rule it cannot check, and a server that did not enforce it would let one sender's message overwrite another's in Room.
 
 ## Consequences
