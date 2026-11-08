@@ -33,7 +33,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.pedroloureiro.muzzchat.R
-import com.pedroloureiro.muzzchat.chat.domain.models.MessageDeliveryStatus
 import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.chat.ui.components.MessageItem
 import com.pedroloureiro.muzzchat.chat.ui.components.MockChatInput
@@ -68,12 +67,10 @@ fun ChatScreen(
     val jumpToLatestInteractionSource = remember { MutableInteractionSource() }
     val isNewestOutOfView by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
 
-    // Only this device's sends are pending, so a SENDING newest message is one the user just sent.
-    val newest = if (messages.itemCount > 0) messages.peek(0) else null
-    LaunchedEffect(newest?.key) {
-        if (newest is ChatItem.Message && newest.deliveryStatus == MessageDeliveryStatus.SENDING) {
-            listState.animateScrollToItem(0)
-        }
+    val newestKey = if (messages.itemCount > 0) messages.peek(0)?.key else null
+    LaunchedEffect(newestKey) {
+        // A new message and its header push the old newest down to index 2 at most.
+        if (newestKey != null && listState.firstVisibleItemIndex <= 2) listState.animateScrollToItem(0)
     }
 
     // Deep in history the newest rows are unloaded placeholders, so snap to them first to see the send land.
