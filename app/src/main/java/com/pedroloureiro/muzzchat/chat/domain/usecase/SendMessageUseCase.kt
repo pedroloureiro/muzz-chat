@@ -13,7 +13,7 @@ class SendMessageUseCase(private val repository: ChatRepository) {
         if (trimmedText.isEmpty()) return
         repository.sendMessage(
             Message.Pending(
-                localId = UUID.randomUUID().toString(),
+                clientMessageId = UUID.randomUUID().toString(),
                 chatId = chatId,
                 senderId = sender.id,
                 content = Content(ContentType.TEXT, trimmedText),

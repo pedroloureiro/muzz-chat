@@ -11,9 +11,9 @@ import com.pedroloureiro.muzzchat.chat.domain.model.Message
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 
 fun MessageDto.toEntity() = MessageEntity(
-    id = id,
+    clientMessageId = clientMessageId,
+    serverMessageId = serverMessageId,
     seq = seq,
-    localId = localId,
     chatId = chatId,
     senderId = senderId,
     contentType = ContentType.valueOf(content.type),
@@ -23,19 +23,19 @@ fun MessageDto.toEntity() = MessageEntity(
 
 fun MessageEntity.toMessage(): Message {
     val content = Content(contentType, contentValue)
-    return if (id == null) {
-        Message.Pending(checkNotNull(localId), chatId, senderId, content, timestampMillis)
+    return if (serverMessageId == null) {
+        Message.Pending(clientMessageId, chatId, senderId, content, timestampMillis)
     } else {
-        Message.Confirmed(id, checkNotNull(seq), localId, chatId, senderId, content, timestampMillis)
+        Message.Confirmed(clientMessageId, serverMessageId, checkNotNull(seq), chatId, senderId, content, timestampMillis)
     }
 }
 
 fun MessageWithNextRow.toMessageWithNext() = MessageWithNext(message.toMessage(), nextSenderId, nextTimestampMillis)
 
 fun Message.Pending.toEntity() = MessageEntity(
-    id = null,
+    clientMessageId = clientMessageId,
+    serverMessageId = null,
     seq = null,
-    localId = localId,
     chatId = chatId,
     senderId = senderId,
     contentType = content.type,
@@ -44,7 +44,7 @@ fun Message.Pending.toEntity() = MessageEntity(
 )
 
 fun Message.Pending.toDto() = OutgoingMessageDto(
-    localId = localId,
+    clientMessageId = clientMessageId,
     senderId = senderId,
     content = ContentDto(type = content.type.name, value = content.value),
     timestampMillis = timestampMillis

@@ -30,23 +30,26 @@ class MockData(private val context: Context) {
     @OptIn(ExperimentalUuidApi::class)
     fun store(chatId: String, outgoing: OutgoingMessageDto): MessageDto =
         storedMessages.updateAndGet { stored ->
-            if (stored.any { it.localId == outgoing.localId }) return@updateAndGet stored
+            if (stored.any { it.isResendOf(outgoing) }) return@updateAndGet stored
             val newestSeq = (loadSeedMessages() + stored).filter { it.chatId == chatId }.maxOfOrNull { it.seq } ?: 0
             stored + MessageDto(
-                id = Uuid.random().toString(),
+                clientMessageId = outgoing.clientMessageId,
+                serverMessageId = Uuid.random().toString(),
                 seq = newestSeq + 1,
-                localId = outgoing.localId,
                 chatId = chatId,
                 senderId = outgoing.senderId,
                 content = outgoing.content,
                 timestampMillis = System.currentTimeMillis()
             )
-        }.single { it.localId == outgoing.localId }
+        }.single { it.isResendOf(outgoing) }
 
     fun loadSeedMessages(): List<MessageDto> =
         context.assets.open(SEED_MESSAGES_ASSET).bufferedReader().use { reader ->
             Json.decodeFromString(reader.readText())
         }
+
+    private fun MessageDto.isResendOf(outgoing: OutgoingMessageDto) =
+        senderId == outgoing.senderId && clientMessageId == outgoing.clientMessageId
 
     private fun messagesIn(chatId: String) = messages().filter { it.chatId == chatId }
 

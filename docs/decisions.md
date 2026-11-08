@@ -57,7 +57,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## The server orders messages by a per-Chat sequence number
 
-**Decision:** The server gives each message of a Chat the next `seq`, starting at 1 with no holes, in the same transaction that stores it. `seq` is the only order of confirmed messages and the paging cursor. The server `id` is an opaque UUID used only for identity. Pending messages sort after confirmed ones by device timestamp. See [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md) and [ADR-0003](adr/0003-cursor-paging.md).
+**Decision:** The server gives each message of a Chat the next `seq`, starting at 1 with no holes, in the same transaction that stores it. `seq` is the only order of confirmed messages and the paging cursor. The `serverMessageId` is an opaque UUID used only for identity. Pending messages sort after confirmed ones by device timestamp. See [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md) and [ADR-0003](adr/0003-cursor-paging.md).
 
 **Limitation:**
 - Every write to a Chat goes through one counter on the server, so writes within a Chat are serialised. Very busy group Chats would need sharded or batched numbering.
@@ -153,9 +153,9 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 **To support a real backend:**
 1. Keep pending messages as an outbox in the same table, and send each from a WorkManager job with a network constraint and exponential backoff, so a send outlives the screen and the process.
-2. Retry network errors and 5xx responses with the same `localId`. The server keeps a unique key on `(senderId, localId)` and answers a repeat with the message it already stored, so a retry after an ambiguous timeout cannot store it twice.
+2. Retry network errors and 5xx responses with the same `clientMessageId`. The server keeps a unique key on `(senderId, clientMessageId)` and answers a repeat with the message it already stored, so a retry after an ambiguous timeout cannot store it twice.
 3. Mark a 4xx response (invalid, blocked, Chat gone) `FAILED` at once, with its reason, since retrying cannot help. Mark it `FAILED` too when retries run out.
-4. Add a `status` column for `FAILED`, indexed with `chatId`, and a tap-to-retry action that enqueues the job again with the same `localId`.
+4. Add a `status` column for `FAILED`, indexed with `chatId`, and a tap-to-retry action that enqueues the job again with the same `clientMessageId`.
 
 ---
 

@@ -108,27 +108,18 @@ class MessageDaoTest {
     }
 
     @Test
-    fun `confirm replaces the pending message with the same localId`() = runBlocking {
+    fun `confirm updates the pending message with the same sender and clientMessageId in place, with no delete`() = runBlocking {
         dao.insertPending(pending("local", timestamp = 1L))
+        rejectDeletes()
 
-        dao.confirm(confirmed("server", seq = 1, timestamp = 2L, localId = "local"))
+        dao.confirm(confirmed("local", seq = 1, timestamp = 2L))
 
-        assertEquals(listOf(confirmed("server", seq = 1, timestamp = 2L, localId = "local")), stored())
-    }
-
-    @Test
-    fun `confirm is one transaction, so a failed insert keeps the pending message`() = runBlocking {
-        dao.insertPending(pending("local", timestamp = 1L))
-        rejectInsertsOf(id = "server")
-
-        runCatching { dao.confirm(confirmed("server", seq = 1, timestamp = 2L, localId = "local")) }
-
-        assertEquals(listOf(pending("local", timestamp = 1L)), stored())
+        assertEquals(listOf(confirmed("local", seq = 1, timestamp = 2L)), stored())
     }
 
     @Test
     fun `an echo that arrives twice leaves one confirmed message`() = runBlocking {
-        val echo = confirmed("server", seq = 1, timestamp = 2L, localId = "local")
+        val echo = confirmed("local", seq = 1, timestamp = 2L)
         dao.insertPending(pending("local", timestamp = 1L))
 
         dao.confirm(echo)
@@ -138,21 +129,39 @@ class MessageDaoTest {
     }
 
     @Test
-    fun `confirm inserts a server message whose localId is not stored`() = runBlocking {
+    fun `confirm inserts a server message no pending message has the key of`() = runBlocking {
         dao.insertPending(pending("mine", timestamp = 1L))
 
-        dao.confirm(confirmed("other-device", seq = 1, timestamp = 2L, localId = "theirs"))
+        dao.confirm(confirmed("theirs", seq = 1, timestamp = 2L))
 
-        assertEquals(listOf(null, "other-device"), stored().map { it.id })
+        assertEquals(listOf("mine", "theirs"), storedKeys())
     }
 
     @Test
-    fun `confirm replaces a confirmed message with the same id`() = runBlocking {
-        dao.confirm(confirmed("server", seq = 1, timestamp = 1L))
+    fun `confirm overwrites a confirmed message with the same key`() = runBlocking {
+        dao.confirm(confirmed("a", seq = 1, timestamp = 1L))
 
-        dao.confirm(confirmed("server", seq = 1, timestamp = 2L))
+        dao.confirm(confirmed("a", seq = 1, timestamp = 2L))
 
-        assertEquals(listOf(confirmed("server", seq = 1, timestamp = 2L)), stored())
+        assertEquals(listOf(confirmed("a", seq = 1, timestamp = 2L)), stored())
+    }
+
+    @Test
+    fun `the same clientMessageId from two senders is stored as two messages`() = runBlocking {
+        dao.confirm(confirmed("same", seq = 1, timestamp = 1L, sender = "first"))
+        dao.confirm(confirmed("same", seq = 2, timestamp = 2L, sender = "second"))
+
+        assertEquals(listOf("second", "first"), stored().map { it.senderId })
+    }
+
+    @Test
+    fun `a message stored from a page and then received as incoming leaves one row`() = runBlocking {
+        val message = confirmed("a", seq = 1, timestamp = 1L)
+        dao.storeNewestPage(CHAT, listOf(message), nextCursor = 1, hasMore = false)
+
+        dao.storeIncoming(message)
+
+        assertEquals(listOf(message), stored())
     }
 
     @Test
@@ -161,12 +170,12 @@ class MessageDaoTest {
 
         dao.storeNewestPage(
             CHAT,
-            listOf(confirmed("b", seq = 9, timestamp = 2L, localId = "local"), confirmed("a", seq = 8, timestamp = 1L)),
+            listOf(confirmed("local", seq = 9, timestamp = 2L), confirmed("a", seq = 8, timestamp = 1L)),
             nextCursor = 8,
             hasMore = true
         )
 
-        assertEquals(listOf("b", "a"), storedKeys())
+        assertEquals(listOf("local", "a"), storedKeys())
         assertEquals(ChatSyncEntity(CHAT, oldestSeq = 8, newestSeq = 9, reachedStart = false), dao.syncState(CHAT))
     }
 
@@ -179,7 +188,7 @@ class MessageDaoTest {
 
     @Test
     fun `storeNewestPage is one transaction, so a failed insert stores neither the page nor the sync state`() = runBlocking {
-        rejectInsertsOf(id = "b")
+        rejectInsertsOf(clientMessageId = "b")
 
         runCatching {
             dao.storeNewestPage(CHAT, listOf(confirmed("a", seq = 2, timestamp = 2L), confirmed("b", seq = 1, timestamp = 1L)), 1, false)
@@ -283,38 +292,38 @@ class MessageDaoTest {
         return (dao.pagingSource(CHAT).load(params) as PagingSource.LoadResult.Page).data
     }
 
-    private suspend fun stored() = rows().map { it.message.copy(rowId = 0) }
+    private suspend fun stored() = rows().map { it.message }
 
-    private suspend fun storedKeys() = rows().map { it.message.id ?: it.message.localId }
+    private suspend fun storedKeys() = rows().map { it.message.clientMessageId }
 
-    private suspend fun nextOf(key: String) = rows()
-        .single { (it.message.id ?: it.message.localId) == key }
+    private suspend fun nextOf(clientMessageId: String) = rows()
+        .single { it.message.clientMessageId == clientMessageId }
         .let { Next(it.nextSenderId, it.nextTimestampMillis) }
 
-    private fun rejectInsertsOf(id: String) {
+    private fun rejectInsertsOf(clientMessageId: String) {
         database.openHelper.writableDatabase.execSQL(
-            "CREATE TRIGGER reject_$id BEFORE INSERT ON messages WHEN NEW.id = '$id' " +
+            "CREATE TRIGGER reject_$clientMessageId BEFORE INSERT ON messages WHEN NEW.clientMessageId = '$clientMessageId' " +
                 "BEGIN SELECT RAISE(ABORT, 'rejected'); END"
         )
     }
 
-    private fun pending(localId: String, timestamp: Long, sender: String = "sender", chat: String = CHAT) =
-        message(id = null, seq = null, localId = localId, timestamp, sender, chat)
+    private fun rejectDeletes() {
+        database.openHelper.writableDatabase.execSQL(
+            "CREATE TRIGGER reject_deletes BEFORE DELETE ON messages BEGIN SELECT RAISE(ABORT, 'rejected'); END"
+        )
+    }
 
-    private fun confirmed(
-        id: String,
-        seq: Long,
-        timestamp: Long,
-        localId: String? = null,
-        sender: String = "sender",
-        chat: String = CHAT
-    ) = message(id, seq, localId, timestamp, sender, chat)
+    private fun pending(clientMessageId: String, timestamp: Long, sender: String = "sender", chat: String = CHAT) =
+        message(clientMessageId, serverMessageId = null, seq = null, timestamp, sender, chat)
 
-    private fun message(id: String?, seq: Long?, localId: String?, timestamp: Long, sender: String, chat: String) =
+    private fun confirmed(clientMessageId: String, seq: Long, timestamp: Long, sender: String = "sender", chat: String = CHAT) =
+        message(clientMessageId, serverMessageId = "server-$sender-$clientMessageId", seq, timestamp, sender, chat)
+
+    private fun message(clientMessageId: String, serverMessageId: String?, seq: Long?, timestamp: Long, sender: String, chat: String) =
         MessageEntity(
-            id = id,
+            clientMessageId = clientMessageId,
+            serverMessageId = serverMessageId,
             seq = seq,
-            localId = localId,
             chatId = chat,
             senderId = sender,
             contentType = ContentType.TEXT,

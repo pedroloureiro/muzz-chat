@@ -1,6 +1,7 @@
 [
   {
-    "id": "e7f6b9d9-d104-42b4-aeaa-224d29c195f2",
+    "clientMessageId": "e98f162d-ee98-4829-b0af-e3203a14b531",
+    "serverMessageId": "e7f6b9d9-d104-42b4-aeaa-224d29c195f2",
     "seq": 1,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -8,7 +9,8 @@
     "timestampMillis": 1767525440000
   },
   {
-    "id": "965ca861-15fc-4f71-ba71-2cffbe02712a",
+    "clientMessageId": "6b731f50-4699-44b3-b685-f6400e518880",
+    "serverMessageId": "965ca861-15fc-4f71-ba71-2cffbe02712a",
     "seq": 2,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -16,7 +18,8 @@
     "timestampMillis": 1767525476000
   },
   {
-    "id": "792f00db-3cb6-4d0a-9362-d55bb3a34879",
+    "clientMessageId": "cb883483-ece0-4938-8e3e-33d4ec73e5ac",
+    "serverMessageId": "792f00db-3cb6-4d0a-9362-d55bb3a34879",
     "seq": 3,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -24,7 +27,8 @@
     "timestampMillis": 1767525701000
   },
   {
-    "id": "437d8638-6664-4199-b9f1-7cfd1293ce6f",
+    "clientMessageId": "7fc1b1a8-ab33-4331-99f6-fd4a7c9f30fe",
+    "serverMessageId": "437d8638-6664-4199-b9f1-7cfd1293ce6f",
     "seq": 4,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -32,7 +36,8 @@
     "timestampMillis": 1767525712000
   },
   {
-    "id": "7f489a77-7599-4fee-919e-847a22692442",
+    "clientMessageId": "c22a7350-f581-405b-b173-a6c75fe657e4",
+    "serverMessageId": "7f489a77-7599-4fee-919e-847a22692442",
     "seq": 5,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -40,7 +45,8 @@
     "timestampMillis": 1767525767000
   },
   {
-    "id": "ca7f8564-028c-4d5d-89c8-51bf0eb6ccd1",
+    "clientMessageId": "bd13ad46-f706-489e-9fbb-65dbf0dca533",
+    "serverMessageId": "ca7f8564-028c-4d5d-89c8-51bf0eb6ccd1",
     "seq": 6,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -48,7 +54,8 @@
     "timestampMillis": 1767525922000
   },
   {
-    "id": "e785e465-644c-4055-8754-97a997896f03",
+    "clientMessageId": "8234a906-66b8-4e12-8b3f-619625884548",
+    "serverMessageId": "e785e465-644c-4055-8754-97a997896f03",
     "seq": 7,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -56,7 +63,8 @@
     "timestampMillis": 1767525998000
   },
   {
-    "id": "f4c8f734-e52f-449d-8ee5-400fe776cb6d",
+    "clientMessageId": "1f8844e8-0711-4e6a-8607-42bdd0527968",
+    "serverMessageId": "f4c8f734-e52f-449d-8ee5-400fe776cb6d",
     "seq": 8,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -64,7 +72,8 @@
     "timestampMillis": 1767526123000
   },
   {
-    "id": "fee0b772-7b3b-457c-9ff6-9210c6af94b3",
+    "clientMessageId": "c3dfcf80-1e6a-4903-ac87-1990beb5aa30",
+    "serverMessageId": "fee0b772-7b3b-457c-9ff6-9210c6af94b3",
     "seq": 9,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -72,7 +81,8 @@
     "timestampMillis": 1767563656000
   },
   {
-    "id": "4c452249-1dd6-4d69-9429-7caa9bd37ff3",
+    "clientMessageId": "5fd686ca-0d4b-4f59-97e5-81582799c152",
+    "serverMessageId": "4c452249-1dd6-4d69-9429-7caa9bd37ff3",
     "seq": 10,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -80,7 +90,8 @@
     "timestampMillis": 1767563816000
   },
   {
-    "id": "bb90f94a-cf21-4aff-941b-81e43b0effc8",
+    "clientMessageId": "7eec1f82-6d82-4c74-ba76-4531a8f415fe",
+    "serverMessageId": "bb90f94a-cf21-4aff-941b-81e43b0effc8",
     "seq": 11,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -88,7 +99,8 @@
     "timestampMillis": 1767563915000
   },
   {
-    "id": "49aa038a-eb65-4a4c-831e-09704c5def1f",
+    "clientMessageId": "5b780470-ae10-4dbf-a3e8-81a72df8c118",
+    "serverMessageId": "49aa038a-eb65-4a4c-831e-09704c5def1f",
     "seq": 12,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -96,7 +108,8 @@
     "timestampMillis": 1767564089000
   },
   {
-    "id": "86f0323d-896e-44aa-a592-3bd1fafeb9e6",
+    "clientMessageId": "e5f04ade-9fd7-4e2e-9f01-7da391440cb2",
+    "serverMessageId": "86f0323d-896e-44aa-a592-3bd1fafeb9e6",
     "seq": 13,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -104,7 +117,8 @@
     "timestampMillis": 1767564151000
   },
   {
-    "id": "11b34c93-926c-4e1c-9564-b02ad836fdc5",
+    "clientMessageId": "36f3743e-2af4-480e-8e60-7d2480bc1e1b",
+    "serverMessageId": "11b34c93-926c-4e1c-9564-b02ad836fdc5",
     "seq": 14,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -112,7 +126,8 @@
     "timestampMillis": 1767564163000
   },
   {
-    "id": "e385f31d-1f3a-4846-ab4c-6627d5c56fd1",
+    "clientMessageId": "7d927cb6-4ab4-4322-8255-63dad00086b8",
+    "serverMessageId": "e385f31d-1f3a-4846-ab4c-6627d5c56fd1",
     "seq": 15,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -120,7 +135,8 @@
     "timestampMillis": 1767564254000
   },
   {
-    "id": "bf460345-e8d8-49ea-9687-269a75165586",
+    "clientMessageId": "bce49aea-314b-4c46-baef-7f1ee8579f62",
+    "serverMessageId": "bf460345-e8d8-49ea-9687-269a75165586",
     "seq": 16,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -128,7 +144,8 @@
     "timestampMillis": 1767564258000
   },
   {
-    "id": "9d92897b-9d7f-477a-ba4f-fd5ca5edf22e",
+    "clientMessageId": "3954f3c7-c21c-4f01-9ba4-c3f28389426e",
+    "serverMessageId": "9d92897b-9d7f-477a-ba4f-fd5ca5edf22e",
     "seq": 17,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -136,7 +153,8 @@
     "timestampMillis": 1767602892000
   },
   {
-    "id": "3df8c13f-1768-40c0-91d5-0d70c9f3c425",
+    "clientMessageId": "70895565-ff52-4e52-88bf-9865fab53710",
+    "serverMessageId": "3df8c13f-1768-40c0-91d5-0d70c9f3c425",
     "seq": 18,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -144,7 +162,8 @@
     "timestampMillis": 1767603022000
   },
   {
-    "id": "2eac476d-1d17-48f1-9e0e-f701d3e2b509",
+    "clientMessageId": "2bc86aa8-a74b-4d47-b956-31673f242092",
+    "serverMessageId": "2eac476d-1d17-48f1-9e0e-f701d3e2b509",
     "seq": 19,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -152,7 +171,8 @@
     "timestampMillis": 1767603130000
   },
   {
-    "id": "b95d3c7f-a8ac-40e4-b549-6a6184fda7b5",
+    "clientMessageId": "224e20eb-4fea-4e81-82b6-1da09df92740",
+    "serverMessageId": "b95d3c7f-a8ac-40e4-b549-6a6184fda7b5",
     "seq": 20,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -160,7 +180,8 @@
     "timestampMillis": 1767603223000
   },
   {
-    "id": "5019d7c7-b096-48d4-8db9-6b22b7b600cb",
+    "clientMessageId": "8fef25db-416e-411d-b26d-f19ecde72fb1",
+    "serverMessageId": "5019d7c7-b096-48d4-8db9-6b22b7b600cb",
     "seq": 21,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -168,7 +189,8 @@
     "timestampMillis": 1767603461000
   },
   {
-    "id": "f3f41558-280c-4e31-8be1-4eab6731a81b",
+    "clientMessageId": "3d6e016e-4363-4db0-a3cb-b013c80aa0cb",
+    "serverMessageId": "f3f41558-280c-4e31-8be1-4eab6731a81b",
     "seq": 22,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -176,7 +198,8 @@
     "timestampMillis": 1767603513000
   },
   {
-    "id": "b396ebbe-9784-4347-b318-67f53bd559d2",
+    "clientMessageId": "4f7a2970-a360-4846-b9d0-5aa406f67d6a",
+    "serverMessageId": "b396ebbe-9784-4347-b318-67f53bd559d2",
     "seq": 23,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -184,7 +207,8 @@
     "timestampMillis": 1767603735000
   },
   {
-    "id": "0b8fce0d-92ba-417d-ac55-8dca2b75dd44",
+    "clientMessageId": "e7b1ee58-4aab-4de2-883a-7e0cbbc84021",
+    "serverMessageId": "0b8fce0d-92ba-417d-ac55-8dca2b75dd44",
     "seq": 24,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -192,7 +216,8 @@
     "timestampMillis": 1767603743000
   },
   {
-    "id": "5d06160b-ec10-41b8-86ad-f7ce16303ada",
+    "clientMessageId": "fac2583d-2560-406a-ba98-98858ec265ad",
+    "serverMessageId": "5d06160b-ec10-41b8-86ad-f7ce16303ada",
     "seq": 25,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -200,7 +225,8 @@
     "timestampMillis": 1767642704000
   },
   {
-    "id": "15a8b6c3-11e8-4b91-9080-6c5ed430f43b",
+    "clientMessageId": "b6fac8f8-02b6-46de-8c81-0063782af9a2",
+    "serverMessageId": "15a8b6c3-11e8-4b91-9080-6c5ed430f43b",
     "seq": 26,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -208,7 +234,8 @@
     "timestampMillis": 1767642734000
   },
   {
-    "id": "6bd16d51-3236-4343-bb0e-cd9b275a0743",
+    "clientMessageId": "946f3bc4-67e8-4b67-a330-77481621e662",
+    "serverMessageId": "6bd16d51-3236-4343-bb0e-cd9b275a0743",
     "seq": 27,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -216,7 +243,8 @@
     "timestampMillis": 1767642904000
   },
   {
-    "id": "50a6e84a-be3d-420d-9418-e29733d94d37",
+    "clientMessageId": "c4faefb1-cf2b-45ad-a83b-0094d429cf97",
+    "serverMessageId": "50a6e84a-be3d-420d-9418-e29733d94d37",
     "seq": 28,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -224,7 +252,8 @@
     "timestampMillis": 1767642916000
   },
   {
-    "id": "553fb692-997b-4fc4-b648-e9adea51476c",
+    "clientMessageId": "25532df0-b44b-41ae-870a-0dd05aeccd6b",
+    "serverMessageId": "553fb692-997b-4fc4-b648-e9adea51476c",
     "seq": 29,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -232,7 +261,8 @@
     "timestampMillis": 1767642992000
   },
   {
-    "id": "a33b3a50-137d-43ab-885d-e577e31d8b35",
+    "clientMessageId": "c96a2fa7-8dab-49d3-b720-535f9a2eeed0",
+    "serverMessageId": "a33b3a50-137d-43ab-885d-e577e31d8b35",
     "seq": 30,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -240,7 +270,8 @@
     "timestampMillis": 1767642996000
   },
   {
-    "id": "9e776c3c-6b19-40f2-9742-59c95a3b0c63",
+    "clientMessageId": "c6d4a538-1938-4d35-9b17-c322a7c7624b",
+    "serverMessageId": "9e776c3c-6b19-40f2-9742-59c95a3b0c63",
     "seq": 31,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -248,7 +279,8 @@
     "timestampMillis": 1767643072000
   },
   {
-    "id": "31b3a602-50aa-4c94-b1c2-15e7e2cef2e4",
+    "clientMessageId": "f4b16d3e-0f12-4d35-99b9-21cc9602a8c5",
+    "serverMessageId": "31b3a602-50aa-4c94-b1c2-15e7e2cef2e4",
     "seq": 32,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -256,7 +288,8 @@
     "timestampMillis": 1767643126000
   },
   {
-    "id": "6b0ab958-9707-4714-a1f3-49c33462e562",
+    "clientMessageId": "46b78d9c-65c7-4eb7-85d0-6780ef0eebd4",
+    "serverMessageId": "6b0ab958-9707-4714-a1f3-49c33462e562",
     "seq": 33,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -264,7 +297,8 @@
     "timestampMillis": 1767683275000
   },
   {
-    "id": "de1d901d-5712-41bd-918b-956c5a659339",
+    "clientMessageId": "917af88b-00ab-4c90-8c14-2ef00b868414",
+    "serverMessageId": "de1d901d-5712-41bd-918b-956c5a659339",
     "seq": 34,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -272,7 +306,8 @@
     "timestampMillis": 1767683416000
   },
   {
-    "id": "522059e9-f154-4fe9-97ce-d40f4bffb759",
+    "clientMessageId": "d5294b66-e409-4749-b166-072613266b95",
+    "serverMessageId": "522059e9-f154-4fe9-97ce-d40f4bffb759",
     "seq": 35,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -280,7 +315,8 @@
     "timestampMillis": 1767683540000
   },
   {
-    "id": "b263a509-3adf-48ec-9dbf-1ca7bf857e8c",
+    "clientMessageId": "91646966-0d63-456e-b6c4-87fce9fbc746",
+    "serverMessageId": "b263a509-3adf-48ec-9dbf-1ca7bf857e8c",
     "seq": 36,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -288,7 +324,8 @@
     "timestampMillis": 1767683752000
   },
   {
-    "id": "64495e3c-e3dd-4273-8566-4c505d850c29",
+    "clientMessageId": "4b4e4c70-a794-40f2-b6f2-716ba50b6d25",
+    "serverMessageId": "64495e3c-e3dd-4273-8566-4c505d850c29",
     "seq": 37,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -296,7 +333,8 @@
     "timestampMillis": 1767683756000
   },
   {
-    "id": "b4ce08b0-5921-4890-be4a-672f3b494b44",
+    "clientMessageId": "fd3407ed-28e7-4944-88f2-029050e6d584",
+    "serverMessageId": "b4ce08b0-5921-4890-be4a-672f3b494b44",
     "seq": 38,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -304,7 +342,8 @@
     "timestampMillis": 1767683986000
   },
   {
-    "id": "27925d93-2293-4b2f-99fd-264d2d7063f4",
+    "clientMessageId": "092aec66-bbc6-4784-93da-f754dc9ecdea",
+    "serverMessageId": "27925d93-2293-4b2f-99fd-264d2d7063f4",
     "seq": 39,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -312,7 +351,8 @@
     "timestampMillis": 1767683990000
   },
   {
-    "id": "36756c06-f97b-4162-8ec9-84ae7552605f",
+    "clientMessageId": "8b9e288c-3391-4584-9d5f-64622a7d6621",
+    "serverMessageId": "36756c06-f97b-4162-8ec9-84ae7552605f",
     "seq": 40,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -320,7 +360,8 @@
     "timestampMillis": 1767684121000
   },
   {
-    "id": "660efa40-8231-4da3-8428-fa8f80ce05c6",
+    "clientMessageId": "c00ec75b-9800-4a87-b530-f1eefa3e2b14",
+    "serverMessageId": "660efa40-8231-4da3-8428-fa8f80ce05c6",
     "seq": 41,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -328,7 +369,8 @@
     "timestampMillis": 1767720670000
   },
   {
-    "id": "4a4ba65f-3690-4ec5-b562-38832d8055e5",
+    "clientMessageId": "8aca7b14-ce7e-4830-8c3e-8016afbe5a19",
+    "serverMessageId": "4a4ba65f-3690-4ec5-b562-38832d8055e5",
     "seq": 42,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -336,7 +378,8 @@
     "timestampMillis": 1767720720000
   },
   {
-    "id": "75ce0756-c2c3-48ab-abf9-dde6c46160b9",
+    "clientMessageId": "92ebeb62-d97a-4e1b-91a9-428a7c5be9ff",
+    "serverMessageId": "75ce0756-c2c3-48ab-abf9-dde6c46160b9",
     "seq": 43,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -344,7 +387,8 @@
     "timestampMillis": 1767720732000
   },
   {
-    "id": "1d58df1b-5ca1-41a1-95eb-3b372a8c5b0d",
+    "clientMessageId": "acd103de-622c-40e4-b4cd-6ddb4e36220e",
+    "serverMessageId": "1d58df1b-5ca1-41a1-95eb-3b372a8c5b0d",
     "seq": 44,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -352,7 +396,8 @@
     "timestampMillis": 1767720943000
   },
   {
-    "id": "c2a3972f-45d0-4f45-8b7a-904d91289d14",
+    "clientMessageId": "c1cdeab2-2ca5-4379-8530-3afc3d1c34d6",
+    "serverMessageId": "c2a3972f-45d0-4f45-8b7a-904d91289d14",
     "seq": 45,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -360,7 +405,8 @@
     "timestampMillis": 1767721076000
   },
   {
-    "id": "c4d7e74d-6546-4168-af21-8347e7b5a4f1",
+    "clientMessageId": "4171c868-63c8-447b-92ba-5c5859743972",
+    "serverMessageId": "c4d7e74d-6546-4168-af21-8347e7b5a4f1",
     "seq": 46,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -368,7 +414,8 @@
     "timestampMillis": 1767721294000
   },
   {
-    "id": "40fbf5df-3cb6-43d5-a9b9-1c1834843984",
+    "clientMessageId": "22416738-e01d-46bc-af44-d9d280fdadfb",
+    "serverMessageId": "40fbf5df-3cb6-43d5-a9b9-1c1834843984",
     "seq": 47,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -376,7 +423,8 @@
     "timestampMillis": 1767721303000
   },
   {
-    "id": "b2562755-3861-4803-85f1-d50aad5ff708",
+    "clientMessageId": "d9c1f8ee-d597-4299-90c3-3df4eba919e4",
+    "serverMessageId": "b2562755-3861-4803-85f1-d50aad5ff708",
     "seq": 48,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -384,7 +432,8 @@
     "timestampMillis": 1767721440000
   },
   {
-    "id": "8432de43-ddd6-4b9a-b9bf-6d312e4913a5",
+    "clientMessageId": "db052b1a-ee48-4d1c-8f76-0c4586a991d5",
+    "serverMessageId": "8432de43-ddd6-4b9a-b9bf-6d312e4913a5",
     "seq": 49,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -392,7 +441,8 @@
     "timestampMillis": 1767762961000
   },
   {
-    "id": "22fa5670-be78-47a6-ad52-4087c308c7b0",
+    "clientMessageId": "a45c10e3-ed8d-432c-bea8-505d0ef8f646",
+    "serverMessageId": "22fa5670-be78-47a6-ad52-4087c308c7b0",
     "seq": 50,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -400,7 +450,8 @@
     "timestampMillis": 1767763062000
   },
   {
-    "id": "49a55cf2-69ce-4706-b562-ed2e8e3f2cb8",
+    "clientMessageId": "982ea14e-b9e7-498b-95ac-9445fa397dcb",
+    "serverMessageId": "49a55cf2-69ce-4706-b562-ed2e8e3f2cb8",
     "seq": 51,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -408,7 +459,8 @@
     "timestampMillis": 1767763233000
   },
   {
-    "id": "de9b56df-63e0-4dbd-a34d-b4b0cdd5a98c",
+    "clientMessageId": "6e5147ab-26d6-4e6b-93ca-aa39985ca50f",
+    "serverMessageId": "de9b56df-63e0-4dbd-a34d-b4b0cdd5a98c",
     "seq": 52,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -416,7 +468,8 @@
     "timestampMillis": 1767763386000
   },
   {
-    "id": "353e790a-f7a7-40ce-a7fa-8639a3e343d1",
+    "clientMessageId": "4eb90f3b-6588-4007-9db5-6343265362d2",
+    "serverMessageId": "353e790a-f7a7-40ce-a7fa-8639a3e343d1",
     "seq": 53,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -424,7 +477,8 @@
     "timestampMillis": 1767763624000
   },
   {
-    "id": "29126d4a-2152-4218-a8f3-307cb30253b4",
+    "clientMessageId": "e3514c96-f0bb-45d6-97ba-abdda9de8663",
+    "serverMessageId": "29126d4a-2152-4218-a8f3-307cb30253b4",
     "seq": 54,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -432,7 +486,8 @@
     "timestampMillis": 1767763689000
   },
   {
-    "id": "00a6c0ad-3df0-4d04-9c76-88d518479c63",
+    "clientMessageId": "df68ff67-8ea6-4aec-ab0a-5508e8f4578e",
+    "serverMessageId": "00a6c0ad-3df0-4d04-9c76-88d518479c63",
     "seq": 55,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -440,7 +495,8 @@
     "timestampMillis": 1767763916000
   },
   {
-    "id": "1c451e76-270e-46bc-aee2-9d608f07b3d7",
+    "clientMessageId": "02b18a16-6ae9-487c-a4d6-d56b1bffe69e",
+    "serverMessageId": "1c451e76-270e-46bc-aee2-9d608f07b3d7",
     "seq": 56,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -448,7 +504,8 @@
     "timestampMillis": 1767764104000
   },
   {
-    "id": "607c3ce5-3df6-4ef6-bd0b-fe06724bbdee",
+    "clientMessageId": "1b61b459-86ac-4650-b96f-8ab0b2bef0f9",
+    "serverMessageId": "607c3ce5-3df6-4ef6-bd0b-fe06724bbdee",
     "seq": 57,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -456,7 +513,8 @@
     "timestampMillis": 1767801504000
   },
   {
-    "id": "3e8add67-194d-48d3-94c2-95cc09962c22",
+    "clientMessageId": "18695569-e1ce-4af6-907f-05bc5a83b474",
+    "serverMessageId": "3e8add67-194d-48d3-94c2-95cc09962c22",
     "seq": 58,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -464,7 +522,8 @@
     "timestampMillis": 1767801588000
   },
   {
-    "id": "d68dff03-d0d4-43cc-be80-da07c48c7aab",
+    "clientMessageId": "ffe38d38-24da-4848-b669-f8b069ab1abd",
+    "serverMessageId": "d68dff03-d0d4-43cc-be80-da07c48c7aab",
     "seq": 59,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -472,7 +531,8 @@
     "timestampMillis": 1767801811000
   },
   {
-    "id": "81743a40-187b-4241-b8c0-915d8385ed3c",
+    "clientMessageId": "db3ceb6d-b6a1-4f75-801c-6445ace387c8",
+    "serverMessageId": "81743a40-187b-4241-b8c0-915d8385ed3c",
     "seq": 60,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -480,7 +540,8 @@
     "timestampMillis": 1767801975000
   },
   {
-    "id": "6122bec5-30fd-4e36-83fc-22ca138e622d",
+    "clientMessageId": "36a55bc6-6123-4cd8-a02d-8cbaad034e6d",
+    "serverMessageId": "6122bec5-30fd-4e36-83fc-22ca138e622d",
     "seq": 61,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -488,7 +549,8 @@
     "timestampMillis": 1767801987000
   },
   {
-    "id": "1fb15812-d2d2-4261-a7d3-c9096feb5ec3",
+    "clientMessageId": "682d27ae-ee5b-41aa-b250-4b2b5d59d378",
+    "serverMessageId": "1fb15812-d2d2-4261-a7d3-c9096feb5ec3",
     "seq": 62,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -496,7 +558,8 @@
     "timestampMillis": 1767802199000
   },
   {
-    "id": "4a2cd705-3541-4b63-ad61-0133495c1816",
+    "clientMessageId": "7affda8d-86b8-4903-8baf-03d85e9a6b70",
+    "serverMessageId": "4a2cd705-3541-4b63-ad61-0133495c1816",
     "seq": 63,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -504,7 +567,8 @@
     "timestampMillis": 1767802251000
   },
   {
-    "id": "eb44f890-f6e0-4b80-8a73-6de08cc0443f",
+    "clientMessageId": "cdd6c05f-17e4-49b4-ad23-97858375c381",
+    "serverMessageId": "eb44f890-f6e0-4b80-8a73-6de08cc0443f",
     "seq": 64,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -512,7 +576,8 @@
     "timestampMillis": 1767802481000
   },
   {
-    "id": "ade7d3a2-b55e-47ad-a6b4-5033b6fb914a",
+    "clientMessageId": "92349b9e-cfcd-4afc-a6a6-a14d23dafa7d",
+    "serverMessageId": "ade7d3a2-b55e-47ad-a6b4-5033b6fb914a",
     "seq": 65,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -520,7 +585,8 @@
     "timestampMillis": 1767840269000
   },
   {
-    "id": "4afca771-c83d-4e91-8bc1-bef717ee503b",
+    "clientMessageId": "eeaf0a44-82fc-4c2e-b45c-54620190944e",
+    "serverMessageId": "4afca771-c83d-4e91-8bc1-bef717ee503b",
     "seq": 66,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -528,7 +594,8 @@
     "timestampMillis": 1767840393000
   },
   {
-    "id": "8e3ee85a-656a-493d-84ca-094ae36996a9",
+    "clientMessageId": "19ad2dfe-eca3-43c6-b216-2b67b0ad25ca",
+    "serverMessageId": "8e3ee85a-656a-493d-84ca-094ae36996a9",
     "seq": 67,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -536,7 +603,8 @@
     "timestampMillis": 1767840467000
   },
   {
-    "id": "68ca8aff-8409-459c-a165-79b94e75a86d",
+    "clientMessageId": "f7c37be6-38d8-4296-8264-2a2246f62f51",
+    "serverMessageId": "68ca8aff-8409-459c-a165-79b94e75a86d",
     "seq": 68,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -544,7 +612,8 @@
     "timestampMillis": 1767840527000
   },
   {
-    "id": "0f1105dd-aaf5-4698-adef-131864d8241e",
+    "clientMessageId": "e420065a-9e14-4799-86f3-4aa542b17f95",
+    "serverMessageId": "0f1105dd-aaf5-4698-adef-131864d8241e",
     "seq": 69,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -552,7 +621,8 @@
     "timestampMillis": 1767840586000
   },
   {
-    "id": "d2ac8c2c-0406-4a32-9bac-a2dc4d21662e",
+    "clientMessageId": "2b75967d-c496-46b1-8950-46b8cd4e3a92",
+    "serverMessageId": "d2ac8c2c-0406-4a32-9bac-a2dc4d21662e",
     "seq": 70,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -560,7 +630,8 @@
     "timestampMillis": 1767840771000
   },
   {
-    "id": "5d62c5e8-07ab-4d8d-96f9-01df9cd3982e",
+    "clientMessageId": "5f02d650-f419-4f6f-83ab-663f7d375743",
+    "serverMessageId": "5d62c5e8-07ab-4d8d-96f9-01df9cd3982e",
     "seq": 71,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -568,7 +639,8 @@
     "timestampMillis": 1767840922000
   },
   {
-    "id": "e6815a72-8790-452a-936f-77bde7d45422",
+    "clientMessageId": "e48b70db-b02b-49f2-93e3-ce359b927425",
+    "serverMessageId": "e6815a72-8790-452a-936f-77bde7d45422",
     "seq": 72,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -576,7 +648,8 @@
     "timestampMillis": 1767840926000
   },
   {
-    "id": "84a6e556-f1a7-48da-bb02-04155006a1ac",
+    "clientMessageId": "638e0fb3-4e3b-42bf-914a-8ccb82a936c9",
+    "serverMessageId": "84a6e556-f1a7-48da-bb02-04155006a1ac",
     "seq": 73,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -584,7 +657,8 @@
     "timestampMillis": 1767881295000
   },
   {
-    "id": "8e0df8dd-6108-4d33-8bbc-9e64ff44d51d",
+    "clientMessageId": "45174e1d-61c3-4cf7-b193-2ed8ed596e87",
+    "serverMessageId": "8e0df8dd-6108-4d33-8bbc-9e64ff44d51d",
     "seq": 74,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -592,7 +666,8 @@
     "timestampMillis": 1767881500000
   },
   {
-    "id": "6e2ec573-6056-42d8-bbcf-336369ac041d",
+    "clientMessageId": "4ecdb549-c430-498e-8ca0-af1fb593f83d",
+    "serverMessageId": "6e2ec573-6056-42d8-bbcf-336369ac041d",
     "seq": 75,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -600,7 +675,8 @@
     "timestampMillis": 1767881510000
   },
   {
-    "id": "8e245dfe-2972-4c55-b58e-2de1153ffcb4",
+    "clientMessageId": "18d19f97-1f10-4238-b274-4bb16de17650",
+    "serverMessageId": "8e245dfe-2972-4c55-b58e-2de1153ffcb4",
     "seq": 76,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -608,7 +684,8 @@
     "timestampMillis": 1767881536000
   },
   {
-    "id": "74affb82-3b6f-4442-b582-079daf689861",
+    "clientMessageId": "e6bd0505-3469-4250-86aa-4dd95a559016",
+    "serverMessageId": "74affb82-3b6f-4442-b582-079daf689861",
     "seq": 77,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -616,7 +693,8 @@
     "timestampMillis": 1767881677000
   },
   {
-    "id": "ca3e0904-8608-4b73-a4c6-5c4c2b6d523e",
+    "clientMessageId": "883ab833-d706-4f21-b63d-9ae68568e8f7",
+    "serverMessageId": "ca3e0904-8608-4b73-a4c6-5c4c2b6d523e",
     "seq": 78,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -624,7 +702,8 @@
     "timestampMillis": 1767881824000
   },
   {
-    "id": "92e2c325-3315-4055-8dea-17e154217096",
+    "clientMessageId": "53855d6b-a67b-4c6b-b615-b5055d4f0456",
+    "serverMessageId": "92e2c325-3315-4055-8dea-17e154217096",
     "seq": 79,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -632,7 +711,8 @@
     "timestampMillis": 1767882001000
   },
   {
-    "id": "1969fe33-646c-4ec9-8f1d-1f7ddccfdbf5",
+    "clientMessageId": "5f6b0890-a1fa-40aa-a845-0976fdd13f73",
+    "serverMessageId": "1969fe33-646c-4ec9-8f1d-1f7ddccfdbf5",
     "seq": 80,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -640,7 +720,8 @@
     "timestampMillis": 1767882056000
   },
   {
-    "id": "c0388514-1b24-4d2c-b180-3ddaaf1db113",
+    "clientMessageId": "73db91db-49ec-40ce-9f30-f91bff0fc17f",
+    "serverMessageId": "c0388514-1b24-4d2c-b180-3ddaaf1db113",
     "seq": 81,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -648,7 +729,8 @@
     "timestampMillis": 1767920781000
   },
   {
-    "id": "219e21c3-7ce6-4e38-83de-6788bd3fb06e",
+    "clientMessageId": "011e1d35-94fb-4292-a596-9f0550f58513",
+    "serverMessageId": "219e21c3-7ce6-4e38-83de-6788bd3fb06e",
     "seq": 82,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -656,7 +738,8 @@
     "timestampMillis": 1767920928000
   },
   {
-    "id": "14a3b697-6459-4f05-9abf-7162c4059157",
+    "clientMessageId": "a5b88324-1546-4865-a891-fd597bd3da10",
+    "serverMessageId": "14a3b697-6459-4f05-9abf-7162c4059157",
     "seq": 83,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -664,7 +747,8 @@
     "timestampMillis": 1767920939000
   },
   {
-    "id": "31bea57c-e60b-471e-8edf-c8a0b305f0fe",
+    "clientMessageId": "7cf0f62c-17d2-452d-b80d-ae948a7fc54d",
+    "serverMessageId": "31bea57c-e60b-471e-8edf-c8a0b305f0fe",
     "seq": 84,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -672,7 +756,8 @@
     "timestampMillis": 1767921090000
   },
   {
-    "id": "fe364d9f-4d5f-4af6-a110-6287ebf08e59",
+    "clientMessageId": "75c1e5c4-7268-4841-8a69-b59cb1be8cff",
+    "serverMessageId": "fe364d9f-4d5f-4af6-a110-6287ebf08e59",
     "seq": 85,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -680,7 +765,8 @@
     "timestampMillis": 1767921098000
   },
   {
-    "id": "20543804-6b71-4455-9be1-4b8da2d6ab74",
+    "clientMessageId": "320c9c84-2295-4ba6-a2d2-5b7f421aa103",
+    "serverMessageId": "20543804-6b71-4455-9be1-4b8da2d6ab74",
     "seq": 86,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -688,7 +774,8 @@
     "timestampMillis": 1767921232000
   },
   {
-    "id": "a8c48e1c-ff17-4ffd-8b3f-89271a744b38",
+    "clientMessageId": "ce328037-5a11-4bed-b549-28c54aa79d76",
+    "serverMessageId": "a8c48e1c-ff17-4ffd-8b3f-89271a744b38",
     "seq": 87,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -696,7 +783,8 @@
     "timestampMillis": 1767921395000
   },
   {
-    "id": "9f9020ec-901f-4c04-8dd3-de7c4156beaa",
+    "clientMessageId": "07e13f88-5450-471e-91da-b5b8cb95b73f",
+    "serverMessageId": "9f9020ec-901f-4c04-8dd3-de7c4156beaa",
     "seq": 88,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -704,7 +792,8 @@
     "timestampMillis": 1767921466000
   },
   {
-    "id": "0803a451-1b18-43b1-b945-773c66ff4935",
+    "clientMessageId": "17cc7c19-7080-4e21-a392-530b8e921990",
+    "serverMessageId": "0803a451-1b18-43b1-b945-773c66ff4935",
     "seq": 89,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -712,7 +801,8 @@
     "timestampMillis": 1767958212000
   },
   {
-    "id": "01951f66-5e3b-4f08-a907-0b82e0527170",
+    "clientMessageId": "a3dabccf-1b75-47ee-8a58-a7ddadf0bd63",
+    "serverMessageId": "01951f66-5e3b-4f08-a907-0b82e0527170",
     "seq": 90,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -720,7 +810,8 @@
     "timestampMillis": 1767958299000
   },
   {
-    "id": "6c251c0b-55b7-48c4-91a4-ad59789d37db",
+    "clientMessageId": "8b1eaeef-2599-48f5-910c-916f3b5215ea",
+    "serverMessageId": "6c251c0b-55b7-48c4-91a4-ad59789d37db",
     "seq": 91,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -728,7 +819,8 @@
     "timestampMillis": 1767958347000
   },
   {
-    "id": "c73a8a49-9d65-42b9-8a30-abd933a29397",
+    "clientMessageId": "8f86d008-da98-472f-af9b-50885a723d1b",
+    "serverMessageId": "c73a8a49-9d65-42b9-8a30-abd933a29397",
     "seq": 92,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -736,7 +828,8 @@
     "timestampMillis": 1767958378000
   },
   {
-    "id": "a45528b2-9dc3-4ec8-bcdc-ad11293f4c04",
+    "clientMessageId": "290718ed-bddb-4f5c-a6be-6903dd263714",
+    "serverMessageId": "a45528b2-9dc3-4ec8-bcdc-ad11293f4c04",
     "seq": 93,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -744,7 +837,8 @@
     "timestampMillis": 1767958388000
   },
   {
-    "id": "1544d120-db7c-4cdc-9c80-77fc14582b90",
+    "clientMessageId": "47d76e98-97d0-4e39-b6db-7013026aabcf",
+    "serverMessageId": "1544d120-db7c-4cdc-9c80-77fc14582b90",
     "seq": 94,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -752,7 +846,8 @@
     "timestampMillis": 1767958509000
   },
   {
-    "id": "d8983a9e-5fba-4780-b82c-63003bef8008",
+    "clientMessageId": "e4d6032f-335f-47dc-b35d-81cd9254b699",
+    "serverMessageId": "d8983a9e-5fba-4780-b82c-63003bef8008",
     "seq": 95,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -760,7 +855,8 @@
     "timestampMillis": 1767958649000
   },
   {
-    "id": "c508274f-7f5a-4e71-a691-eb23fd6dfa69",
+    "clientMessageId": "e05c2a1d-7147-455c-9a61-6c9ac8fcdb61",
+    "serverMessageId": "c508274f-7f5a-4e71-a691-eb23fd6dfa69",
     "seq": 96,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -768,7 +864,8 @@
     "timestampMillis": 1767958703000
   },
   {
-    "id": "258ad728-559c-4ac3-98b1-21febe7f9737",
+    "clientMessageId": "ea36d488-8bbb-428c-8281-e52418db93a0",
+    "serverMessageId": "258ad728-559c-4ac3-98b1-21febe7f9737",
     "seq": 97,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -776,7 +873,8 @@
     "timestampMillis": 1768000634000
   },
   {
-    "id": "34efcfd8-3a10-422a-95ec-926f6f864154",
+    "clientMessageId": "1dd40c98-8b29-40d3-bce3-1edfbbc669cb",
+    "serverMessageId": "34efcfd8-3a10-422a-95ec-926f6f864154",
     "seq": 98,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -784,7 +882,8 @@
     "timestampMillis": 1768000839000
   },
   {
-    "id": "f8977ebd-e1d5-4a01-a87c-c71d39e13820",
+    "clientMessageId": "3fc8e833-a7a7-434f-9fd3-833de74e2588",
+    "serverMessageId": "f8977ebd-e1d5-4a01-a87c-c71d39e13820",
     "seq": 99,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -792,7 +891,8 @@
     "timestampMillis": 1768001031000
   },
   {
-    "id": "12b83a64-b497-417e-a6ca-421aa059458f",
+    "clientMessageId": "73b547dd-1364-42ff-9aa2-318a29e736e9",
+    "serverMessageId": "12b83a64-b497-417e-a6ca-421aa059458f",
     "seq": 100,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -800,7 +900,8 @@
     "timestampMillis": 1768001038000
   },
   {
-    "id": "1aefe50e-ef75-4a13-85e7-a62c9d2f90a3",
+    "clientMessageId": "aeaaa4d0-54af-4cd9-bdeb-d84d69dab580",
+    "serverMessageId": "1aefe50e-ef75-4a13-85e7-a62c9d2f90a3",
     "seq": 101,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -808,7 +909,8 @@
     "timestampMillis": 1768001095000
   },
   {
-    "id": "6ac91d6a-228f-4079-8f14-a6c014f7f175",
+    "clientMessageId": "5ac38832-e917-4b3c-8cd0-2fa7bc72364e",
+    "serverMessageId": "6ac91d6a-228f-4079-8f14-a6c014f7f175",
     "seq": 102,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -816,7 +918,8 @@
     "timestampMillis": 1768001241000
   },
   {
-    "id": "be329a2d-c56b-45cc-a5ef-1998fcb0edb2",
+    "clientMessageId": "4e51cf1a-7c2e-43f1-827d-a8c4ce6bf810",
+    "serverMessageId": "be329a2d-c56b-45cc-a5ef-1998fcb0edb2",
     "seq": 103,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -824,7 +927,8 @@
     "timestampMillis": 1768001338000
   },
   {
-    "id": "ad62dff9-e51b-4080-81bf-42f556069b31",
+    "clientMessageId": "7e513cc9-73d2-4f0e-81c6-feec80a7bd3e",
+    "serverMessageId": "ad62dff9-e51b-4080-81bf-42f556069b31",
     "seq": 104,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -832,7 +936,8 @@
     "timestampMillis": 1768001478000
   },
   {
-    "id": "c335e764-029c-4b6a-a596-096580a6f380",
+    "clientMessageId": "5a0592a9-2b54-4079-ab11-ec0818849dec",
+    "serverMessageId": "c335e764-029c-4b6a-a596-096580a6f380",
     "seq": 105,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -840,7 +945,8 @@
     "timestampMillis": 1768039092000
   },
   {
-    "id": "605cff58-39a2-4600-8f61-bec2900d23dc",
+    "clientMessageId": "9a8073a9-8e3d-4238-b445-d63657122eba",
+    "serverMessageId": "605cff58-39a2-4600-8f61-bec2900d23dc",
     "seq": 106,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -848,7 +954,8 @@
     "timestampMillis": 1768039192000
   },
   {
-    "id": "4cd1d11d-730a-4587-a2cc-a953fa904a31",
+    "clientMessageId": "5cc32a4d-46d5-4980-8a03-ce0193e3c543",
+    "serverMessageId": "4cd1d11d-730a-4587-a2cc-a953fa904a31",
     "seq": 107,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -856,7 +963,8 @@
     "timestampMillis": 1768039405000
   },
   {
-    "id": "1da6ad70-88b8-42ec-8638-586b65ff8c02",
+    "clientMessageId": "f765cc81-c884-49ae-8f8e-52c12406cf04",
+    "serverMessageId": "1da6ad70-88b8-42ec-8638-586b65ff8c02",
     "seq": 108,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -864,7 +972,8 @@
     "timestampMillis": 1768039473000
   },
   {
-    "id": "cc6d9ad5-eb86-4f78-b645-d29c4ee5ae9a",
+    "clientMessageId": "77af7182-b1d1-48aa-8f43-4b6a4d103757",
+    "serverMessageId": "cc6d9ad5-eb86-4f78-b645-d29c4ee5ae9a",
     "seq": 109,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -872,7 +981,8 @@
     "timestampMillis": 1768039616000
   },
   {
-    "id": "cf01a937-abbd-4c41-8077-91d3bcd9285f",
+    "clientMessageId": "f51f26a5-d310-4638-a43c-fd60c928ed08",
+    "serverMessageId": "cf01a937-abbd-4c41-8077-91d3bcd9285f",
     "seq": 110,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -880,7 +990,8 @@
     "timestampMillis": 1768039626000
   },
   {
-    "id": "24e67729-c4b9-423f-94e8-19b52bd13ea0",
+    "clientMessageId": "9feef770-faa9-458e-8da1-536e4dd3800b",
+    "serverMessageId": "24e67729-c4b9-423f-94e8-19b52bd13ea0",
     "seq": 111,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -888,7 +999,8 @@
     "timestampMillis": 1768039728000
   },
   {
-    "id": "d0776f3b-c95b-4ed3-a33c-eb443cf89fa7",
+    "clientMessageId": "2fa8c7d6-af71-42d2-9f2b-d58130765be5",
+    "serverMessageId": "d0776f3b-c95b-4ed3-a33c-eb443cf89fa7",
     "seq": 112,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -896,7 +1008,8 @@
     "timestampMillis": 1768039735000
   },
   {
-    "id": "ab302fa4-ada1-4a20-933e-dd6f2442ee4e",
+    "clientMessageId": "2810f05b-6218-4dd0-9608-b4d2f05e8c3b",
+    "serverMessageId": "ab302fa4-ada1-4a20-933e-dd6f2442ee4e",
     "seq": 113,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -904,7 +1017,8 @@
     "timestampMillis": 1768079841000
   },
   {
-    "id": "3084a34a-0555-414d-9b5d-55e8a0549ada",
+    "clientMessageId": "a687fa99-b686-40b4-ba6f-682299136e1b",
+    "serverMessageId": "3084a34a-0555-414d-9b5d-55e8a0549ada",
     "seq": 114,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -912,7 +1026,8 @@
     "timestampMillis": 1768080061000
   },
   {
-    "id": "a9a3a45f-e79a-4aae-b632-c5bf892b3413",
+    "clientMessageId": "b8b925d8-3f94-407d-ab00-aa782c3f0ea6",
+    "serverMessageId": "a9a3a45f-e79a-4aae-b632-c5bf892b3413",
     "seq": 115,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -920,7 +1035,8 @@
     "timestampMillis": 1768080097000
   },
   {
-    "id": "df04b276-577b-48d9-b10a-12cbbf76e533",
+    "clientMessageId": "3b39c493-9c84-4589-8390-1082d6d5c648",
+    "serverMessageId": "df04b276-577b-48d9-b10a-12cbbf76e533",
     "seq": 116,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -928,7 +1044,8 @@
     "timestampMillis": 1768080141000
   },
   {
-    "id": "7b89d969-71d5-40c8-a49c-8408c9090cbb",
+    "clientMessageId": "3604d0d6-2aac-4db9-8f3c-7a09f7ed9551",
+    "serverMessageId": "7b89d969-71d5-40c8-a49c-8408c9090cbb",
     "seq": 117,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -936,7 +1053,8 @@
     "timestampMillis": 1768080219000
   },
   {
-    "id": "d787ad33-3726-46fe-861a-8e55ac80c645",
+    "clientMessageId": "df0c8766-54fc-4284-801b-d0adaf4d5358",
+    "serverMessageId": "d787ad33-3726-46fe-861a-8e55ac80c645",
     "seq": 118,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -944,7 +1062,8 @@
     "timestampMillis": 1768080323000
   },
   {
-    "id": "ebfc4973-5aec-4837-b44d-bf1617e79bd7",
+    "clientMessageId": "bb6d9c06-e85b-4b91-a0ee-cbc1c848eb1e",
+    "serverMessageId": "ebfc4973-5aec-4837-b44d-bf1617e79bd7",
     "seq": 119,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -952,7 +1071,8 @@
     "timestampMillis": 1768080523000
   },
   {
-    "id": "ee240e09-c87a-4fc2-b81e-95ea48d525be",
+    "clientMessageId": "557149f5-eadc-4fae-b3b4-1e175b399e0e",
+    "serverMessageId": "ee240e09-c87a-4fc2-b81e-95ea48d525be",
     "seq": 120,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -960,7 +1080,8 @@
     "timestampMillis": 1768080538000
   },
   {
-    "id": "84c9dfcb-c499-46a8-b336-9e7b0421a75f",
+    "clientMessageId": "b1e002d8-544c-4d2b-bb06-66e30076906b",
+    "serverMessageId": "84c9dfcb-c499-46a8-b336-9e7b0421a75f",
     "seq": 121,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -968,7 +1089,8 @@
     "timestampMillis": 1768118364000
   },
   {
-    "id": "98afc164-da1b-474e-a20b-8d39640fb208",
+    "clientMessageId": "544f4061-ddca-491e-a231-4e0c875ed6be",
+    "serverMessageId": "98afc164-da1b-474e-a20b-8d39640fb208",
     "seq": 122,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -976,7 +1098,8 @@
     "timestampMillis": 1768118414000
   },
   {
-    "id": "d98818a0-0262-4e67-b7e6-e76a21e6510b",
+    "clientMessageId": "af4641df-593e-4786-8dac-dcc719b78b89",
+    "serverMessageId": "d98818a0-0262-4e67-b7e6-e76a21e6510b",
     "seq": 123,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -984,7 +1107,8 @@
     "timestampMillis": 1768118557000
   },
   {
-    "id": "09bf1a97-c2b4-44ab-81b4-8a90c6b5b235",
+    "clientMessageId": "4e2f20bb-be19-4786-aa55-7421b9ad5f18",
+    "serverMessageId": "09bf1a97-c2b4-44ab-81b4-8a90c6b5b235",
     "seq": 124,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -992,7 +1116,8 @@
     "timestampMillis": 1768118561000
   },
   {
-    "id": "27091bb1-eeb8-4fe4-8cf4-00ee337539ea",
+    "clientMessageId": "592029a2-9083-4b6e-885a-b458b3b8ebe4",
+    "serverMessageId": "27091bb1-eeb8-4fe4-8cf4-00ee337539ea",
     "seq": 125,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1000,7 +1125,8 @@
     "timestampMillis": 1768118705000
   },
   {
-    "id": "e991d29e-c444-4318-a138-e31c7fc1eac8",
+    "clientMessageId": "9ea6b711-cffb-4c16-b7eb-dabe04558b0c",
+    "serverMessageId": "e991d29e-c444-4318-a138-e31c7fc1eac8",
     "seq": 126,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1008,7 +1134,8 @@
     "timestampMillis": 1768118716000
   },
   {
-    "id": "e0e99300-833a-4ca4-b45e-c957333d8ac5",
+    "clientMessageId": "94ee2877-e6ab-42d4-ae84-bb57e024adc8",
+    "serverMessageId": "e0e99300-833a-4ca4-b45e-c957333d8ac5",
     "seq": 127,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1016,7 +1143,8 @@
     "timestampMillis": 1768118856000
   },
   {
-    "id": "e883831c-5f62-4689-93c6-aaecf328011c",
+    "clientMessageId": "757f454e-70cd-47d4-bded-ba473d17369f",
+    "serverMessageId": "e883831c-5f62-4689-93c6-aaecf328011c",
     "seq": 128,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1024,7 +1152,8 @@
     "timestampMillis": 1768119049000
   },
   {
-    "id": "8ead6eb0-0b7a-4879-b0c8-8e97712bada5",
+    "clientMessageId": "a74e565e-3549-4b50-88e5-d441dc1a187d",
+    "serverMessageId": "8ead6eb0-0b7a-4879-b0c8-8e97712bada5",
     "seq": 129,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1032,7 +1161,8 @@
     "timestampMillis": 1768156267000
   },
   {
-    "id": "00da69d4-1d35-4398-af9e-7521c282b516",
+    "clientMessageId": "19d6fa0c-3a36-4767-bdf9-4d73b7f0dc83",
+    "serverMessageId": "00da69d4-1d35-4398-af9e-7521c282b516",
     "seq": 130,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1040,7 +1170,8 @@
     "timestampMillis": 1768156336000
   },
   {
-    "id": "bbe049a4-624f-4f0d-a63d-a3617eb0066d",
+    "clientMessageId": "9d6cb031-c946-45c6-b449-37784e5d45ed",
+    "serverMessageId": "bbe049a4-624f-4f0d-a63d-a3617eb0066d",
     "seq": 131,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1048,7 +1179,8 @@
     "timestampMillis": 1768156472000
   },
   {
-    "id": "ca471978-50b8-4700-b667-fe208796c13a",
+    "clientMessageId": "126bf689-66f5-4db6-a866-f0a7eba5ded8",
+    "serverMessageId": "ca471978-50b8-4700-b667-fe208796c13a",
     "seq": 132,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1056,7 +1188,8 @@
     "timestampMillis": 1768156663000
   },
   {
-    "id": "62d86170-44f7-4257-a5fa-8e6a17b9f722",
+    "clientMessageId": "51c14d9c-e3ae-4017-9a03-6204235cd105",
+    "serverMessageId": "62d86170-44f7-4257-a5fa-8e6a17b9f722",
     "seq": 133,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1064,7 +1197,8 @@
     "timestampMillis": 1768156670000
   },
   {
-    "id": "31196eeb-febf-4e55-a696-24b256859077",
+    "clientMessageId": "9f76b9e7-d326-4a05-9a55-06475c9ddeb4",
+    "serverMessageId": "31196eeb-febf-4e55-a696-24b256859077",
     "seq": 134,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1072,7 +1206,8 @@
     "timestampMillis": 1768156714000
   },
   {
-    "id": "7b02db1a-6d43-417f-af73-746db293c3e9",
+    "clientMessageId": "780e970f-916d-440d-9c1d-b335d604d861",
+    "serverMessageId": "7b02db1a-6d43-417f-af73-746db293c3e9",
     "seq": 135,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1080,7 +1215,8 @@
     "timestampMillis": 1768156718000
   },
   {
-    "id": "32282765-fce5-4a64-90d3-810709b0c388",
+    "clientMessageId": "2fbb4b3c-1ffa-4244-92ee-0528d12f8849",
+    "serverMessageId": "32282765-fce5-4a64-90d3-810709b0c388",
     "seq": 136,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1088,7 +1224,8 @@
     "timestampMillis": 1768156775000
   },
   {
-    "id": "e9116b27-e55a-411c-bbf7-c6fcda34e604",
+    "clientMessageId": "ac86cf80-da7e-4832-82c1-61058636cc3d",
+    "serverMessageId": "e9116b27-e55a-411c-bbf7-c6fcda34e604",
     "seq": 137,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1096,7 +1233,8 @@
     "timestampMillis": 1768196517000
   },
   {
-    "id": "3433d494-4643-424b-9835-ae535dd9b14f",
+    "clientMessageId": "40fb9195-65ca-489d-b158-1f5984a8dec6",
+    "serverMessageId": "3433d494-4643-424b-9835-ae535dd9b14f",
     "seq": 138,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1104,7 +1242,8 @@
     "timestampMillis": 1768196652000
   },
   {
-    "id": "68251b92-506d-4d5a-a974-60af0839d746",
+    "clientMessageId": "9cb81e6c-f831-4fcc-8bfe-bedb4d136c5d",
+    "serverMessageId": "68251b92-506d-4d5a-a974-60af0839d746",
     "seq": 139,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1112,7 +1251,8 @@
     "timestampMillis": 1768196659000
   },
   {
-    "id": "badcf30a-2638-474e-88d8-8d0abccdd8b9",
+    "clientMessageId": "9be0286c-8176-4ee9-91e1-50265b06c3b6",
+    "serverMessageId": "badcf30a-2638-474e-88d8-8d0abccdd8b9",
     "seq": 140,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1120,7 +1260,8 @@
     "timestampMillis": 1768196803000
   },
   {
-    "id": "5faa0280-e155-4ee6-a92c-ada4c9c263e8",
+    "clientMessageId": "de8a91e1-340a-429b-9470-f76713a9e63f",
+    "serverMessageId": "5faa0280-e155-4ee6-a92c-ada4c9c263e8",
     "seq": 141,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1128,7 +1269,8 @@
     "timestampMillis": 1768197040000
   },
   {
-    "id": "03ed8c0e-a4b0-48dd-82e5-0f3f85d136e5",
+    "clientMessageId": "f3ec169d-950d-4029-973d-689cd0155406",
+    "serverMessageId": "03ed8c0e-a4b0-48dd-82e5-0f3f85d136e5",
     "seq": 142,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1136,7 +1278,8 @@
     "timestampMillis": 1768197093000
   },
   {
-    "id": "da11ce59-221c-4300-81c1-6918402ed7fd",
+    "clientMessageId": "a3efe986-ee70-409a-a3ee-bae8251f195b",
+    "serverMessageId": "da11ce59-221c-4300-81c1-6918402ed7fd",
     "seq": 143,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1144,7 +1287,8 @@
     "timestampMillis": 1768197099000
   },
   {
-    "id": "215bf6d7-5dbc-4265-9082-dd1d8de5de4b",
+    "clientMessageId": "cbd4f2be-749c-4be6-8c13-fb8a01f82c6a",
+    "serverMessageId": "215bf6d7-5dbc-4265-9082-dd1d8de5de4b",
     "seq": 144,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1152,7 +1296,8 @@
     "timestampMillis": 1768197282000
   },
   {
-    "id": "35212dc4-2f55-49cd-830a-84b1ebe2b0eb",
+    "clientMessageId": "a8ff2938-0163-4731-ab35-e4828b5ccdf5",
+    "serverMessageId": "35212dc4-2f55-49cd-830a-84b1ebe2b0eb",
     "seq": 145,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1160,7 +1305,8 @@
     "timestampMillis": 1768237369000
   },
   {
-    "id": "f93d7e91-b771-4718-ac29-60e7f2426ceb",
+    "clientMessageId": "e2e7e6b2-d6ee-4cc7-93df-19eb9717aa33",
+    "serverMessageId": "f93d7e91-b771-4718-ac29-60e7f2426ceb",
     "seq": 146,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1168,7 +1314,8 @@
     "timestampMillis": 1768237569000
   },
   {
-    "id": "dfe28807-a314-4bf8-b64c-f876c84588ef",
+    "clientMessageId": "f6e1ed91-e7e8-464d-add4-1c64ca29164d",
+    "serverMessageId": "dfe28807-a314-4bf8-b64c-f876c84588ef",
     "seq": 147,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1176,7 +1323,8 @@
     "timestampMillis": 1768237801000
   },
   {
-    "id": "84d45956-9c7d-4e5a-bff0-50c21ac16e73",
+    "clientMessageId": "37a5cd0c-877c-4f85-80c8-43b1bcd3135b",
+    "serverMessageId": "84d45956-9c7d-4e5a-bff0-50c21ac16e73",
     "seq": 148,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1184,7 +1332,8 @@
     "timestampMillis": 1768237843000
   },
   {
-    "id": "fb8525b7-2315-4e03-86b3-e66de581dc4f",
+    "clientMessageId": "86a2cdbe-fef3-4efe-93d9-ff5f09d1c304",
+    "serverMessageId": "fb8525b7-2315-4e03-86b3-e66de581dc4f",
     "seq": 149,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1192,7 +1341,8 @@
     "timestampMillis": 1768237977000
   },
   {
-    "id": "bb4e6955-b5b8-487f-903b-fb8967adaa5c",
+    "clientMessageId": "78e68718-49d1-48c9-811d-5a456eb66965",
+    "serverMessageId": "bb4e6955-b5b8-487f-903b-fb8967adaa5c",
     "seq": 150,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1200,7 +1350,8 @@
     "timestampMillis": 1768238168000
   },
   {
-    "id": "10e80335-501f-4a18-b963-1568081d6930",
+    "clientMessageId": "aa1adb46-e0fc-4c86-b03e-140c04507924",
+    "serverMessageId": "10e80335-501f-4a18-b963-1568081d6930",
     "seq": 151,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1208,7 +1359,8 @@
     "timestampMillis": 1768238355000
   },
   {
-    "id": "f3165c48-76ca-446b-8721-d5df8b93f1b2",
+    "clientMessageId": "cb9face9-475f-4daf-a278-14c9e17bd9e6",
+    "serverMessageId": "f3165c48-76ca-446b-8721-d5df8b93f1b2",
     "seq": 152,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1216,7 +1368,8 @@
     "timestampMillis": 1768238419000
   },
   {
-    "id": "b726c807-e312-4c89-95e8-d6d0b42da7d2",
+    "clientMessageId": "388118eb-7c87-4b6b-a3dc-f9a32a01b7ee",
+    "serverMessageId": "b726c807-e312-4c89-95e8-d6d0b42da7d2",
     "seq": 153,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1224,7 +1377,8 @@
     "timestampMillis": 1768275036000
   },
   {
-    "id": "5a00f04b-7031-449a-a1fa-53d06904fe0c",
+    "clientMessageId": "f45f8c93-8f1c-42f6-a844-480210ca5842",
+    "serverMessageId": "5a00f04b-7031-449a-a1fa-53d06904fe0c",
     "seq": 154,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1232,7 +1386,8 @@
     "timestampMillis": 1768275159000
   },
   {
-    "id": "6761b53f-24b6-4f61-b8b5-c20e18cb15b5",
+    "clientMessageId": "2c4f961f-e08b-440c-85d1-a0da354802c4",
+    "serverMessageId": "6761b53f-24b6-4f61-b8b5-c20e18cb15b5",
     "seq": 155,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1240,7 +1395,8 @@
     "timestampMillis": 1768275342000
   },
   {
-    "id": "1cf3fe96-5f8e-490e-b72a-b17bf55f67d3",
+    "clientMessageId": "c658f20d-4342-4db8-bbec-479b59d1338d",
+    "serverMessageId": "1cf3fe96-5f8e-490e-b72a-b17bf55f67d3",
     "seq": 156,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1248,7 +1404,8 @@
     "timestampMillis": 1768275534000
   },
   {
-    "id": "e4533d5f-a639-4b16-9e02-b3500f1c9929",
+    "clientMessageId": "4c7cc2a3-a0f2-4cfb-8ab6-188a6b897663",
+    "serverMessageId": "e4533d5f-a639-4b16-9e02-b3500f1c9929",
     "seq": 157,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1256,7 +1413,8 @@
     "timestampMillis": 1768275541000
   },
   {
-    "id": "e70f5ad5-3ad8-4a04-a15d-4a13f7cd15db",
+    "clientMessageId": "62bcf84a-c07a-4912-b75e-ff82ca177c75",
+    "serverMessageId": "e70f5ad5-3ad8-4a04-a15d-4a13f7cd15db",
     "seq": 158,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1264,7 +1422,8 @@
     "timestampMillis": 1768275729000
   },
   {
-    "id": "b7977510-6203-4e04-bd63-d473bda33944",
+    "clientMessageId": "77cb85c3-d505-435f-8a26-7d0188503dff",
+    "serverMessageId": "b7977510-6203-4e04-bd63-d473bda33944",
     "seq": 159,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1272,7 +1431,8 @@
     "timestampMillis": 1768275764000
   },
   {
-    "id": "1b8f2bbd-1033-489d-9e14-e446677e0c51",
+    "clientMessageId": "e93df9d3-3925-4576-936a-11a1c93ee553",
+    "serverMessageId": "1b8f2bbd-1033-489d-9e14-e446677e0c51",
     "seq": 160,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1280,7 +1440,8 @@
     "timestampMillis": 1768275934000
   },
   {
-    "id": "c9ba3ac9-edd3-43d7-98b3-cab0d03d2e0e",
+    "clientMessageId": "f6587469-c907-47e5-bd5f-9f49e00fdb7c",
+    "serverMessageId": "c9ba3ac9-edd3-43d7-98b3-cab0d03d2e0e",
     "seq": 161,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1288,7 +1449,8 @@
     "timestampMillis": 1768316888000
   },
   {
-    "id": "ab9ffbc9-8023-4418-9748-0bd2b9727315",
+    "clientMessageId": "5298e576-0979-43d8-8178-1b7eac160258",
+    "serverMessageId": "ab9ffbc9-8023-4418-9748-0bd2b9727315",
     "seq": 162,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1296,7 +1458,8 @@
     "timestampMillis": 1768317063000
   },
   {
-    "id": "7fd4a30b-6f9f-45c1-b5cb-939183f3e2bc",
+    "clientMessageId": "11f0af24-7725-4da7-ab68-dc143ee4238d",
+    "serverMessageId": "7fd4a30b-6f9f-45c1-b5cb-939183f3e2bc",
     "seq": 163,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1304,7 +1467,8 @@
     "timestampMillis": 1768317179000
   },
   {
-    "id": "91e94115-2301-484d-8421-f697bebd093b",
+    "clientMessageId": "cda53b37-9620-4cb2-b138-e4950f044876",
+    "serverMessageId": "91e94115-2301-484d-8421-f697bebd093b",
     "seq": 164,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1312,7 +1476,8 @@
     "timestampMillis": 1768317268000
   },
   {
-    "id": "11a1ebac-dd65-4295-a87d-b1be239f3f3f",
+    "clientMessageId": "b74ab14f-31aa-4591-bdc9-39ab8bf4e99c",
+    "serverMessageId": "11a1ebac-dd65-4295-a87d-b1be239f3f3f",
     "seq": 165,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1320,7 +1485,8 @@
     "timestampMillis": 1768317346000
   },
   {
-    "id": "8bf3d891-34fe-4db0-9b98-5e5f28b94323",
+    "clientMessageId": "c022950e-d8a5-4edb-9a6c-146a7c3d142d",
+    "serverMessageId": "8bf3d891-34fe-4db0-9b98-5e5f28b94323",
     "seq": 166,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1328,7 +1494,8 @@
     "timestampMillis": 1768317438000
   },
   {
-    "id": "c610de03-4916-48f2-a0b4-9ae777070377",
+    "clientMessageId": "aa4ec2f0-b189-47de-804a-b602fc603dbd",
+    "serverMessageId": "c610de03-4916-48f2-a0b4-9ae777070377",
     "seq": 167,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1336,7 +1503,8 @@
     "timestampMillis": 1768317593000
   },
   {
-    "id": "caef24d5-655f-4071-a9db-e6d3fa074f99",
+    "clientMessageId": "ce8b4f58-32ab-49d4-81a1-8071d8c30b5f",
+    "serverMessageId": "caef24d5-655f-4071-a9db-e6d3fa074f99",
     "seq": 168,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1344,7 +1512,8 @@
     "timestampMillis": 1768317601000
   },
   {
-    "id": "29c30e8e-efef-4037-9747-40e6e1009270",
+    "clientMessageId": "186312d9-738a-4fca-8fe3-a16ca3d60724",
+    "serverMessageId": "29c30e8e-efef-4037-9747-40e6e1009270",
     "seq": 169,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1352,7 +1521,8 @@
     "timestampMillis": 1768354458000
   },
   {
-    "id": "d42388e2-c3d1-45f2-a513-b4c7fe01e002",
+    "clientMessageId": "1c82e44a-e59b-4f4f-9e29-195cc38ed3fe",
+    "serverMessageId": "d42388e2-c3d1-45f2-a513-b4c7fe01e002",
     "seq": 170,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1360,7 +1530,8 @@
     "timestampMillis": 1768354489000
   },
   {
-    "id": "59ae4a56-92ef-4a75-aceb-de47626395dd",
+    "clientMessageId": "1cba57b5-e36d-47c0-8afb-d331173b4680",
+    "serverMessageId": "59ae4a56-92ef-4a75-aceb-de47626395dd",
     "seq": 171,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1368,7 +1539,8 @@
     "timestampMillis": 1768354504000
   },
   {
-    "id": "d956ab9c-bbd7-4d21-8fab-953676a6ba9f",
+    "clientMessageId": "a47840e5-febc-4ace-ac8b-341bda0b29d9",
+    "serverMessageId": "d956ab9c-bbd7-4d21-8fab-953676a6ba9f",
     "seq": 172,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1376,7 +1548,8 @@
     "timestampMillis": 1768354600000
   },
   {
-    "id": "47a7babe-250a-4520-85d5-75e4744fe4cd",
+    "clientMessageId": "ec79d823-604e-4340-8f74-ff47609f757d",
+    "serverMessageId": "47a7babe-250a-4520-85d5-75e4744fe4cd",
     "seq": 173,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1384,7 +1557,8 @@
     "timestampMillis": 1768354792000
   },
   {
-    "id": "f08231e9-ec7d-4c95-9166-cec881a2267d",
+    "clientMessageId": "604864ce-c097-47ff-be6a-bdb930850749",
+    "serverMessageId": "f08231e9-ec7d-4c95-9166-cec881a2267d",
     "seq": 174,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1392,7 +1566,8 @@
     "timestampMillis": 1768354870000
   },
   {
-    "id": "204803ca-3d44-473a-b0e5-89019d3932f2",
+    "clientMessageId": "dda293b8-e131-4556-9b2b-d0f8cf5a9d76",
+    "serverMessageId": "204803ca-3d44-473a-b0e5-89019d3932f2",
     "seq": 175,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1400,7 +1575,8 @@
     "timestampMillis": 1768354911000
   },
   {
-    "id": "82566c8c-d2f5-435f-8c3b-9d57c0dd4763",
+    "clientMessageId": "98dfbc8f-2993-437e-ba7d-68442a29805e",
+    "serverMessageId": "82566c8c-d2f5-435f-8c3b-9d57c0dd4763",
     "seq": 176,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1408,7 +1584,8 @@
     "timestampMillis": 1768354986000
   },
   {
-    "id": "f72bfc80-5c83-4a91-8b5f-e94dc8d9ea21",
+    "clientMessageId": "1e8c94d0-7bff-4197-bbe1-813a2c52f006",
+    "serverMessageId": "f72bfc80-5c83-4a91-8b5f-e94dc8d9ea21",
     "seq": 177,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1416,7 +1593,8 @@
     "timestampMillis": 1768395032000
   },
   {
-    "id": "ba9387b1-cbbf-4829-b5cb-5e18cecb2b96",
+    "clientMessageId": "2ea2867f-f062-47e1-9eb1-fc43278bdc04",
+    "serverMessageId": "ba9387b1-cbbf-4829-b5cb-5e18cecb2b96",
     "seq": 178,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1424,7 +1602,8 @@
     "timestampMillis": 1768395191000
   },
   {
-    "id": "99c94d75-48ae-4271-b874-106a9ea5c3c7",
+    "clientMessageId": "30ce064c-d52f-456b-983b-b20553f5f2a2",
+    "serverMessageId": "99c94d75-48ae-4271-b874-106a9ea5c3c7",
     "seq": 179,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1432,7 +1611,8 @@
     "timestampMillis": 1768395201000
   },
   {
-    "id": "bff6ade9-2a72-42e6-af49-be5d6cd7c35f",
+    "clientMessageId": "aba258b1-05d1-4bae-93f3-6bc8f8267bfe",
+    "serverMessageId": "bff6ade9-2a72-42e6-af49-be5d6cd7c35f",
     "seq": 180,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1440,7 +1620,8 @@
     "timestampMillis": 1768395418000
   },
   {
-    "id": "a2c771fd-e62c-4b09-a5f6-b7727da51af0",
+    "clientMessageId": "9f3641d0-eb22-433d-bcc6-182bbaf83380",
+    "serverMessageId": "a2c771fd-e62c-4b09-a5f6-b7727da51af0",
     "seq": 181,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1448,7 +1629,8 @@
     "timestampMillis": 1768395429000
   },
   {
-    "id": "33f9b008-0a6b-4bc5-8989-92bad671bc8c",
+    "clientMessageId": "b45d2972-0770-44c2-a5f7-1430362d4307",
+    "serverMessageId": "33f9b008-0a6b-4bc5-8989-92bad671bc8c",
     "seq": 182,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1456,7 +1638,8 @@
     "timestampMillis": 1768395488000
   },
   {
-    "id": "5c95208b-381e-4b95-88de-a77e5d571c5f",
+    "clientMessageId": "d8bb3582-b6f8-407e-a760-77dd4d12e8cd",
+    "serverMessageId": "5c95208b-381e-4b95-88de-a77e5d571c5f",
     "seq": 183,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1464,7 +1647,8 @@
     "timestampMillis": 1768395595000
   },
   {
-    "id": "31429cf3-107d-4e07-9252-6b2f9783253a",
+    "clientMessageId": "fd0b1f26-94c7-44f2-b081-871a0b31d3d9",
+    "serverMessageId": "31429cf3-107d-4e07-9252-6b2f9783253a",
     "seq": 184,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1472,7 +1656,8 @@
     "timestampMillis": 1768395825000
   },
   {
-    "id": "0cbcf5ac-ddd5-4478-8840-9076f5298328",
+    "clientMessageId": "ca397c4f-cd08-4cdc-a430-b830a137c95c",
+    "serverMessageId": "0cbcf5ac-ddd5-4478-8840-9076f5298328",
     "seq": 185,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1480,7 +1665,8 @@
     "timestampMillis": 1768435550000
   },
   {
-    "id": "37e94df8-423e-448e-808e-746551ab93a4",
+    "clientMessageId": "7f13532f-81f2-484a-8528-94e29f6087c3",
+    "serverMessageId": "37e94df8-423e-448e-808e-746551ab93a4",
     "seq": 186,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1488,7 +1674,8 @@
     "timestampMillis": 1768435780000
   },
   {
-    "id": "ced5e36e-373a-4fe0-b743-73546351c69d",
+    "clientMessageId": "29438ffc-4739-4e12-a90f-469ebb1f3497",
+    "serverMessageId": "ced5e36e-373a-4fe0-b743-73546351c69d",
     "seq": 187,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1496,7 +1683,8 @@
     "timestampMillis": 1768435871000
   },
   {
-    "id": "f55dbf22-2a67-4f07-8f5a-e94356eef51a",
+    "clientMessageId": "6828e927-1fc9-4e4e-8669-0cccff85d967",
+    "serverMessageId": "f55dbf22-2a67-4f07-8f5a-e94356eef51a",
     "seq": 188,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1504,7 +1692,8 @@
     "timestampMillis": 1768436039000
   },
   {
-    "id": "b7e362f3-4ca9-4b67-b07b-e7e3cdd53f9f",
+    "clientMessageId": "15ab55d6-6f77-4c5e-a2f6-64050fad0b60",
+    "serverMessageId": "b7e362f3-4ca9-4b67-b07b-e7e3cdd53f9f",
     "seq": 189,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1512,7 +1701,8 @@
     "timestampMillis": 1768436053000
   },
   {
-    "id": "ad83b229-6cbc-4684-887f-3a139b50f4b0",
+    "clientMessageId": "5801bef9-c772-4948-9571-7c604b91afa7",
+    "serverMessageId": "ad83b229-6cbc-4684-887f-3a139b50f4b0",
     "seq": 190,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1520,7 +1710,8 @@
     "timestampMillis": 1768436263000
   },
   {
-    "id": "3e2801ae-ceb3-44aa-af83-eec81e4226e0",
+    "clientMessageId": "fe0cbd86-ef47-4baf-8143-39a3c5cadb72",
+    "serverMessageId": "3e2801ae-ceb3-44aa-af83-eec81e4226e0",
     "seq": 191,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1528,7 +1719,8 @@
     "timestampMillis": 1768436476000
   },
   {
-    "id": "7fb7831a-78b1-4e0c-8e06-8156027bc7af",
+    "clientMessageId": "ddfdd49e-fe88-4354-8b90-763a955c5215",
+    "serverMessageId": "7fb7831a-78b1-4e0c-8e06-8156027bc7af",
     "seq": 192,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1536,7 +1728,8 @@
     "timestampMillis": 1768436579000
   },
   {
-    "id": "995fec6b-9bec-4fc3-bea6-1d8bab843e53",
+    "clientMessageId": "4f70e369-a762-4146-a16f-b4f165729532",
+    "serverMessageId": "995fec6b-9bec-4fc3-bea6-1d8bab843e53",
     "seq": 193,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1544,7 +1737,8 @@
     "timestampMillis": 1768473000000
   },
   {
-    "id": "b0bf170a-fda1-452c-8d47-a6a0e3ed8a04",
+    "clientMessageId": "7e63cb23-3488-4887-84b2-75b368f04f55",
+    "serverMessageId": "b0bf170a-fda1-452c-8d47-a6a0e3ed8a04",
     "seq": 194,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1552,7 +1746,8 @@
     "timestampMillis": 1768478340000
   },
   {
-    "id": "658a10e3-5be5-4415-b604-519c37dcd0e6",
+    "clientMessageId": "5952dad5-e9f3-4a03-8a42-0937277c597f",
+    "serverMessageId": "658a10e3-5be5-4415-b604-519c37dcd0e6",
     "seq": 195,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1560,7 +1755,8 @@
     "timestampMillis": 1768478400000
   },
   {
-    "id": "c7f19bd4-c17b-4896-9178-72757adcd133",
+    "clientMessageId": "063a075a-42d5-48f9-b1cd-6e15e313afb9",
+    "serverMessageId": "c7f19bd4-c17b-4896-9178-72757adcd133",
     "seq": 196,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1568,7 +1764,8 @@
     "timestampMillis": 1768478415000
   },
   {
-    "id": "c4edfacd-e0b6-4953-9d07-984bdd3afe83",
+    "clientMessageId": "d1171120-acc1-4ba5-abee-0cbdccc6a06e",
+    "serverMessageId": "c4edfacd-e0b6-4953-9d07-984bdd3afe83",
     "seq": 197,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000001",
@@ -1576,7 +1773,8 @@
     "timestampMillis": 1768478460000
   },
   {
-    "id": "62d51cd4-c843-4da5-9e0f-a51afc3a65e8",
+    "clientMessageId": "19388aef-7e69-412a-9017-77b7ecd7295e",
+    "serverMessageId": "62d51cd4-c843-4da5-9e0f-a51afc3a65e8",
     "seq": 198,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1584,7 +1782,8 @@
     "timestampMillis": 1768478520000
   },
   {
-    "id": "9947b5fe-7531-4fa2-90dc-ed4b1c9370f3",
+    "clientMessageId": "139333f1-e5cf-4184-8eda-7d074d731c3c",
+    "serverMessageId": "9947b5fe-7531-4fa2-90dc-ed4b1c9370f3",
     "seq": 199,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",
@@ -1592,7 +1791,8 @@
     "timestampMillis": 1768478530000
   },
   {
-    "id": "b7c6737c-21e9-4c3c-a273-5cfc29d7b066",
+    "clientMessageId": "9d95c705-14fd-4cd8-a033-c8f6fc343d29",
+    "serverMessageId": "b7c6737c-21e9-4c3c-a273-5cfc29d7b066",
     "seq": 200,
     "chatId": "00000000-0000-0000-0000-000000000c01",
     "senderId": "00000000-0000-0000-0000-000000000002",

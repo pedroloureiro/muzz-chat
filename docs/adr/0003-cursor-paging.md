@@ -53,7 +53,7 @@ Each row is a `MessageWithNext`. The query exists for the bubble tail, which is 
 - `insertSeparators { newer, older -> headerAbove(newer, older) }` inserts a `TimestampHeader` above a message when there is more than an hour since the older one. Paging calls it with `older = null` only once the oldest message has loaded, so the first message of the Chat still gets a header.
 
 ### UI
-`ChatViewModel` exposes `Flow<PagingData<ChatItem>>`, cached in `viewModelScope`, separately from `ChatUiState`. The screen collects it with `collectAsLazyPagingItems()` and shows it in a `LazyColumn(reverseLayout = true)`, keyed by each message's `localId`, or its server `id` when it has none.
+`ChatViewModel` exposes `Flow<PagingData<ChatItem>>`, cached in `viewModelScope`, separately from `ChatUiState`. The screen collects it with `collectAsLazyPagingItems()` and shows it in a `LazyColumn(reverseLayout = true)`, keyed by each message's `senderId` and `clientMessageId` (see [ADR-0001](0001-repository-dual-datasource-echo-pattern.md)).
 
 ## Alternatives
 - **UUIDv7 `id` as order and cursor** (the first version): no per-Chat counter on the server, but gaps can only be guessed, and two messages in one millisecond from different servers have an arbitrary order.

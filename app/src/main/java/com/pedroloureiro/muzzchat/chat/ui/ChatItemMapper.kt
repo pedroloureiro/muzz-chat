@@ -34,10 +34,7 @@ object ChatItemMapper {
     fun toMessageItem(row: MessageWithNext): ChatItem.Message {
         val message = row.message
         return ChatItem.Message(
-            messageId = when (message) {
-                is Message.Pending -> message.localId
-                is Message.Confirmed -> message.localId ?: message.id
-            },
+            messageId = "${message.senderId}/${message.clientMessageId}",
             direction = if (message.senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
             content = message.content.value,
             timestampMillis = message.timestampMillis,

@@ -36,11 +36,11 @@ class SendMessageUseCaseTest {
     }
 
     @Test
-    fun message_localIdIsAUniqueUuid() = runTest {
+    fun message_clientMessageIdIsAUniqueUuid() = runTest {
         sendMessage(CHAT_ID, "hello", Users.ME)
         sendMessage(CHAT_ID, "hello", Users.ME)
 
-        val (first, second) = repository.sent.map { it.localId }
+        val (first, second) = repository.sent.map { it.clientMessageId }
         assertEquals(first, UUID.fromString(first).toString())
         assertNotEquals(first, second)
     }

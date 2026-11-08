@@ -4,9 +4,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class MessageDto(
-    val id: String,
+    val clientMessageId: String,
+    val serverMessageId: String,
     val seq: Long,
-    val localId: String? = null,
     val chatId: String,
     val senderId: String,
     val content: ContentDto,

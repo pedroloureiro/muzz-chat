@@ -52,22 +52,22 @@ class ChatRepositoryImplTest {
     private val mockRemote = MockChatRemoteDataSource(mockData)
     private val chat = mockData.loadSeedMessages().first().chatId
     private val message = Message.Pending(
-        localId = "local",
+        clientMessageId = "client",
         chatId = chat,
         senderId = "sender",
         content = Content(ContentType.TEXT, "text"),
         timestampMillis = 1L
     )
     private val echo = MessageDto(
-        id = "server",
+        clientMessageId = "client",
+        serverMessageId = "server",
         seq = 1,
-        localId = "local",
         chatId = chat,
         senderId = "sender",
         content = ContentDto(type = "TEXT", value = "text"),
         timestampMillis = 2L
     )
-    private val otherDeviceMessage = echo.copy(id = "other", seq = 2, localId = null)
+    private val otherDeviceMessage = echo.copy(clientMessageId = "other-client", serverMessageId = "other", seq = 2)
 
     @After
     fun closeDatabase() {
@@ -152,6 +152,35 @@ class ChatRepositoryImplTest {
     }
 
     @Test
+    fun `a resend with the same sender and clientMessageId leaves one message and moves seq once`() = runTest {
+        val repository = repository(mockRemote)
+        repository.getMessages(chat).asSnapshot()
+        startSync(repository)
+        repository.sendMessage(message)
+
+        val resent = mockRemote.sendMessage(chat, message.toDto()).getOrThrow()
+
+        assertEquals(SEED_SIZE + 1, resent.seq)
+        assertEquals(listOf(SEED_SIZE + 1), stored().filter { it.clientMessageId == message.clientMessageId }.map { it.seq })
+        assertEquals(SEED_SIZE + 1, local.syncState(chat)?.newestSeq)
+    }
+
+    @Test
+    fun `the same clientMessageId from another sender is stored as a second message`() = runTest {
+        val repository = repository(mockRemote)
+        repository.getMessages(chat).asSnapshot()
+        startSync(repository)
+        repository.sendMessage(message)
+
+        mockRemote.sendMessage(chat, outgoing(message.clientMessageId).copy(senderId = "other-sender"))
+
+        assertEquals(
+            listOf("other-sender" to SEED_SIZE + 2, message.senderId to SEED_SIZE + 1),
+            stored().filter { it.clientMessageId == message.clientMessageId }.map { it.senderId to it.seq }
+        )
+    }
+
+    @Test
     fun `syncIncomingMessages stores the chat's incoming messages and moves it forward`() = runTest {
         val repository = repository(mockRemote)
         repository.getMessages(chat).asSnapshot()
@@ -192,10 +221,24 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `sendMessage replaces the pending message with the confirmed one when the remote succeeds`() = runTest {
+    fun `sendMessage confirms the pending message from the send response when no echo arrives`() = runTest {
         repository().sendMessage(message)
 
         assertEquals(listOf(echo.toEntity()), stored())
+    }
+
+    @Test
+    fun `an echo that arrives after the send response changes nothing`() = runTest {
+        val repository = repository()
+        local.storeNewestPage(chat, emptyList(), nextCursor = null, hasMore = false)
+        startSync(repository)
+        repository.sendMessage(message)
+        val afterResponse = stored() to local.syncState(chat)
+
+        remote.incoming.emit(echo)
+
+        assertEquals(afterResponse, stored() to local.syncState(chat))
+        assertEquals(1L, local.syncState(chat)?.newestSeq)
     }
 
     @Test
@@ -215,11 +258,11 @@ class ChatRepositoryImplTest {
         launch { repository.sendMessage(message) }
 
         advanceTimeBy(200)
-        assertEquals(listOf(null), stored().map { it.id })
+        assertEquals(listOf(null), stored().map { it.serverMessageId })
         runCurrent()
         val confirmed = stored().single()
-        assertTrue(confirmed.id != null)
-        assertEquals(message.localId, confirmed.localId)
+        assertTrue(confirmed.serverMessageId != null)
+        assertEquals(message.clientMessageId, confirmed.clientMessageId)
     }
 
     @Test
@@ -232,7 +275,7 @@ class ChatRepositoryImplTest {
     }
 
     @Test
-    fun `syncIncomingMessages replaces the pending message its echo carries the localId of`() = runTest {
+    fun `syncIncomingMessages confirms the pending message its echo carries the key of`() = runTest {
         local.insertPending(message.toEntity())
         startSync(repository())
 
@@ -258,7 +301,7 @@ class ChatRepositoryImplTest {
     private suspend fun stored(chatId: String = chat): List<MessageEntity> {
         val params = PagingSource.LoadParams.Refresh<Int>(key = null, loadSize = 1_000, placeholdersEnabled = false)
         val page = local.pagingSource(chatId).load(params) as PagingSource.LoadResult.Page
-        return page.data.map { it.message.copy(rowId = 0) }
+        return page.data.map { it.message }
     }
 
     private suspend fun storedSeqs() = stored().mapNotNull { it.seq }
@@ -269,8 +312,8 @@ class ChatRepositoryImplTest {
         assertEquals((newestFirst.first() downTo newestFirst.last()).toList(), newestFirst)
     }
 
-    private fun outgoing(localId: String) = OutgoingMessageDto(
-        localId = localId,
+    private fun outgoing(clientMessageId: String) = OutgoingMessageDto(
+        clientMessageId = clientMessageId,
         senderId = Users.SARAH.id,
         content = ContentDto(type = "TEXT", value = "text"),
         timestampMillis = 1L
