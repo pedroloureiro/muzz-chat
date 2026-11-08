@@ -2,6 +2,7 @@ package com.pedroloureiro.muzzchat.chat.data.mock
 
 import android.content.Context
 import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.model.MessagePageDto
 import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -16,19 +17,26 @@ class MockData(private val context: Context) {
 
     fun messages(): List<MessageDto> = loadSeedMessages() + storedMessages.value
 
-    fun page(beforeId: String?, limit: Int): List<MessageDto> =
-        messages()
-            .filter { beforeId == null || it.id < beforeId }
-            .sortedByDescending { it.id }
-            .take(limit)
+    fun pageBefore(chatId: String, beforeSeq: Long?, limit: Int): MessagePageDto {
+        val older = messagesIn(chatId).filter { beforeSeq == null || it.seq < beforeSeq }.sortedByDescending { it.seq }
+        return page(older, limit)
+    }
+
+    fun pageAfter(chatId: String, afterSeq: Long, limit: Int): MessagePageDto {
+        val newer = messagesIn(chatId).filter { it.seq > afterSeq }.sortedBy { it.seq }
+        return page(newer, limit)
+    }
 
     @OptIn(ExperimentalUuidApi::class)
-    fun store(outgoing: OutgoingMessageDto): MessageDto =
+    fun store(chatId: String, outgoing: OutgoingMessageDto): MessageDto =
         storedMessages.updateAndGet { stored ->
             if (stored.any { it.localId == outgoing.localId }) return@updateAndGet stored
+            val newestSeq = (loadSeedMessages() + stored).filter { it.chatId == chatId }.maxOfOrNull { it.seq } ?: 0
             stored + MessageDto(
-                id = Uuid.generateV7().toString(),
+                id = Uuid.random().toString(),
+                seq = newestSeq + 1,
                 localId = outgoing.localId,
+                chatId = chatId,
                 senderId = outgoing.senderId,
                 content = outgoing.content,
                 timestampMillis = System.currentTimeMillis()
@@ -39,4 +47,11 @@ class MockData(private val context: Context) {
         context.assets.open(SEED_MESSAGES_ASSET).bufferedReader().use { reader ->
             Json.decodeFromString(reader.readText())
         }
+
+    private fun messagesIn(chatId: String) = messages().filter { it.chatId == chatId }
+
+    private fun page(inDirection: List<MessageDto>, limit: Int): MessagePageDto {
+        val messages = inDirection.take(limit)
+        return MessagePageDto(messages, nextCursor = messages.lastOrNull()?.seq, hasMore = inDirection.size > limit)
+    }
 }

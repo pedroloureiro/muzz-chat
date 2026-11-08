@@ -256,7 +256,9 @@ class ChatItemMapperTest {
 
     private fun message(id: String, sender: User, timestamp: Long, localId: String? = null) = Message.Confirmed(
         id = id,
+        seq = 1L,
         localId = localId,
+        chatId = "chat",
         senderId = sender.id,
         content = Content(ContentType.TEXT, "text $id"),
         timestampMillis = timestamp
@@ -264,6 +266,7 @@ class ChatItemMapperTest {
 
     private fun pending(localId: String) = Message.Pending(
         localId = localId,
+        chatId = "chat",
         senderId = Users.ME.id,
         content = Content(ContentType.TEXT, "text"),
         timestampMillis = t0

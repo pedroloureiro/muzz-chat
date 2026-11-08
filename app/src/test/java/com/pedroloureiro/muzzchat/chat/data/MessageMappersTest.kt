@@ -16,13 +16,16 @@ class MessageMappersTest {
 
     private val pending = Message.Pending(
         localId = "local",
+        chatId = "chat",
         senderId = "sender",
         content = Content(ContentType.TEXT, "text"),
         timestampMillis = 1L
     )
     private val pendingEntity = MessageEntity(
         id = null,
+        seq = null,
         localId = "local",
+        chatId = "chat",
         senderId = "sender",
         contentType = ContentType.TEXT,
         contentValue = "text",
@@ -30,15 +33,17 @@ class MessageMappersTest {
     )
     private val dto = MessageDto(
         id = "server",
+        seq = 7L,
         localId = "local",
+        chatId = "chat",
         senderId = "sender",
         content = ContentDto(type = "TEXT", value = "text"),
         timestampMillis = 2L
     )
-    private val confirmedEntity = pendingEntity.copy(id = "server", timestampMillis = 2L)
+    private val confirmedEntity = pendingEntity.copy(id = "server", seq = 7L, timestampMillis = 2L)
 
     @Test
-    fun `dto toEntity flattens the content and keeps both ids`() {
+    fun `dto toEntity flattens the content and keeps both ids, the seq and the chat`() {
         assertEquals(confirmedEntity, dto.toEntity())
     }
 
@@ -51,7 +56,9 @@ class MessageMappersTest {
     fun `entity with an id maps to a confirmed message`() {
         val expected = Message.Confirmed(
             id = "server",
+            seq = 7L,
             localId = "local",
+            chatId = "chat",
             senderId = "sender",
             content = Content(ContentType.TEXT, "text"),
             timestampMillis = 2L
@@ -68,7 +75,7 @@ class MessageMappersTest {
     }
 
     @Test
-    fun `pending toEntity stores the message without an id`() {
+    fun `pending toEntity stores the message in its chat without an id or seq`() {
         assertEquals(pendingEntity, pending.toEntity())
     }
 

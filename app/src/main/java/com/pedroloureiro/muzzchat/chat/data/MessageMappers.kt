@@ -12,7 +12,9 @@ import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 
 fun MessageDto.toEntity() = MessageEntity(
     id = id,
+    seq = seq,
     localId = localId,
+    chatId = chatId,
     senderId = senderId,
     contentType = ContentType.valueOf(content.type),
     contentValue = content.value,
@@ -22,9 +24,9 @@ fun MessageDto.toEntity() = MessageEntity(
 fun MessageEntity.toMessage(): Message {
     val content = Content(contentType, contentValue)
     return if (id == null) {
-        Message.Pending(checkNotNull(localId), senderId, content, timestampMillis)
+        Message.Pending(checkNotNull(localId), chatId, senderId, content, timestampMillis)
     } else {
-        Message.Confirmed(id, localId, senderId, content, timestampMillis)
+        Message.Confirmed(id, checkNotNull(seq), localId, chatId, senderId, content, timestampMillis)
     }
 }
 
@@ -32,7 +34,9 @@ fun MessageWithNextRow.toMessageWithNext() = MessageWithNext(message.toMessage()
 
 fun Message.Pending.toEntity() = MessageEntity(
     id = null,
+    seq = null,
     localId = localId,
+    chatId = chatId,
     senderId = senderId,
     contentType = content.type,
     contentValue = content.value,

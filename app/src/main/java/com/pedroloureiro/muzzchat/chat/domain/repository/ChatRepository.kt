@@ -6,9 +6,7 @@ import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {
-    fun getMessages(): Flow<PagingData<MessageWithNext>>
-    suspend fun syncIncomingMessages()
+    fun getMessages(chatId: String): Flow<PagingData<MessageWithNext>>
+    suspend fun syncIncomingMessages(chatId: String)
     suspend fun sendMessage(message: Message.Pending)
-    suspend fun loadMessages()
-    suspend fun clearMessages()
 }
