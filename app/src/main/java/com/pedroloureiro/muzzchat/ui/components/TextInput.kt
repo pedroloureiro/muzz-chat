@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
@@ -61,7 +62,10 @@ fun TextInput(
         interactionSource = interactionSource,
         cursorBrush = SolidColor(colorPrimary),
         decorationBox = { innerTextField ->
-            Box(modifier = Modifier.padding(horizontal = Spacing.md, vertical = Spacing.sm)) {
+            Box(
+                modifier = Modifier.padding(horizontal = Spacing.md, vertical = Spacing.sm),
+                contentAlignment = Alignment.CenterStart,
+            ) {
                 if (value.isEmpty()) {
                     Text(text = placeholder, style = textStyle, color = textSecondary)
                 }

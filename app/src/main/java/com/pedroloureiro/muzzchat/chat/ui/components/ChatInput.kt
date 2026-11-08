@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -52,7 +53,9 @@ fun ChatInput(
                 value = inputText,
                 onValueChange = onInputChanged,
                 interactionSource = inputInteractionSource,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .heightIn(min = Dimens.buttonPrimarySize),
                 placeholder = stringResource(R.string.message_placeholder),
                 maxLines = MAX_INPUT_LINES,
             )
