@@ -251,3 +251,13 @@ Composes `TextInput` + `Button (primary)` + `Button (secondary)`. The screen pas
 | Filled | filled | default | default |
 
 - Both buttons enabled when `text.isNotBlank()`
+
+---
+
+### ChatScreen
+Composes `TopBar`, the message list and `ChatInput` in a `Scaffold` on colorBackground. It remembers every interaction source and the list's scroll state, so every component below it is stateless.
+- TopBar: the title is Sarah's name
+- List: the newest message at the bottom, and scrolling up loads older pages. Messages render as `MessageItem` and timestamp headers as `SectionHeader`
+- List spacing: a `Spacing.md` side margin and no vertical padding. The gaps below the bubbles and SectionHeader's padding space the rows
+- When the newest message changes, the list scrolls to it
+- Insets: TopBar applies the status bar inset, and ChatInput the navigation bar and keyboard insets. The list sits between them and applies none, so the keyboard never covers the input

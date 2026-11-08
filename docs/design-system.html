@@ -114,7 +114,7 @@
   .chat-input-wrap { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: white; border: 1px solid #F0F0F0; border-radius: 12px; width: 320px; }
   .ci-field { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
   .ci-field::placeholder { color: #9E9E9E; }
-  .ci-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ci-btn { width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .ci-btn-active { background: #E8175D; }
   .ci-btn-disabled { background: #F2F2F2; cursor: not-allowed; }
   .ci-btn svg { fill: white; }
@@ -123,17 +123,15 @@
   /* ── Chat Preview ── */
   .chat-preview { background: #FFF; border-radius: 24px; border: 1px solid #E0E0E0; overflow: hidden; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
   .chat-topbar { display: flex; align-items: center; padding: 4px 8px; border-bottom: 1px solid #E0E0E0; gap: 4px; }
-  .chat-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; min-height: 300px; }
+  /* The list adds the 16px screen margin and no vertical padding: the gaps below the bubbles space it */
+  .chat-body { padding: 0 16px; display: flex; flex-direction: column; background: #FFFFFF; min-height: 300px; }
+  .chat-body .msg-row { margin-bottom: 8px; }
+  .chat-body .msg-row.grouped { margin-bottom: 2px; }
+  .preview-msg-col { display: flex; flex-direction: column; align-items: flex-end; max-width: 80%; }
+  .preview-msg-col .bubble { max-width: 100%; }
   .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 0; }
-  .pbubble { padding: 8px 12px; border-radius: 18px; max-width: 80%; font-size: 14px; line-height: 20px; }
-  .pbubble.sent { background: #E8175D; color: white; border-bottom-right-radius: 4px; }
-  .pbubble.recv { background: #F2F2F2; color: #1A1A1A; border-bottom-left-radius: 4px; }
-  .pbubble.sent.g { border-top-right-radius: 18px; border-bottom-right-radius: 18px; }
-  .pbubble.recv.g { border-top-left-radius: 18px; border-bottom-left-radius: 18px; }
-  .preview-input-row { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid #F0F0F0; }
-  .preview-input { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
-  .preview-send { width: 40px; height: 40px; border-radius: 50%; background: #E8175D; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .preview-send svg { fill: white; }
+  .preview-input { display: flex; flex-direction: column; gap: 8px; background: white; border-top: 1px solid #E0E0E0; padding: 8px 16px; }
+  .preview-input-row { display: flex; align-items: center; gap: 8px; }
 </style>
 </head>
 <body>
@@ -543,20 +541,32 @@
   </div>
   <div class="chat-body">
     <div class="preview-section-header">Thursday 11:59</div>
-    <div class="msg-row recv"><div class="pbubble recv">Wowsa sounds fun</div></div>
-    <div class="msg-row recv grouped"><div class="pbubble recv g">Yeh for sure that works. What time do you think?</div></div>
-    <div class="msg-row sent"><div class="pbubble sent">Does 7pm work for you? I've got to go pick up my little brother first from a party</div></div>
-    <div class="msg-row recv"><div class="pbubble recv">Ok cool!</div></div>
-    <div class="msg-row sent"><div class="pbubble sent">What are you up to today?</div></div>
-    <div class="msg-row recv"><div class="pbubble recv">Nothing much</div></div>
-    <div class="msg-row recv grouped"><div class="pbubble recv g">Actually just about to go shopping, got any recommendations for a good shoe shop?</div></div>
-    <div class="msg-row recv grouped"><div class="pbubble recv g">The last one went on for hours</div></div>
+    <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Wowsa sounds fun</span></div>
+    <div class="msg-row recv"><span class="bubble bubble-recv">Yeh for sure that works. What time do you think?</span></div>
+    <div class="msg-row sent"><span class="bubble bubble-sent">Does 7pm work for you? I've got to go pick up my little brother first from a party</span></div>
+    <div class="msg-row recv"><span class="bubble bubble-recv">Ok cool!</span></div>
+    <div class="preview-section-header">09:14</div>
+    <div class="msg-row sent"><span class="bubble bubble-sent">What are you up to today?</span></div>
+    <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Nothing much</span></div>
+    <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Actually just about to go shopping, got any recommendations for a good shoe shop?</span></div>
+    <div class="msg-row recv"><span class="bubble bubble-recv">The last one went on for hours</span></div>
+    <div class="msg-row sent">
+      <div class="preview-msg-col">
+        <span class="bubble bubble-sent bubble-sending">Try the one on the high street!</span>
+        <div class="sending-indicator sending-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
   </div>
-  <div class="preview-input-row">
-    <input class="preview-input" placeholder="Message…" />
-    <button class="preview-send">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-    </button>
+  <div class="preview-input">
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
+    </div>
+    <div class="preview-input-row">
+      <input class="ci-field" placeholder="Message…" readonly />
+      <button class="ci-btn ci-btn-disabled" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
+      </button>
+    </div>
   </div>
 </div>
 
