@@ -65,4 +65,4 @@ Each row is a `MessageWithNext`. The query exists for the bubble tail, which is 
 - The server has to assign `seq` atomically per Chat, which serialises writes within a Chat.
 - Room's generated `PagingSource` uses `LIMIT/OFFSET` locally. Room invalidates it on every write, so it does not drift, and an offset over local indexed rows is fast.
 - `chat/domain` depends on `paging-common`, a plain Kotlin library, and has a `MessageWithNext` row model. Both are listed in the accepted deviations in [`architecture.md`](../architecture.md#accepted-deviations).
-- Tests cover `ChatItemMapper`'s rules directly and its paging wiring with `asSnapshot()`, along with the `RemoteMediator`, catch-up and gap handling in the repository, the paged query and sync state, and the mock's paging.
+- Tests cover `ChatItemMapper`'s rules directly and its paging wiring with `asSnapshot()`, along with the `RemoteMediator`, catch-up and gap handling in the repository, and the paged query and sync state. The mock is exercised through the repository tests, not tested on its own.
