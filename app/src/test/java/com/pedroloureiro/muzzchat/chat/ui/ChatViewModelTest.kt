@@ -3,6 +3,7 @@ package com.pedroloureiro.muzzchat.chat.ui
 import androidx.paging.PagingData
 import androidx.paging.testing.asSnapshot
 import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.OtherUserDevice
 import com.pedroloureiro.muzzchat.chat.domain.SendMessageUseCase
 import com.pedroloureiro.muzzchat.chat.domain.models.Content
 import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
@@ -27,12 +28,13 @@ import org.junit.Test
 class ChatViewModelTest {
 
     private val repository = FakeChatRepository()
+    private val otherUser = FakeOtherUserDevice()
     private lateinit var viewModel: ChatViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = ChatViewModel(CHAT_ID, repository, SendMessageUseCase(repository))
+        viewModel = ChatViewModel(CHAT_ID, repository, SendMessageUseCase(repository), otherUser)
     }
 
     @After
@@ -61,10 +63,10 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun sendMessage_sendsInputAsMe() {
+    fun send_sendsInputAsMe() {
         viewModel.onInputChanged("hello")
 
-        viewModel.sendMessage()
+        viewModel.send()
 
         val sent = repository.sent.single()
         assertEquals(Users.ME.id, sent.senderId)
@@ -73,29 +75,39 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun sendAsOther_sendsInputAsSarah() {
+    fun sendAsOther_sendsTrimmedInputThroughTheOtherUsersDevice() {
+        viewModel.onInputChanged("  hello  ")
+
+        viewModel.sendAsOther()
+
+        assertEquals(listOf(CHAT_ID to "hello"), otherUser.sent)
+        assertEquals(emptyList<Message.Pending>(), repository.sent)
+    }
+
+    @Test
+    fun sendAsOther_clearsInput() {
         viewModel.onInputChanged("hello")
 
         viewModel.sendAsOther()
 
-        assertEquals(Users.SARAH.id, repository.sent.single().senderId)
+        assertEquals("", viewModel.uiState.value.inputText)
     }
 
     @Test
     fun send_clearsInputBeforeTheSendFinishes() {
         viewModel.onInputChanged("hello")
 
-        viewModel.sendMessage()
+        viewModel.send()
 
         assertEquals(1, repository.sent.size)
         assertEquals("", viewModel.uiState.value.inputText)
     }
 
     @Test
-    fun sendMessage_blankInput_isNoOp() {
+    fun send_blankInput_isNoOp() {
         viewModel.onInputChanged("  \n ")
 
-        viewModel.sendMessage()
+        viewModel.send()
 
         assertEquals(emptyList<Message.Pending>(), repository.sent)
         assertEquals("  \n ", viewModel.uiState.value.inputText)
@@ -107,7 +119,7 @@ class ChatViewModelTest {
 
         viewModel.sendAsOther()
 
-        assertEquals(emptyList<Message.Pending>(), repository.sent)
+        assertEquals(emptyList<Pair<String, String>>(), otherUser.sent)
         assertEquals("  \n ", viewModel.uiState.value.inputText)
     }
 
@@ -129,6 +141,14 @@ class ChatViewModelTest {
         override suspend fun sendMessage(message: Message.Pending) {
             sent += message
             awaitCancellation()
+        }
+    }
+
+    private class FakeOtherUserDevice : OtherUserDevice {
+        val sent = mutableListOf<Pair<String, String>>()
+
+        override suspend fun send(chatId: String, text: String) {
+            sent += chatId to text
         }
     }
 

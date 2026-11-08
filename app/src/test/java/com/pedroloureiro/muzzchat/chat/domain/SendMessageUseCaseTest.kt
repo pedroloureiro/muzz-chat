@@ -22,22 +22,22 @@ class SendMessageUseCaseTest {
 
     @Test
     fun blankText_sendsNothing() = runTest {
-        sendMessage(CHAT_ID, "  \n\t ", Users.ME)
+        sendMessage(CHAT_ID, "  \n\t ")
 
         assertEquals(emptyList<Message.Pending>(), repository.sent)
     }
 
     @Test
     fun textIsTrimmed() = runTest {
-        sendMessage(CHAT_ID, "  hello  ", Users.ME)
+        sendMessage(CHAT_ID, "  hello  ")
 
         assertEquals("hello", repository.sent.single().content.value)
     }
 
     @Test
     fun message_clientMessageIdIsAUniqueUuid() = runTest {
-        sendMessage(CHAT_ID, "hello", Users.ME)
-        sendMessage(CHAT_ID, "hello", Users.ME)
+        sendMessage(CHAT_ID, "hello")
+        sendMessage(CHAT_ID, "hello")
 
         val (first, second) = repository.sent.map { it.clientMessageId }
         assertEquals(first, UUID.fromString(first).toString())
@@ -48,28 +48,28 @@ class SendMessageUseCaseTest {
     fun message_timestampIsTheDeviceTime() = runTest {
         val before = System.currentTimeMillis()
 
-        sendMessage(CHAT_ID, "hello", Users.ME)
+        sendMessage(CHAT_ID, "hello")
 
         assertTrue(repository.sent.single().timestampMillis in before..System.currentTimeMillis())
     }
 
     @Test
-    fun message_usesSenderId() = runTest {
-        sendMessage(CHAT_ID, "hello", Users.SARAH)
+    fun message_isFromMe() = runTest {
+        sendMessage(CHAT_ID, "hello")
 
-        assertEquals(Users.SARAH.id, repository.sent.single().senderId)
+        assertEquals(Users.ME.id, repository.sent.single().senderId)
     }
 
     @Test
     fun message_isInTheChat() = runTest {
-        sendMessage(CHAT_ID, "hello", Users.ME)
+        sendMessage(CHAT_ID, "hello")
 
         assertEquals(CHAT_ID, repository.sent.single().chatId)
     }
 
     @Test
     fun message_isText() = runTest {
-        sendMessage(CHAT_ID, "hello", Users.ME)
+        sendMessage(CHAT_ID, "hello")
 
         assertEquals(Content(ContentType.TEXT, "hello"), repository.sent.single().content)
     }

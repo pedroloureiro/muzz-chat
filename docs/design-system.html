@@ -61,6 +61,9 @@
   .btn-primary-pressed { background: #C01048; color: white; border-radius: 50%; width: 44px; height: 44px; }
   .btn-primary-disabled { background: #F2F2F2; color: #BDBDBD; border-radius: 50%; width: 44px; height: 44px; cursor: not-allowed; }
   .btn-icon { font-size: 18px; }
+  .btn-floating { background: white; border: 1.5px solid #E0E0E0; border-radius: 50%; width: 44px; height: 44px; }
+  .btn-floating-pressed { background: #F5F5F5; border: 1.5px solid #BDBDBD; border-radius: 50%; width: 44px; height: 44px; transform: scale(0.95); }
+  .btn-floating-disabled { background: white; border: 1.5px solid #E0E0E0; border-radius: 50%; width: 44px; height: 44px; opacity: 0.6; cursor: not-allowed; }
 
   /* ── TextInput states ── */
   .text-input { width: 220px; border-radius: 24px; padding: 8px 16px; font-size: 14px; font-family: inherit; border: none; outline: none; }
@@ -104,17 +107,11 @@
   .topbar-name-text { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 
-  /* ── SendAsOther button ── */
-  .send-as-btn { display: inline-flex; align-items: center; gap: 4px; border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.1s; }
-  .send-as-default { background: white; color: #9E9E9E; border: 1.5px solid #E0E0E0; }
-  .send-as-pressed { background: #F5F5F5; color: #9E9E9E; border: 1.5px solid #BDBDBD; transform: scale(0.97); }
-  .send-as-disabled { background: white; color: #BDBDBD; border: 1.5px solid #E0E0E0; cursor: not-allowed; opacity: 0.6; }
 
   /* ── ChatInput states ── */
-  .chat-input-wrap { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: white; border: 1px solid #F0F0F0; border-radius: 12px; width: 320px; }
-  .ci-field { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
+  .ci-field { flex: 1; min-height: 44px; box-sizing: border-box; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
   .ci-field::placeholder { color: #9E9E9E; }
-  .ci-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .ci-btn { width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .ci-btn-active { background: #E8175D; }
   .ci-btn-disabled { background: #F2F2F2; cursor: not-allowed; }
   .ci-btn svg { fill: white; }
@@ -123,17 +120,16 @@
   /* ── Chat Preview ── */
   .chat-preview { background: #FFF; border-radius: 24px; border: 1px solid #E0E0E0; overflow: hidden; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
   .chat-topbar { display: flex; align-items: center; padding: 4px 8px; border-bottom: 1px solid #E0E0E0; gap: 4px; }
-  .chat-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; min-height: 300px; }
+  /* The list adds the 16px screen margin and no vertical padding: the gaps below the bubbles space it */
+  .chat-body { padding: 0 16px; display: flex; flex-direction: column; background: #FFFFFF; min-height: 300px; }
+  .chat-body .msg-row { margin-bottom: 8px; }
+  .chat-body .msg-row.grouped { margin-bottom: 2px; }
+  .preview-msg-col { display: flex; flex-direction: column; align-items: flex-end; max-width: 80%; }
+  .preview-msg-col .bubble { max-width: 100%; }
   .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 0; }
-  .pbubble { padding: 8px 12px; border-radius: 18px; max-width: 80%; font-size: 14px; line-height: 20px; }
-  .pbubble.sent { background: #E8175D; color: white; border-bottom-right-radius: 4px; }
-  .pbubble.recv { background: #F2F2F2; color: #1A1A1A; border-bottom-left-radius: 4px; }
-  .pbubble.sent.g { border-top-right-radius: 18px; border-bottom-right-radius: 18px; }
-  .pbubble.recv.g { border-top-left-radius: 18px; border-bottom-left-radius: 18px; }
-  .preview-input-row { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid #F0F0F0; }
-  .preview-input { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
-  .preview-send { width: 40px; height: 40px; border-radius: 50%; background: #E8175D; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .preview-send svg { fill: white; }
+  .ci-bar { background: white; border-top: 1px solid #E0E0E0; padding: 8px 16px; }
+  .preview-input-row { display: flex; align-items: flex-end; gap: 8px; }
+  .preview-input-row .btn { flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -170,8 +166,8 @@
   <tr><td class="token-name">colorSurface</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Top bar, input bar surface</td></tr>
   <tr><td class="token-name">colorSurfaceVariant</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="role-ref">Neutral200</td><td class="token-desc">Received bubble bg, input focus ring bg</td></tr>
   <tr><td class="token-name">colorInputBackground</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="role-ref">Neutral100</td><td class="token-desc">TextInput field background</td></tr>
-  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border, secondary button border</td></tr>
-  <tr><td class="token-name">colorBorderPressed</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Secondary button border when pressed</td></tr>
+  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border, floating button border</td></tr>
+  <tr><td class="token-name">colorBorderPressed</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Floating button border when pressed</td></tr>
   <tr><td class="token-name">textPrimary</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="role-ref">Neutral900</td><td class="token-desc">Message text on received bubbles, top bar</td></tr>
   <tr><td class="token-name">textSecondary</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="role-ref">Neutral500</td><td class="token-desc">Section headers, timestamps, placeholder</td></tr>
   <tr><td class="token-name">textDisabled</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Disabled input text, disabled button icon</td></tr>
@@ -199,8 +195,8 @@
   <div style="font-size:12px;line-height:16px;color:#9E9E9E;">11:59</div>
 </div>
 <div class="type-row">
-  <div class="type-meta"><div class="type-label">labelLarge</div><div class="type-spec">14sp / lh 20sp / SemiBold</div><div class="type-role">color: textSecondary · textOnPrimary (Avatar initial)</div></div>
-  <div style="font-size:14px;line-height:20px;font-weight:600;color:#9E9E9E;">Reply as Sarah</div>
+  <div class="type-meta"><div class="type-label">labelLarge</div><div class="type-spec">14sp / lh 20sp / SemiBold</div><div class="type-role">color: textOnPrimary (Avatar initial)</div></div>
+  <div class="avatar-md">S</div>
 </div>
 <div class="type-row">
   <div class="type-meta"><div class="type-label">labelSmall</div><div class="type-spec">11sp / lh 16sp / SemiBold · 0 tracking</div><div class="type-role">color: textSecondary</div></div>
@@ -285,7 +281,7 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">Button</div>
-    <div class="component-subtitle">Generic configurable action button — variant: primary | secondary</div>
+    <div class="component-subtitle">Generic configurable action button — variant: primary | floating</div>
   </div>
 
   <h3>variant = primary</h3>
@@ -313,22 +309,22 @@
     </div>
   </div>
 
-  <h3>variant = secondary (outlined pill)</h3>
+  <h3>variant = floating (outlined circle)</h3>
   <div class="states-grid">
     <div class="state-card">
       <div class="state-label active">Default</div>
-      <button class="send-as-btn send-as-default">↩ Reply as Sarah</button>
-      <div class="state-props">bg: colorSurface<br>text: textSecondary<br>border: colorBorder<br>shape: 20dp pill</div>
+      <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <div class="state-props">bg: colorSurface<br>icon: textPrimary<br>border: borderWidth colorBorder<br>shape: circle, 44dp</div>
     </div>
     <div class="state-card">
       <div class="state-label active">Pressed</div>
-      <button class="send-as-btn send-as-pressed">↩ Reply as Sarah</button>
-      <div class="state-props">bg: colorInputBackground<br>border: colorBorderPressed<br>scale: 0.97</div>
+      <button class="btn btn-floating-pressed"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <div class="state-props">bg: colorInputBackground<br>border: colorBorderPressed<br>scale: 0.95</div>
     </div>
     <div class="state-card">
       <div class="state-label">Disabled</div>
-      <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
-      <div class="state-props">text: textDisabled<br>border: colorBorder<br>opacity: 0.6<br>not clickable</div>
+      <button class="btn btn-floating-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <div class="state-props">icon: textDisabled<br>border: colorBorder<br>opacity: 0.6<br>not clickable</div>
     </div>
   </div>
 </div>
@@ -493,38 +489,60 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">ChatInput</div>
-    <div class="component-subtitle">Composes TextInput + Button — chat-specific bottom bar</div>
+    <div class="component-subtitle">The message input — composes TextInput + Button (primary)</div>
   </div>
   <div class="states-grid">
     <div class="state-card" style="min-width:360px;">
-      <div class="state-label active">Empty — all disabled</div>
-      <div style="display:flex;flex-direction:column;gap:8px;background:white;border-top:1px solid #E0E0E0;padding:8px 16px;width:320px;">
-        <div style="display:flex;justify-content:flex-end;">
-          <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
-        </div>
-        <div class="chat-input-wrap" style="border:none;border-radius:0;padding:0;width:auto;background:none;">
+      <div class="state-label active">Empty</div>
+      <div class="ci-bar">
+        <div class="preview-input-row">
           <input class="ci-field" placeholder="Message…" readonly />
-          <button class="ci-btn ci-btn-disabled" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-          </button>
+          <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
         </div>
       </div>
-      <div class="state-props">TextInput: empty<br>Button: disabled<br>SendAsOther: disabled<br>both enabled when text.isNotBlank()</div>
+      <div class="state-props">TextInput: empty<br>Send: disabled<br>enabled when text.isNotBlank()</div>
     </div>
     <div class="state-card" style="min-width:360px;">
-      <div class="state-label active">Filled — both enabled</div>
-      <div style="display:flex;flex-direction:column;gap:8px;background:white;border-top:1px solid #E0E0E0;padding:8px 16px;width:320px;">
-        <div style="display:flex;justify-content:flex-end;">
-          <button class="send-as-btn send-as-default">↩ Reply as Sarah</button>
-        </div>
-        <div class="chat-input-wrap" style="border:none;border-radius:0;padding:0;width:auto;background:none;">
+      <div class="state-label active">Filled</div>
+      <div class="ci-bar">
+        <div class="preview-input-row">
           <input class="ci-field" value="Hey, Sara looks great" readonly />
-          <button class="ci-btn ci-btn-active">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-          </button>
+          <button class="ci-btn ci-btn-active"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
         </div>
       </div>
-      <div class="state-props">TextInput: filled<br>Send: enabled (sends as you)<br>SendAsOther: enabled (sends as Sarah)</div>
+      <div class="state-props">TextInput: filled, grows to 8 lines then scrolls<br>Send: enabled, bottom-aligned</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MockChatInput ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">MockChatInput</div>
+    <div class="component-subtitle">Mock data — ChatInput with a "Reply as Sarah" button after Send</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card" style="min-width:360px;">
+      <div class="state-label active">Empty</div>
+      <div style="width:352px;"><div class="ci-bar">
+        <div class="preview-input-row">
+          <input class="ci-field" placeholder="Message…" readonly />
+          <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+          <button class="btn btn-floating-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><g transform="translate(-1.8,-0.4)"><path d="M12.5,6 C12,4.6 10.7,4 9,4 C6.8,4 5,5.2 5,7.1 C5,9.1 6.8,9.9 9,10.4 C11.3,10.9 13,11.8 13,14 C13,16.1 11.2,17.3 9,17.3 C7.1,17.3 5.5,16.5 4.8,15" fill="none" stroke="#BDBDBD" stroke-width="2.2" stroke-linecap="round"/><g transform="translate(14.6,13.5) scale(0.4)"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></g></g></svg></button>
+        </div>
+      </div></div>
+      <div class="state-props">ChatInput: Empty<br>Reply as Sarah: floating, ic_send_as_other, disabled</div>
+    </div>
+    <div class="state-card" style="min-width:360px;">
+      <div class="state-label active">Filled</div>
+      <div style="width:352px;"><div class="ci-bar">
+        <div class="preview-input-row">
+          <input class="ci-field" value="Hey, Sara looks great" readonly />
+          <button class="ci-btn ci-btn-active"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+          <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><g transform="translate(-1.8,-0.4)"><path d="M12.5,6 C12,4.6 10.7,4 9,4 C6.8,4 5,5.2 5,7.1 C5,9.1 6.8,9.9 9,10.4 C11.3,10.9 13,11.8 13,14 C13,16.1 11.2,17.3 9,17.3 C7.1,17.3 5.5,16.5 4.8,15" fill="none" stroke="#1A1A1A" stroke-width="2.2" stroke-linecap="round"/><g transform="translate(14.6,13.5) scale(0.4)"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></g></g></svg></button>
+        </div>
+      </div></div>
+      <div class="state-props">ChatInput: Filled<br>Reply as Sarah: enabled, sends as Sarah through the mock server</div>
     </div>
   </div>
 </div>
@@ -543,21 +561,29 @@
   </div>
   <div class="chat-body">
     <div class="preview-section-header">Thursday 11:59</div>
-    <div class="msg-row recv"><div class="pbubble recv">Wowsa sounds fun</div></div>
-    <div class="msg-row recv grouped"><div class="pbubble recv g">Yeh for sure that works. What time do you think?</div></div>
-    <div class="msg-row sent"><div class="pbubble sent">Does 7pm work for you? I've got to go pick up my little brother first from a party</div></div>
-    <div class="msg-row recv"><div class="pbubble recv">Ok cool!</div></div>
-    <div class="msg-row sent"><div class="pbubble sent">What are you up to today?</div></div>
-    <div class="msg-row recv"><div class="pbubble recv">Nothing much</div></div>
-    <div class="msg-row recv grouped"><div class="pbubble recv g">Actually just about to go shopping, got any recommendations for a good shoe shop?</div></div>
-    <div class="msg-row recv grouped"><div class="pbubble recv g">The last one went on for hours</div></div>
+    <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Wowsa sounds fun</span></div>
+    <div class="msg-row recv"><span class="bubble bubble-recv">Yeh for sure that works. What time do you think?</span></div>
+    <div class="msg-row sent"><span class="bubble bubble-sent">Does 7pm work for you? I've got to go pick up my little brother first from a party</span></div>
+    <div class="msg-row recv"><span class="bubble bubble-recv">Ok cool!</span></div>
+    <div class="preview-section-header">09:14</div>
+    <div class="msg-row sent"><span class="bubble bubble-sent">What are you up to today?</span></div>
+    <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Nothing much</span></div>
+    <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Actually just about to go shopping, got any recommendations for a good shoe shop?</span></div>
+    <div class="msg-row recv"><span class="bubble bubble-recv">The last one went on for hours</span></div>
+    <div class="msg-row sent">
+      <div class="preview-msg-col">
+        <span class="bubble bubble-sent bubble-sending">Try the one on the high street!</span>
+        <div class="sending-indicator sending-dots"><span></span><span></span><span></span></div>
+      </div>
+    </div>
   </div>
-  <div class="preview-input-row">
-    <input class="preview-input" placeholder="Message…" />
-    <button class="preview-send">
-      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-    </button>
-  </div>
+  <div class="ci-bar">
+        <div class="preview-input-row">
+          <input class="ci-field" placeholder="Message…" readonly />
+          <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+          <button class="btn btn-floating-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><g transform="translate(-1.8,-0.4)"><path d="M12.5,6 C12,4.6 10.7,4 9,4 C6.8,4 5,5.2 5,7.1 C5,9.1 6.8,9.9 9,10.4 C11.3,10.9 13,11.8 13,14 C13,16.1 11.2,17.3 9,17.3 C7.1,17.3 5.5,16.5 4.8,15" fill="none" stroke="#BDBDBD" stroke-width="2.2" stroke-linecap="round"/><g transform="translate(14.6,13.5) scale(0.4)"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></g></g></svg></button>
+        </div>
+      </div>
 </div>
 
 </body>

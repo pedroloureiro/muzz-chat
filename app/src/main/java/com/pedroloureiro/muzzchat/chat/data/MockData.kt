@@ -4,6 +4,7 @@ import android.content.Context
 import com.pedroloureiro.muzzchat.chat.data.remote.models.MessageDto
 import com.pedroloureiro.muzzchat.chat.data.remote.models.MessagePageDto
 import com.pedroloureiro.muzzchat.chat.data.remote.models.OutgoingMessageDto
+import java.io.File
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,9 +12,11 @@ import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.serialization.json.Json
 
 private const val SEED_MESSAGES_ASSET = "mock_messages.json"
+private const val SENT_MESSAGES_FILE = "mock_sent_messages.json"
 
 class MockData(private val context: Context) {
-    private val storedMessages = MutableStateFlow(emptyList<MessageDto>())
+    private val sentMessagesFile = File(context.filesDir, SENT_MESSAGES_FILE)
+    private val storedMessages = MutableStateFlow(loadSentMessages())
 
     fun messages(): List<MessageDto> = loadSeedMessages() + storedMessages.value
 
@@ -41,12 +44,16 @@ class MockData(private val context: Context) {
                 content = outgoing.content,
                 timestampMillis = System.currentTimeMillis()
             )
-        }.single { it.isResendOf(outgoing) }
+        }.also { sentMessagesFile.writeText(Json.encodeToString(it)) }
+            .single { it.isResendOf(outgoing) }
 
     fun loadSeedMessages(): List<MessageDto> =
         context.assets.open(SEED_MESSAGES_ASSET).bufferedReader().use { reader ->
             Json.decodeFromString(reader.readText())
         }
+
+    private fun loadSentMessages(): List<MessageDto> =
+        if (sentMessagesFile.exists()) Json.decodeFromString(sentMessagesFile.readText()) else emptyList()
 
     private fun MessageDto.isResendOf(outgoing: OutgoingMessageDto) =
         senderId == outgoing.senderId && clientMessageId == outgoing.clientMessageId

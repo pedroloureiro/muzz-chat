@@ -231,13 +231,39 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The mock backend keeps sent messages only in memory
+## The mock backend keeps sent messages in a file
 
-**Decision:** `MockData` keeps sent messages in memory, after the seed messages.
+**Decision:** `MockData` writes the messages sent to it to a JSON file in the app's files directory after each one, and reads them back when it is created, after the seed messages.
 
-**Limitation:** The mock forgets them when the process dies, so after a restart they survive only in Room.
+**Limitation:** The file is rewritten in full on every send, and it is cleared only with the app's data, along with Room.
 
-**Trade-off:** This makes the mock behave like a server without adding storage to a fake one.
+**Trade-off:** A server never reuses a `seq`. A mock that forgot its sent messages on restart would give the next send a `seq` Room already stores, and storing it would break the unique `(chatId, seq)` key. The file keeps the mock's history in step with Room, without a database for a fake server.
 
 **To support a real backend:**
 1. Replace `mockBackendModule`. The server then owns history and it survives restarts.
+
+---
+
+## The message list follows new messages while the newest is in view
+
+**Decision:** When a new message becomes the newest and the list was showing the newest rows, `ChatScreen` scrolls to it, whoever sent it. Send and Reply as Sarah first snap the list to the newest message, so what they send always comes into view. Deep in history the newest rows are unloaded paging placeholders, so without the snap the message could not be seen arriving. Otherwise the list stays where it is, and the jump-to-latest button shows while the newest message is out of view.
+
+**Limitation:** A message that arrives while the user is reading older history gives no sign of itself beyond the jump-to-latest button, which shows whenever the newest message is out of view, new or not. "Showing the newest rows" means the first visible row is within two of the newest, which allows for a new message and its header pushing the old newest down.
+
+**Trade-off:** The user keeps their place in older history, and sees new messages as they arrive when at the bottom. A new-message count would need the screen to track what the user has seen.
+
+**To show new messages:**
+1. Count the messages that arrive while the newest message is out of view, and show the count on the jump-to-latest button.
+
+---
+
+## A change during a paging source's first load is not lost
+
+**Decision:** `RoomChatLocalDataSource` wraps each Room paging source in `FirstLoadSafePagingSource`. While the source's first load runs, it watches the `messages` table through Room's invalidation tracker. If the table changed during that load, it invalidates the source once the load returns. Later changes are left to Room.
+
+**Limitation:** A change reported during the first load always causes one more refresh, even when the load already read it, for example a write that committed just before the load's read but was reported just after.
+
+**Trade-off:** Room 2.8.5's `LimitOffsetPagingSource` acts on a change only after its first load has completed (`if (refreshComplete.get()) invalidate()` in `CommonLimitOffsetImpl`), and drops one reported earlier. On the emulator, a sent message's echo committed during the refresh its pending insert had started, and the bubble stayed `SENDING` while Room held it confirmed. Watching only the first load fixes exactly that window. Invalidating after every local write fixed it too, but reloaded the list for writes Room already handles.
+
+**To remove it:**
+1. Delete `FirstLoadSafePagingSource` once a Room release keeps a change reported during the first load, and its test that changes the table during the first load passes against Room's own paging source.

@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.SolidColor
@@ -38,6 +39,7 @@ fun TextInput(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     enabled: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
     val shape = ComponentShapes.textInput
@@ -55,11 +57,15 @@ fun TextInput(
             .background(colorInputBackground, shape)
             .then(focusRing),
         enabled = enabled,
+        maxLines = maxLines,
         textStyle = textStyle.copy(color = if (enabled) textPrimary else textDisabled),
         interactionSource = interactionSource,
         cursorBrush = SolidColor(colorPrimary),
         decorationBox = { innerTextField ->
-            Box(modifier = Modifier.padding(horizontal = Spacing.md, vertical = Spacing.sm)) {
+            Box(
+                modifier = Modifier.padding(horizontal = Spacing.md, vertical = Spacing.sm),
+                contentAlignment = Alignment.CenterStart,
+            ) {
                 if (value.isEmpty()) {
                     Text(text = placeholder, style = textStyle, color = textSecondary)
                 }

@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -41,9 +39,9 @@ import com.pedroloureiro.muzzchat.ui.theme.colorPrimaryPressed
 import com.pedroloureiro.muzzchat.ui.theme.colorSurface
 import com.pedroloureiro.muzzchat.ui.theme.textDisabled
 import com.pedroloureiro.muzzchat.ui.theme.textOnPrimary
-import com.pedroloureiro.muzzchat.ui.theme.textSecondary
+import com.pedroloureiro.muzzchat.ui.theme.textPrimary
 
-enum class ButtonVariant { PRIMARY, SECONDARY }
+enum class ButtonVariant { PRIMARY, FLOATING }
 
 @Composable
 fun Button(
@@ -57,7 +55,7 @@ fun Button(
 ) {
     when (variant) {
         ButtonVariant.PRIMARY -> PrimaryButton(onClick, interactionSource, modifier, icon, label, enabled)
-        ButtonVariant.SECONDARY -> SecondaryButton(onClick, interactionSource, modifier, icon, label, enabled)
+        ButtonVariant.FLOATING -> FloatingButton(onClick, interactionSource, modifier, icon, label, enabled)
     }
 }
 
@@ -100,42 +98,37 @@ private fun PrimaryButton(
 }
 
 @Composable
-private fun SecondaryButton(
+private fun FloatingButton(
     onClick: () -> Unit,
     interactionSource: MutableInteractionSource,
     modifier: Modifier,
     icon: ImageVector?,
-    label: String?,
+    contentDescription: String?,
     enabled: Boolean,
 ) {
     val isPressed by interactionSource.collectIsPressedAsState()
     val scale by animateFloatAsState(
-        targetValue = if (isPressed) Scale.buttonSecondaryPressed else 1f,
-        label = "secondaryButtonScale",
+        targetValue = if (isPressed) Scale.buttonFloatingPressed else 1f,
+        label = "floatingButtonScale",
     )
-    val shape = ComponentShapes.buttonSecondary
-    val contentColor = if (enabled) textSecondary else textDisabled
-    Row(
+    val shape = ComponentShapes.buttonFloating
+    Box(
         modifier = modifier
             .scale(scale)
             .alpha(if (enabled) 1f else Alpha.disabled)
+            .size(Dimens.buttonPrimarySize)
             .background(if (isPressed) colorInputBackground else colorSurface, shape)
             .border(Dimens.borderWidth, if (isPressed) colorBorderPressed else colorBorder, shape)
-            .clickable(interactionSource, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
-            .padding(horizontal = Spacing.md, vertical = Spacing.sm),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
-        verticalAlignment = Alignment.CenterVertically,
+            .clickable(interactionSource, indication = null, enabled = enabled, role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center,
     ) {
         if (icon != null) {
             Icon(
                 imageVector = icon,
-                contentDescription = null,
+                contentDescription = contentDescription,
                 modifier = Modifier.size(Dimens.iconSize),
-                tint = contentColor,
+                tint = if (enabled) textPrimary else textDisabled,
             )
-        }
-        if (label != null) {
-            Text(text = label, style = MaterialTheme.typography.labelLarge, color = contentColor)
         }
     }
 }
@@ -163,7 +156,7 @@ private fun PrimaryButtonPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun SecondaryButtonPreview() {
+private fun FloatingButtonPreview() {
     MuzzChatTheme {
         Row(
             modifier = Modifier.padding(Spacing.md),
@@ -173,9 +166,9 @@ private fun SecondaryButtonPreview() {
                 Button(
                     onClick = {},
                     interactionSource = remember { MutableInteractionSource() },
-                    variant = ButtonVariant.SECONDARY,
-                    icon = ImageVector.vectorResource(R.drawable.ic_reply),
-                    label = "Reply as Sarah",
+                    variant = ButtonVariant.FLOATING,
+                    icon = ImageVector.vectorResource(R.drawable.ic_arrow_down),
+                    label = "Jump to latest",
                     enabled = enabled,
                 )
             }
