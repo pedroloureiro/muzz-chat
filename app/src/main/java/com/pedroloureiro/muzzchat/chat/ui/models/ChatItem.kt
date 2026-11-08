@@ -1,6 +1,6 @@
-package com.pedroloureiro.muzzchat.chat.ui.model
+package com.pedroloureiro.muzzchat.chat.ui.models
 
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
+import com.pedroloureiro.muzzchat.chat.domain.models.MessageDeliveryStatus
 
 sealed class ChatItem {
     abstract val key: String

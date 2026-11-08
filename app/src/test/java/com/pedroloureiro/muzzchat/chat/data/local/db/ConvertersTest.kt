@@ -1,6 +1,6 @@
 package com.pedroloureiro.muzzchat.chat.data.local.db
 
-import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
+import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -1,12 +1,11 @@
-package com.pedroloureiro.muzzchat.chat.domain.usecase
+package com.pedroloureiro.muzzchat.chat.domain
 
 import androidx.paging.PagingData
-import com.pedroloureiro.muzzchat.chat.domain.model.Content
-import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
-import com.pedroloureiro.muzzchat.chat.domain.model.Message
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.model.Users
-import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.models.Content
+import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
+import com.pedroloureiro.muzzchat.chat.domain.models.Message
+import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
+import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow

@@ -1,12 +1,12 @@
-package com.pedroloureiro.muzzchat.chat.data.paging
+package com.pedroloureiro.muzzchat.chat.data
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingConfig
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator.MediatorResult
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.ChatSyncEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.ChatSyncEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue

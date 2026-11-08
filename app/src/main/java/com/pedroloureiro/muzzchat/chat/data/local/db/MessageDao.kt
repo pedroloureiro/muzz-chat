@@ -1,4 +1,4 @@
-package com.pedroloureiro.muzzchat.chat.data.local.db.dao
+package com.pedroloureiro.muzzchat.chat.data.local.db
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
@@ -6,9 +6,9 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.ChatSyncEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.ChatSyncEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
 
 @Dao
 interface MessageDao {

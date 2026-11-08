@@ -1,8 +1,8 @@
-package com.pedroloureiro.muzzchat.chat.domain.repository
+package com.pedroloureiro.muzzchat.chat.domain
 
 import androidx.paging.PagingData
-import com.pedroloureiro.muzzchat.chat.domain.model.Message
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
+import com.pedroloureiro.muzzchat.chat.domain.models.Message
+import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRepository {

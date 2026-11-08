@@ -1,10 +1,9 @@
-package com.pedroloureiro.muzzchat.chat.domain.usecase
+package com.pedroloureiro.muzzchat.chat.domain
 
-import com.pedroloureiro.muzzchat.chat.domain.model.Content
-import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
-import com.pedroloureiro.muzzchat.chat.domain.model.Message
-import com.pedroloureiro.muzzchat.chat.domain.model.User
-import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.models.Content
+import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
+import com.pedroloureiro.muzzchat.chat.domain.models.Message
+import com.pedroloureiro.muzzchat.chat.domain.models.User
 import java.util.UUID
 
 class SendMessageUseCase(private val repository: ChatRepository) {

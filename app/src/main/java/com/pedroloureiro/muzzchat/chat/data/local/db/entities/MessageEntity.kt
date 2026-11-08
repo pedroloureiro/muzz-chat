@@ -1,8 +1,8 @@
-package com.pedroloureiro.muzzchat.chat.data.local.db.entity
+package com.pedroloureiro.muzzchat.chat.data.local.db.entities
 
 import androidx.room.Entity
 import androidx.room.Index
-import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
+import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 
 @Entity(
     tableName = "messages",

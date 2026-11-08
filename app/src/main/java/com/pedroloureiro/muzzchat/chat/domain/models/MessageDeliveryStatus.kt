@@ -1,4 +1,4 @@
-package com.pedroloureiro.muzzchat.chat.domain.model
+package com.pedroloureiro.muzzchat.chat.domain.models
 
 enum class MessageDeliveryStatus {
     SENDING, // optimistic insert, echo pending

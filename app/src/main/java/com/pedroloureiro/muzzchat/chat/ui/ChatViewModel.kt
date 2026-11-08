@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.pedroloureiro.muzzchat.chat.domain.model.User
-import com.pedroloureiro.muzzchat.chat.domain.model.Users
-import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
-import com.pedroloureiro.muzzchat.chat.domain.usecase.SendMessageUseCase
-import com.pedroloureiro.muzzchat.chat.ui.model.ChatItem
+import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.SendMessageUseCase
+import com.pedroloureiro.muzzchat.chat.domain.models.User
+import com.pedroloureiro.muzzchat.chat.domain.models.Users
+import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
+import com.pedroloureiro.muzzchat.chat.ui.models.ChatUiState
 import java.time.ZoneId
 import java.util.Locale
 import kotlinx.coroutines.flow.Flow
@@ -18,10 +19,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-
-data class ChatUiState(
-    val inputText: String = ""
-)
 
 class ChatViewModel(
     private val chatId: String,

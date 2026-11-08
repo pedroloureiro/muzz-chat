@@ -1,4 +1,4 @@
-package com.pedroloureiro.muzzchat.chat.data.local.db.entity
+package com.pedroloureiro.muzzchat.chat.data.local.db.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

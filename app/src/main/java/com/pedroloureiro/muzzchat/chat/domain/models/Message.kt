@@ -1,4 +1,4 @@
-package com.pedroloureiro.muzzchat.chat.domain.model
+package com.pedroloureiro.muzzchat.chat.domain.models
 
 sealed class Message {
     abstract val clientMessageId: String // unique per sender, so senderId and clientMessageId identify the message

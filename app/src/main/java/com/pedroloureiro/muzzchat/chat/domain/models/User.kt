@@ -1,4 +1,4 @@
-package com.pedroloureiro.muzzchat.chat.domain.model
+package com.pedroloureiro.muzzchat.chat.domain.models
 
 data class User(val id: String, val name: String)
 

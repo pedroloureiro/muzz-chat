@@ -1,11 +1,11 @@
-package com.pedroloureiro.muzzchat.chat.data.paging
+package com.pedroloureiro.muzzchat.chat.data
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.ChatSyncEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.ChatSyncEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
 
 const val MESSAGE_PAGE_SIZE = 20
 

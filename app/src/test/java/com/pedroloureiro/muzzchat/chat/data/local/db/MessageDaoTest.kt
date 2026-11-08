@@ -1,14 +1,13 @@
-package com.pedroloureiro.muzzchat.chat.data.local.db.dao
+package com.pedroloureiro.muzzchat.chat.data.local.db
 
 import android.content.Context
 import androidx.paging.PagingSource
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.ChatSyncEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
-import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.ChatSyncEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
+import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals

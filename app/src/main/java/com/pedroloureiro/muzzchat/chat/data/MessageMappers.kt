@@ -1,14 +1,14 @@
 package com.pedroloureiro.muzzchat.chat.data
 
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
-import com.pedroloureiro.muzzchat.chat.data.remote.model.ContentDto
-import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
-import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
-import com.pedroloureiro.muzzchat.chat.domain.model.Content
-import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
-import com.pedroloureiro.muzzchat.chat.domain.model.Message
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
+import com.pedroloureiro.muzzchat.chat.data.remote.models.ContentDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.OutgoingMessageDto
+import com.pedroloureiro.muzzchat.chat.domain.models.Content
+import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
+import com.pedroloureiro.muzzchat.chat.domain.models.Message
+import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
 
 fun MessageDto.toEntity() = MessageEntity(
     clientMessageId = clientMessageId,

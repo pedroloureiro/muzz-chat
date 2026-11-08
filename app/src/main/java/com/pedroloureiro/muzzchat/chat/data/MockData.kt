@@ -1,9 +1,9 @@
-package com.pedroloureiro.muzzchat.chat.data.mock
+package com.pedroloureiro.muzzchat.chat.data
 
 import android.content.Context
-import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
-import com.pedroloureiro.muzzchat.chat.data.remote.model.MessagePageDto
-import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.MessagePageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.OutgoingMessageDto
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 import kotlinx.coroutines.flow.MutableStateFlow
