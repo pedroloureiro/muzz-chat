@@ -71,7 +71,7 @@ Every value is listed here, in a token table or in its component's section.
 ## Dimens
 | Token | Value | Usage |
 |---|---|---|
-| buttonPrimarySize | 44dp | Primary and floating button diameter |
+| buttonPrimarySize | 44dp | Primary and floating button diameter, ChatInput's minimum TextInput height |
 | iconSize | 18dp | Icons inside buttons, TopBar back icon |
 | borderWidth | 1.5dp | Floating button border |
 | focusRingWidth | 2dp | TextInput focus ring |
@@ -175,6 +175,7 @@ Generic action button. The caller passes a `MutableInteractionSource`, and the b
 Generic configurable text field. The caller passes a `MutableInteractionSource`, and the field reads its focused state from it.
 - `BasicTextField`, shape `ComponentShapes.textInput`, padding `Spacing.md` horizontal and `Spacing.sm` vertical, text `bodyMedium`
 - Grows with its text up to `maxLines`, then scrolls. Unlimited unless the caller passes it
+- Its text is centred vertically, so a caller's minimum height leaves one line in the middle
 - Focus ring: a `focusRingWidth` border in colorPrimary at `Alpha.focusRing`
 
 | State | bg | text |
@@ -244,7 +245,7 @@ Centred timestamp divider. Single state.
 The message input: composes `TextInput` + `Button (primary)`. The screen passes in an interaction source for each. Its values are private to `ChatInput.kt`.
 - Bar: `colorSurface`, with a `dividerWidth` `colorBorder` divider along its top, then padding `Spacing.md` horizontal and `Spacing.sm` vertical
 - Row: `TextInput` filling the space, then Button primary (`ic_send`, content description "Send"), then the caller's optional `trailing` content, `Spacing.sm` apart and aligned to the bottom, so the buttons stay beside the last line
-- TextInput grows to at most 8 lines, then scrolls
+- TextInput is at least `buttonPrimarySize` tall, so one line matches the buttons, and grows to at most 8 lines, then scrolls
 - The screen applies the keyboard and navigation bar insets
 
 | State | TextInput | Button primary |
