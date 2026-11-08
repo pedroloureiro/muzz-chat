@@ -241,3 +241,17 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 **To support a real backend:**
 1. Replace `mockBackendModule`. The server then owns history and it survives restarts.
+
+---
+
+## The message list scrolls to every new message
+
+**Decision:** When the newest item in the list changes, `ChatScreen` scrolls the list to it, whoever sent it.
+
+**Limitation:** A message from Sarah that arrives while the user is reading older history pulls them down to it, and they lose their place.
+
+**Trade-off:** The mock server sends nothing unprompted. Every new message comes from the user's own Send or Reply as Sarah, so scrolling on every change is the same as scrolling on their own sends, with no extra state in the screen.
+
+**To support a real backend:**
+1. Scroll on the user's own sends, and on incoming messages only when the newest message was already in view.
+2. Otherwise show a new-message chip above the input, which scrolls to the newest message when tapped.
