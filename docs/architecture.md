@@ -132,7 +132,7 @@ Opening the Chat runs a REFRESH. With no sync state it fetches the newest page. 
 
 | Code | Approach |
 |---|---|
-| Classes with logic: use cases, `ChatItemMapper`, `ChatRepositoryImpl`, `MessageRemoteMediator`, `Converters` | Unit tests, written first. `ChatItemMapper`'s rules are tested directly and its paging wiring with `asSnapshot()` |
+| Classes with logic: use cases, `ChatItemMapper`, `ChatViewModel`, `ChatRepositoryImpl`, `MessageRemoteMediator`, `Converters` | Unit tests, written first. `ChatItemMapper`'s rules are tested directly and its paging wiring with `asSnapshot()` |
 | DAO queries, including the paged `MessageWithNext` query | `MessageDaoTest`, using Robolectric and an in-memory Room database, so no emulator is needed |
 | Forwarding code | Not tested directly |
 | Composables | Not tested |

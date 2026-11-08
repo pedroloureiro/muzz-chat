@@ -34,7 +34,7 @@ object ChatItemMapper {
     fun toMessageItem(row: MessageWithNext): ChatItem.Message {
         val message = row.message
         return ChatItem.Message(
-            messageId = "${message.senderId}/${message.clientMessageId}",
+            key = "${message.senderId}/${message.clientMessageId}",
             direction = if (message.senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
             content = message.content.value,
             timestampMillis = message.timestampMillis,
@@ -57,7 +57,7 @@ object ChatItemMapper {
         val format = headerFormat(message.timestampMillis, nowMillis, zoneId)
         return ChatItem.TimestampHeader(
             label = formatUtc(message.timestampMillis, zoneId, locale, format),
-            key = "header-${message.messageId}"
+            key = "header-${message.key}"
         )
     }
 

@@ -9,7 +9,9 @@ import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.MockChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
 import com.pedroloureiro.muzzchat.chat.domain.usecase.SendMessageUseCase
+import com.pedroloureiro.muzzchat.chat.ui.ChatViewModel
 import org.koin.android.ext.koin.androidContext
+import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 private val localModule = module {
@@ -27,4 +29,5 @@ val chatModule = module {
     includes(localModule, mockBackendModule)
     single<ChatRepository> { ChatRepositoryImpl(local = get(), remote = get()) }
     factory { SendMessageUseCase(get()) }
+    viewModel { (chatId: String) -> ChatViewModel(chatId, get(), get()) }
 }

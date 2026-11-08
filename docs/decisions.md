@@ -130,7 +130,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## Timestamp headers update only when messages change
 
-**Decision:** `ChatItemMapper` reads the current time, time zone and locale each time it maps, and paging maps again when Room is invalidated.
+**Decision:** `ChatViewModel` reads the current time, time zone and locale each time Room emits a new `PagingData`, which happens when Room is invalidated, and passes them to `ChatItemMapper`.
 
 **Limitation:** Header labels are not recomputed while the messages are unchanged. A header showing `11:59` still shows it after midnight, when it should read `Thursday 11:59`. A change of time zone or locale also shows only after the next message.
 
