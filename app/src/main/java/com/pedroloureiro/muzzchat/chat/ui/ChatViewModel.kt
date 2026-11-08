@@ -39,7 +39,7 @@ class ChatViewModel(
 
     fun onInputChanged(text: String) = _uiState.update { it.copy(inputText = text) }
 
-    fun sendMessage() = sendAs(Users.ME)
+    fun send() = sendAs(Users.ME)
 
     fun sendAsOther() = sendAs(Users.SARAH)
 

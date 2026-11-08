@@ -61,10 +61,10 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun sendMessage_sendsInputAsMe() {
+    fun send_sendsInputAsMe() {
         viewModel.onInputChanged("hello")
 
-        viewModel.sendMessage()
+        viewModel.send()
 
         val sent = repository.sent.single()
         assertEquals(Users.ME.id, sent.senderId)
@@ -85,17 +85,17 @@ class ChatViewModelTest {
     fun send_clearsInputBeforeTheSendFinishes() {
         viewModel.onInputChanged("hello")
 
-        viewModel.sendMessage()
+        viewModel.send()
 
         assertEquals(1, repository.sent.size)
         assertEquals("", viewModel.uiState.value.inputText)
     }
 
     @Test
-    fun sendMessage_blankInput_isNoOp() {
+    fun send_blankInput_isNoOp() {
         viewModel.onInputChanged("  \n ")
 
-        viewModel.sendMessage()
+        viewModel.send()
 
         assertEquals(emptyList<Message.Pending>(), repository.sent)
         assertEquals("  \n ", viewModel.uiState.value.inputText)
