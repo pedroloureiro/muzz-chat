@@ -18,16 +18,16 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## Refreshing does not fill a gap in stored history
+## Opening a Chat catches up forward from the newest gap-free message
 
-**Decision:** `MessageRemoteMediator` REFRESH writes the newest page over what Room already holds, and APPEND continues from the smallest stored `id`.
+**Decision:** REFRESH fetches the pages after the Chat sync state's `newestSeq` until the server reports `hasMore = false`. With no sync state, it fetches the newest page. An incoming message that skips a `seq` starts the same catch-up. See [ADR-0003](adr/0003-cursor-paging.md).
 
-**Limitation:** If more than a page of messages arrived on the server while the app was closed, the newest page does not reach the messages already stored. The messages in between are never fetched, because APPEND starts below the oldest stored message.
+**Limitation:** After a long absence, the catch-up downloads every missed message, one page per request, before the Chat is up to date.
 
-**Trade-off:** The mock server only gains messages this device sends, and their echoes are stored as they arrive, so a gap cannot happen here. Detecting one needs either a full page that does not overlap what is stored or a sync token from the server.
+**Trade-off:** Stored history is never thrown away, and the history stays complete with no gaps. Dropping it and starting from the newest page would cost fewer requests after a long absence, but would download the dropped history again while scrolling.
 
-**To support a real backend:**
-1. On REFRESH, when the newest page does not overlap the stored messages, delete the stored confirmed messages in the same transaction, so APPEND fetches them again.
+**To support very long absences:**
+1. Beyond a number of catch-up pages, delete the Chat's stored confirmed messages and its sync state in one transaction, and fetch the newest page.
 
 ---
 
@@ -41,13 +41,13 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 **To support long histories:**
 1. Set `PagingConfig.maxSize` so pages far from the screen are dropped. It must be at least `pageSize + 2 * prefetchDistance`.
-2. Trim the oldest confirmed messages when storage runs low. Scrolling back to them fetches them again through `MessageRemoteMediator`.
+2. Trim the oldest confirmed messages when storage runs low, resetting the Chat's `oldestSeq` and `reachedStart` in the same transaction. Scrolling back to them fetches them again through `MessageRemoteMediator`.
 
 ---
 
 ## Message timestamps are epoch millis
 
-**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer, including the Room column and the JSON field. It is used for display and grouping, and never for order, which the message `id` decides.
+**Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer, including the Room column and the JSON field. It is used for display and grouping, and never for order, which `seq` decides.
 
 **Limitation:** The value cannot be read by eye in the database or in JSON.
 
@@ -55,21 +55,17 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The server orders messages by a time-ordered ID
+## The server orders messages by a per-Chat sequence number
 
-**Decision:** The server generates each confirmed message's `id` as a UUIDv7, whose leading bits are its creation time in milliseconds, stored as a lowercase string. Room orders confirmed messages by it, and pending messages after them by device timestamp. The order in which messages arrive from `ChatRemoteDataSource` does not matter. See [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
+**Decision:** The server gives each message of a Chat the next `seq`, starting at 1 with no holes, in the same transaction that stores it. `seq` is the only order of confirmed messages and the paging cursor. The server `id` is an opaque UUID used only for identity. Pending messages sort after confirmed ones by device timestamp. See [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md) and [ADR-0003](adr/0003-cursor-paging.md).
 
 **Limitation:**
-- A message missed while the incoming stream was down is not fetched. IDs are not consecutive, so a missing message cannot be detected from the IDs around it.
-- Two messages stored in the same millisecond by different server instances have an arbitrary order, though it is stable.
-- IDs only sort correctly as text when they all use the same case.
+- Every write to a Chat goes through one counter on the server, so writes within a Chat are serialised. Very busy group Chats would need sharded or batched numbering.
+- A deleted message must keep its `seq`, or a hole would look like a missing message. See "Messages cannot be edited or deleted".
 - Timestamps can go backwards between neighbours while a message is pending, because a pending message has the device time. The display rules treat a negative gap as no gap.
 
-**Trade-off:** A server-generated time-ordered ID makes order independent of device clocks, gives paging a unique cursor, and needs no per-conversation counter on the server. A gap-free sequence number would detect missed messages, but every write to a conversation would have to go through one counter. The mock's stream never drops, so there is nothing to catch up on.
+**Trade-off:** A sequence with no holes makes a missing message detectable and the start of the history known, and needs no tiebreaker between messages stored in the same millisecond. A time-ordered UUIDv7 needs no counter, but its values are not consecutive, so gaps could only be guessed.
 
-**To support a real backend:**
-1. Add `fetchMessages(afterId, limit)` to `ChatRemoteDataSource`.
-2. After every reconnect, fetch the messages after the newest stored `id`.
 ---
 
 ## Room schema is not exported
@@ -90,15 +86,15 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## Message history pages from Room
 
-**Decision:** The message list is paged with Paging 3. Room is the paging source, and `MessageRemoteMediator` fetches older pages from the server by `id`. See [ADR-0003](adr/0003-cursor-paging.md).
+**Decision:** The message list is paged with Paging 3. Room is the paging source, and `MessageRemoteMediator` fetches a Chat's history from the server by `seq`, following the server's `nextCursor` and `hasMore`. See [ADR-0003](adr/0003-cursor-paging.md).
 
-**Limitation:** Nothing deletes old messages from Room, so the table grows with the history the user has scrolled through, until "Clear messages" is used. Room's generated `PagingSource` uses `LIMIT/OFFSET`, which gets slower on very large local tables.
+**Limitation:** Nothing deletes old messages from Room, so the table grows with the history the user has scrolled through. Room's generated `PagingSource` uses `LIMIT/OFFSET`, which gets slower on very large local tables.
 
-**Trade-off:** Keeping what was loaded makes scrolling back instant and works offline. A local offset over indexed rows stays fast at the sizes a single conversation reaches.
+**Trade-off:** Keeping what was loaded makes scrolling back instant and works offline. A local offset over indexed rows stays fast at the sizes a single Chat reaches.
 
 **To support very large histories:**
-1. Evict the oldest stored pages beyond a limit, and let the `RemoteMediator` fetch them again.
-2. Replace the generated `PagingSource` with one keyed by `id`.
+1. Keep the newest N messages per Chat, delete older ones, and in the same transaction set the Chat's `oldestSeq` to the oldest kept `seq` and `reachedStart` to false, so scrolling back fetches them again.
+2. Replace the generated `PagingSource` with one keyed by `seq`.
 
 ---
 
@@ -108,42 +104,27 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 **Limitation:** The UI cannot show a loading indicator while a page is fetched, or report a failure. A failed send or page load would have no visible feedback.
 
-**Trade-off:** There is no network connection, only a mocked one that always succeeds at once, so there are no slow requests or failures to display. Modelling those states now would add UI paths that never run.
+**Trade-off:** There is no network connection, only a mocked one that always succeeds after a fixed delay of a few hundred milliseconds, so there are no failures to display and no slow requests. Modelling those states now would add UI paths that never run.
 
 **To support a real backend:**
-1. Add `FAILED` as a state of a pending message and handle the failure branch in the repository, as described in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md).
-2. Render a retry affordance on failed messages.
-3. Render the paged list's `LoadState` for page loading and errors, and add connection state to `ChatUiState`.
+1. Render the paged list's `LoadState` for page loading and errors, and add connection state to `ChatUiState`.
+2. Show failed sends, as described in "Sends are not retried and cannot fail".
 
 ---
 
-## Clearing messages does not cancel a send in flight
+## `ChatViewModel` runs the incoming message sync, for the open Chat only
 
-**Decision:** `ChatRepositoryImpl` inserts every echo from `incomingMessages()` without checking whether its message was cleared in the meantime.
+**Decision:** `ChatViewModel` calls `ChatRepository.syncIncomingMessages(chatId)` in `viewModelScope`. It stores the open Chat's messages and ignores the others.
 
-**Limitation:** A message cleared during the ~200ms before its echo arrives comes back as confirmed, because the echo inserts it again.
+**Limitation:** Incoming messages are stored only while the ViewModel is alive, and only for the open Chat. Other Chats' messages reach Room when that Chat is opened and catches up. The sync also keeps running when the app is in the background, and it stops when the user leaves the Chat.
 
-**Trade-off:** The window is small and the backend is a mock. Telling a late echo apart from a new message would add tracking to the repository, and the right rule depends on how a real server treats deletes.
+**Trade-off:** The app has one screen and no chat list, so nothing would read other Chats' messages. The catch-up on opening a Chat fills whatever the stream missed. In exchange, the repository needs no injected scope and starts no work when it is created.
 
-**To support a real backend:**
-1. Define what clearing means on the server, and whether it applies to messages in flight.
-2. Make the repository drop echoes of cleared messages, for example by remembering the `localId`s that were cleared.
-3. Cover clearing during a send in `ChatRepositoryImplTest`.
-
----
-
-## `ChatViewModel` runs the incoming message sync
-
-**Decision:** `ChatViewModel` calls `ChatRepository.syncIncomingMessages()` in `viewModelScope`.
-
-**Limitation:** Incoming messages are stored only while the ViewModel is alive. The sync also keeps running when the app is in the background, and it stops when the user leaves the chat.
-
-**Trade-off:** The app has one screen and a mock that emits only after a send, so these gaps have no visible effect today. In exchange, the repository needs no injected scope and starts no work when it is created.
-
-**To support a real backend:**
-1. Call `syncIncomingMessages()` from an app-level owner, using `ProcessLifecycleOwner` and `repeatOnLifecycle(STARTED)` so it follows the foreground.
-2. Add reconnection, and a catch-up sync for messages missed while disconnected.
-3. Add push notifications for messages that arrive while the app is in the background.
+**To support a chat list:**
+1. Run one app-level handler for the stream, using `ProcessLifecycleOwner` and `repeatOnLifecycle(STARTED)` so it follows the foreground, and store every Chat's messages, each moving its own sync state.
+2. Store Chats in a `chats` table with the last message preview, last activity time and unread count, updated with each message.
+3. Catch up every Chat with a sync state after each reconnect.
+4. Add push notifications for messages that arrive while the app is in the background. Opening a Chat from one catches up as usual.
 
 ---
 
@@ -160,28 +141,47 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## Leaving the chat can leave a send stuck
+## Sends are not retried and cannot fail
 
-**Decision:** `ChatViewModel` runs sends in `viewModelScope`.
+**Decision:** `ChatViewModel` runs sends in `viewModelScope`, and a failed send leaves the message pending. A message is confirmed by whichever arrives first, the send response or its echo on the stream, and the second changes nothing.
 
-**Limitation:** If the ViewModel is cleared after the pending row is inserted and before the send finishes, the send is cancelled and the message stays pending for good. Nothing resends it.
+**Limitation:**
+- If the ViewModel is cleared after the pending row is inserted and before the send finishes, the send is cancelled and the message stays pending for good. Nothing resends it.
+- A send that fails stays `SENDING`, and the user cannot retry it.
 
-**Trade-off:** The window is only ~200ms with the mock, and resending needs the failure handling that is not built yet.
+**Trade-off:** The mock never fails and answers in ~200ms. Retries, failure states and an outbox would add paths that never run here.
 
 **To support a real backend:**
-1. Run sends where they outlive the screen, in an application scope or WorkManager.
-2. When the app starts, resend every pending message with its `localId`. The server recognises the `localId`, so a message it already stored is returned, not stored twice.
+1. Keep pending messages as an outbox in the same table, and send each from a WorkManager job with a network constraint and exponential backoff, so a send outlives the screen and the process.
+2. Retry network errors and 5xx responses with the same `localId`. The server keeps a unique key on `(senderId, localId)` and answers a repeat with the message it already stored, so a retry after an ambiguous timeout cannot store it twice.
+3. Mark a 4xx response (invalid, blocked, Chat gone) `FAILED` at once, with its reason, since retrying cannot help. Mark it `FAILED` too when retries run out.
+4. Add a `status` column for `FAILED`, indexed with `chatId`, and a tap-to-retry action that enqueues the job again with the same `localId`.
 
 ---
 
-## "Clear messages" only clears the device
+## Messages cannot be edited or deleted
 
-**Decision:** `clearMessages()` deletes from Room and leaves the mock backend untouched. `MockData` keeps sent messages in memory, after the seed messages.
+**Decision:** A confirmed message never changes after the server stores it. There are no edit or delete operations, and only `TEXT` content.
 
-**Limitation:** Sent messages come back when "Load sample data" runs after "Clear messages", as they would from a real server. The mock forgets them when the process dies, so after a restart they survive only in Room, and clearing then removes them for good.
+**Limitation:** The user cannot correct or remove a message.
+
+**Trade-off:** With no changes after confirmation, a late or repeated echo cannot overwrite newer state, so writes need no version check. Out of scope for this exercise.
+
+**To support edits and deletes:**
+1. Delete as a tombstone: the message keeps its `seq` and loses its content, with a `deleted` flag, so its `seq` never becomes a hole.
+2. Add `editedAt`, and a server `changeSeq` that rises with every change to a message. Apply a change only when its `changeSeq` is newer than the stored one, so a late event cannot overwrite a newer one.
+3. Deliver edits and deletes as their own events on the stream, such as `message.updated`.
+4. Add content types, such as images, as new `ContentType` values.
+
+---
+
+## The mock backend keeps sent messages only in memory
+
+**Decision:** `MockData` keeps sent messages in memory, after the seed messages.
+
+**Limitation:** The mock forgets them when the process dies, so after a restart they survive only in Room.
 
 **Trade-off:** This makes the mock behave like a server without adding storage to a fake one.
 
 **To support a real backend:**
 1. Replace `mockBackendModule`. The server then owns history and it survives restarts.
-2. Decide whether clearing should also delete on the server, which ties in with clearing during a send above.

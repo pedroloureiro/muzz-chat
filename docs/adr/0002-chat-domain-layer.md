@@ -20,7 +20,7 @@ That design had three problems:
 The layers stay in the single `app` module, and `ArchitectureTest` checks the dependency rules. Separate Gradle modules would make violations compile errors, but one feature does not justify the extra build setup.
 
 ### Add a use case only when an operation has logic of its own
-`SendMessageUseCase` exists because it trims and validates text and builds the `Message`. Observing, loading and clearing messages have no logic, so `ChatViewModel` calls `ChatRepository` directly for those.
+`SendMessageUseCase` exists because it trims and validates text and builds the `Message`. Observing messages has no logic, so `ChatViewModel` calls `ChatRepository` directly for that.
 
 ### Keep persistence separate from the domain
 `MessageEntity` has its own `contentType` and `contentValue` columns instead of embedding the domain `Content`, so changing `Content` cannot change the database schema by accident.

@@ -48,11 +48,11 @@ com.pedroloureiro.muzzchat
     │   │   └── db
     │   │       ├── MessageDatabase, Converters
     │   │       ├── dao       MessageDao
-    │   │       └── entity    MessageEntity
+    │   │       └── entity    MessageEntity, ChatSyncEntity, MessageWithNextRow
     │   ├── paging            MessageRemoteMediator
     │   ├── remote            ChatRemoteDataSource, MockChatRemoteDataSource
-    │   │   └── model         MessageDto, ContentDto
-    │   └── mock              MockData
+    │   │   └── model         MessageDto, MessagePageDto, ContentDto, OutgoingMessageDto
+    │   └── mock              MockData, MOCK_SARAH_CHAT_ID
     └── ui
         ├── ChatScreen, ChatViewModel, ChatUiState, ChatItemMapper
         ├── model             ChatItem, MessageDirection
@@ -93,8 +93,8 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 17. Long-running work in `chat/data` is a `suspend` function whose caller owns its lifetime through a scope. Nothing uses `GlobalScope`.
 
 ### Ordering and paging
-18. Confirmed messages are ordered by their server-generated UUIDv7 `id`, and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
-19. An echo replaces its pending message by `localId` in one Room transaction. Every write of server messages, whether a history page or an incoming message, goes through the same insert.
+18. Every message belongs to one Chat, and every remote call and Room query is limited to one `chatId`. Confirmed messages are ordered by their server-assigned `seq`, and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
+19. An echo replaces its pending message by `localId` in one Room transaction. Every write of server messages, whether a history page or an incoming message, goes through the same insert, in the same transaction as the Chat's sync state it moves.
 20. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
 
 ---
@@ -118,13 +118,13 @@ ChatViewModel
 
 ```text
 ChatScreen scrolls past the oldest stored message
-  → MessageRemoteMediator APPEND   fetchMessages(beforeId = smallest stored id, limit)
-  → ChatRepositoryImpl             writes the page into Room in one transaction
+  → MessageRemoteMediator APPEND   fetchMessagesBefore(chatId, beforeSeq = sync state's oldestSeq, limit)
+  → ChatRepositoryImpl             one transaction: write the page, set oldestSeq = nextCursor, reachedStart = !hasMore
   → Room PagingSource              invalidated, loads the older rows
   → ChatItemMapper                 same rules as above
 ```
 
-Opening the chat runs a REFRESH, which fetches the newest page. History is complete when a page comes back with fewer than `limit` messages. "Load sample data" calls `ChatRepository.loadMessages()`, which refreshes from the newest page.
+Opening the Chat runs a REFRESH. With no sync state it fetches the newest page. Otherwise it catches up: it fetches pages after the sync state's `newestSeq` until `hasMore` is false. An incoming message that skips a `seq` is stored and starts the same catch-up. History is complete when the server reports `hasMore = false` for older messages.
 
 ---
 
@@ -152,9 +152,10 @@ These are the places where the app knowingly departs from strict Clean Architect
 
 | # | Deviation | Why we accept it | How to correct it |
 |---|---|---|---|
-| 1 | `ChatViewModel` calls `ChatRepository` directly for observe, load and clear, with no use case in between | Those use cases would only forward the call | Add a use case when an operation gains logic, or add all of them if a uniform rule becomes worth the code |
+| 1 | `ChatViewModel` calls `ChatRepository` directly to observe messages, with no use case in between | That use case would only forward the call | Add a use case when an operation gains logic, or add all of them if a uniform rule becomes worth the code |
 | 2 | Layers are packages in one Gradle module, so boundaries are checked by a test and not the compiler | With one feature, separate modules would add build setup without enough benefit | Split into `:feature:chat:domain`, `:feature:chat:data` and `:feature:chat:presentation`, with `domain` as a plain Kotlin module and `:app` as the wiring point |
 | 3 | `Users.ME` is a global constant, so `ChatItemMapper` has the current user hardcoded | The app has no authentication and its users are fixed by design | Add a `CurrentUser` abstraction when login exists, and inject it into the mapper |
 | 4 | `chat/domain` has `MessageWithNext`, a row model shaped by the paged list's needs | Paging maps one row at a time, and the bubble tail needs the next message. See [ADR-0003](adr/0003-cursor-paging.md) | Move the type into `chat/data` and map it to a UI-facing row in the ViewModel, if the domain should stay free of display concerns |
 | 5 | `MessageEntity` stores the domain `ContentType` enum by name, so renaming a value changes what is stored | A separate enum for storage would duplicate it for little benefit | Add a storage-only enum or stable codes, and map them in `chat/data` |
 | 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
+| 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a constant marked as mock data in `chat/data/mock`. `MainActivity` passes it to `ChatScreen` as its navigation argument, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has no chat list to navigate from | Navigate to `ChatScreen` from a chat list with the selected `chatId`, and delete the constant |

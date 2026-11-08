@@ -86,26 +86,11 @@ User profile image — initials fallback when no image available.
 ---
 
 ### TopBar
-Composes back button + Avatar + name + overflow menu trigger.
+Composes back button + Avatar + name.
 
 | State | Notes |
 |---|---|
-| Default | bg: colorSurface, border-bottom: colorBorder, back/name: textPrimary, overflow icon: textSecondary |
-| Overflow pressed | overflow bg: colorInputBackground, icon: textPrimary |
-
----
-
-### OverflowMenu
-Dropdown anchored to the ⋮ button.
-
-| Item | Style |
-|---|---|
-| Load sample data | textPrimary |
-| Clear messages | colorPrimary (destructive) |
-
-- bg: colorSurface, shadow: 0 4dp 16dp #00000012, radius: 8dp
-- Item hover bg: colorInputBackground
-- On tap: execute action + dismiss
+| Default | bg: colorSurface, border-bottom: colorBorder, back/name: textPrimary |
 
 ---
 
