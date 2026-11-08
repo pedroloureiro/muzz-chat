@@ -3,7 +3,6 @@ package com.pedroloureiro.muzzchat.chat.data.local.db.dao
 import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -16,17 +15,8 @@ interface MessageDao {
     @Insert
     suspend fun insertPending(entity: MessageEntity)
 
-    @Transaction
-    suspend fun confirm(entity: MessageEntity) {
-        entity.localId?.let { deleteByLocalId(it) }
-        insertReplacingId(entity)
-    }
-
-    @Query("DELETE FROM messages WHERE localId = :localId")
-    suspend fun deleteByLocalId(localId: String)
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertReplacingId(entity: MessageEntity)
+    @Upsert
+    suspend fun confirm(entity: MessageEntity)
 
     @Transaction
     suspend fun storeNewestPage(chatId: String, entities: List<MessageEntity>, nextCursor: Long?, hasMore: Boolean) {
@@ -75,18 +65,19 @@ interface MessageDao {
 
     // Newest first. Pending rows have a null seq, so `seq IS NULL DESC` puts them before every confirmed row.
     // The next message in chat order: for a confirmed row the next stored seq, else the oldest pending row;
-    // for a pending row the next pending row by device time.
+    // for a pending row the next pending row by device time. The join uses SQLite's implicit rowid as row identity
+    // inside this statement only: it is not stable across statements and must never be selected or stored.
     @Query(
         """
         SELECT m.*, n.senderId AS nextSenderId, n.timestampMillis AS nextTimestampMillis
         FROM messages m
-        LEFT JOIN messages n ON n.rowId = CASE
+        LEFT JOIN messages n ON n.rowid = CASE
             WHEN m.seq IS NOT NULL THEN COALESCE(
-                (SELECT rowId FROM messages WHERE chatId = m.chatId AND seq > m.seq ORDER BY seq LIMIT 1),
-                (SELECT rowId FROM messages WHERE chatId = m.chatId AND seq IS NULL ORDER BY timestampMillis LIMIT 1)
+                (SELECT rowid FROM messages WHERE chatId = m.chatId AND seq > m.seq ORDER BY seq LIMIT 1),
+                (SELECT rowid FROM messages WHERE chatId = m.chatId AND seq IS NULL ORDER BY timestampMillis LIMIT 1)
             )
             ELSE (
-                SELECT rowId FROM messages
+                SELECT rowid FROM messages
                 WHERE chatId = m.chatId AND seq IS NULL AND timestampMillis > m.timestampMillis
                 ORDER BY timestampMillis LIMIT 1
             )
