@@ -244,13 +244,13 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## Only the user's own sends scroll the message list
+## The message list follows new messages while the newest is in view
 
-**Decision:** When the user sends a message, with Send or Reply as Sarah, `ChatScreen` snaps the list to the newest message, then scrolls whenever the newest item is a `SENDING` message. Only this device's sends are pending, so this needs no remembered flag. The snap comes first because, deep in history, the newest rows are unloaded paging placeholders, so the sent message could not be seen arriving. Other new messages leave the list where it is, and the jump-to-latest button shows while the newest message is out of view.
+**Decision:** When a new message becomes the newest and the list was showing the newest rows, `ChatScreen` scrolls to it, whoever sent it. Send and Reply as Sarah first snap the list to the newest message, so what they send always comes into view. Deep in history the newest rows are unloaded paging placeholders, so without the snap the message could not be seen arriving. Otherwise the list stays where it is, and the jump-to-latest button shows while the newest message is out of view.
 
-**Limitation:** A message that arrives while the user is reading older history gives no sign of itself beyond the jump-to-latest button, which shows whenever the newest message is out of view, new or not.
+**Limitation:** A message that arrives while the user is reading older history gives no sign of itself beyond the jump-to-latest button, which shows whenever the newest message is out of view, new or not. "Showing the newest rows" means the first visible row is within two of the newest, which allows for a new message and its header pushing the old newest down.
 
-**Trade-off:** The user keeps their place in older history, and their own sends always land in view. A new-message count would need the screen to track what the user has seen.
+**Trade-off:** The user keeps their place in older history, and sees new messages as they arrive when at the bottom. A new-message count would need the screen to track what the user has seen.
 
 **To show new messages:**
 1. Count the messages that arrive while the newest message is out of view, and show the count on the jump-to-latest button.

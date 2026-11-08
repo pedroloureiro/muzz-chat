@@ -34,7 +34,7 @@ com.pedroloureiro.muzzchat
 ├── utils                     Static utility functions: DateTimeUtils
 └── chat
     ├── di                    ChatModule
-    ├── domain                ChatRepository (interface), SendMessageUseCase
+    ├── domain                ChatRepository (interface), SendMessageUseCase, OtherUserDevice (interface)
     │   └── models            Message (Pending, Confirmed), MessageWithNext, Content, ContentType,
     │                         User + Users, MessageDeliveryStatus
     ├── data                  ChatRepositoryImpl, MessageMappers, MessageRemoteMediator, MockData
@@ -155,4 +155,4 @@ These are the places where the app knowingly departs from strict Clean Architect
 | 5 | `MessageEntity` stores the domain `ContentType` enum by name, so renaming a value changes what is stored | A separate enum for storage would duplicate it for little benefit | Add a storage-only enum or stable codes, and map them in `chat/data` |
 | 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
 | 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a private constant in `MainActivity.kt` marked as mock data. `MainActivity`, the app's entry point, passes it to `ChatScreen` as its `chatId` parameter, where a navigation argument would come from, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has one screen and no chat list to navigate from, so it has no navigation library | Add navigation, open `ChatScreen` from a chat list with the selected `chatId` as its navigation argument, and delete the constant |
-| 8 | `ChatScreen` shows `MockChatInput`, marked as mock data, which adds a "Reply as Sarah" button above the real `ChatInput`. It calls `ChatViewModel.sendAsOther`, which sends the input as Sarah | Sarah has no device in the exercise, so her messages are sent from this one | Show `ChatInput` alone, and delete `MockChatInput` and `sendAsOther`, once other users' messages arrive from the server |
+| 8 | `ChatScreen` shows `MockChatInput`, marked as mock data, which adds a "Reply as Sarah" button after Send in the real `ChatInput`. It calls `ChatViewModel.sendAsOther`, which sends the input through `OtherUserDevice`, a mock domain contract that `MockChatRemoteDataSource` implements: the mock server stores the message as Sarah's and pushes it on the incoming stream, so this device never writes it | Sarah has no device in the exercise, so her messages are sent from this one | Show `ChatInput` alone, and delete `MockChatInput`, `sendAsOther` and `OtherUserDevice`, once other users' messages arrive from the server |

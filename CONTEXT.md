@@ -67,10 +67,13 @@ The delivery state of a message, as shown in the UI. Follows from the message ty
 The domain interface for working with messages. Exposes `getMessages(chatId): Flow<PagingData<MessageWithNext>>`, `syncIncomingMessages(chatId)` and `sendMessage(message: Message.Pending)`. `syncIncomingMessages(chatId)` stores that Chat's messages from `ChatRemoteDataSource` until its caller cancels it, ignores other Chats' messages, and runs a catch-up when a message skips a `seq`. `ChatRepositoryImpl` in `chat/data` implements it and is the single ingestion point for all messages.
 
 ## SendMessageUseCase
-Trims and validates message text, ignores blank input, and builds a `Message.Pending` for a Chat, with a new `clientMessageId` and the device time, before passing it to `ChatRepository`. The only use case, because the other operations have no logic of their own.
+Trims and validates message text, ignores blank input, and builds a `Message.Pending` from `ME` for a Chat, with a new `clientMessageId` and the device time, before passing it to `ChatRepository`. The only use case, because the other operations have no logic of their own.
 
 ## ChatRemoteDataSource
 The interface representing the remote messaging service. Exposes `sendMessage(chatId, dto): Result<MessageDto>` for outgoing messages, `fetchMessagesBefore(chatId, beforeSeq: Long?, limit)` and `fetchMessagesAfter(chatId, afterSeq: Long, limit)`, each returning a `Result<MessagePageDto>` history page, and `incomingMessages(): Flow<MessageDto>` for the incoming stream of every Chat, one WebSocket in production. The order it delivers messages in does not matter, because Room orders them. `MockChatRemoteDataSource` implements this using `MockData`, echoing sent messages back on `incomingMessages()` and answering `fetchMessages`, each after a ~200ms simulated network delay.
+
+## OtherUserDevice
+Mock data: a domain interface standing in for Sarah's phone, which the exercise does not have. `send(chatId, text)` sends a message as Sarah to the server. `MockChatRemoteDataSource` implements it by storing the message in `MockData` and pushing it on `incomingMessages()`, so it reaches Room through `syncIncomingMessages` like a message from any other device. `ChatViewModel.sendAsOther` is its only caller.
 
 ## ChatLocalDataSource
 The interface over Room, and the single source of truth for the UI. Stores pending and confirmed messages in one table, confirms a pending message in place when its echo arrives, keeps each Chat's sync state, and exposes the paged `MessageWithNext` query for one Chat, newest first: pending messages by device timestamp, then confirmed messages by `seq`.

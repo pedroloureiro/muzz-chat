@@ -107,11 +107,6 @@
   .topbar-name-text { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 
-  /* ── SendAsOther button ── */
-  .send-as-btn { display: inline-flex; align-items: center; gap: 4px; border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.1s; }
-  .send-as-default { background: white; color: #9E9E9E; border: 1.5px solid #E0E0E0; }
-  .send-as-pressed { background: #F5F5F5; color: #9E9E9E; border: 1.5px solid #BDBDBD; transform: scale(0.97); }
-  .send-as-disabled { background: white; color: #BDBDBD; border: 1.5px solid #E0E0E0; cursor: not-allowed; opacity: 0.6; }
 
   /* ── ChatInput states ── */
   .ci-field { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
@@ -132,9 +127,9 @@
   .preview-msg-col { display: flex; flex-direction: column; align-items: flex-end; max-width: 80%; }
   .preview-msg-col .bubble { max-width: 100%; }
   .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 0; }
-  .mock-strip { display: flex; justify-content: flex-end; background: white; padding: 8px 16px 0; }
   .ci-bar { background: white; border-top: 1px solid #E0E0E0; padding: 8px 16px; }
   .preview-input-row { display: flex; align-items: flex-end; gap: 8px; }
+  .preview-input-row .btn { flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -171,8 +166,8 @@
   <tr><td class="token-name">colorSurface</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Top bar, input bar surface</td></tr>
   <tr><td class="token-name">colorSurfaceVariant</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="role-ref">Neutral200</td><td class="token-desc">Received bubble bg, input focus ring bg</td></tr>
   <tr><td class="token-name">colorInputBackground</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="role-ref">Neutral100</td><td class="token-desc">TextInput field background</td></tr>
-  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border, secondary button border</td></tr>
-  <tr><td class="token-name">colorBorderPressed</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Secondary button border when pressed</td></tr>
+  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border, floating button border</td></tr>
+  <tr><td class="token-name">colorBorderPressed</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Floating button border when pressed</td></tr>
   <tr><td class="token-name">textPrimary</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="role-ref">Neutral900</td><td class="token-desc">Message text on received bubbles, top bar</td></tr>
   <tr><td class="token-name">textSecondary</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="role-ref">Neutral500</td><td class="token-desc">Section headers, timestamps, placeholder</td></tr>
   <tr><td class="token-name">textDisabled</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Disabled input text, disabled button icon</td></tr>
@@ -200,8 +195,8 @@
   <div style="font-size:12px;line-height:16px;color:#9E9E9E;">11:59</div>
 </div>
 <div class="type-row">
-  <div class="type-meta"><div class="type-label">labelLarge</div><div class="type-spec">14sp / lh 20sp / SemiBold</div><div class="type-role">color: textSecondary · textOnPrimary (Avatar initial)</div></div>
-  <div style="font-size:14px;line-height:20px;font-weight:600;color:#9E9E9E;">Reply as Sarah</div>
+  <div class="type-meta"><div class="type-label">labelLarge</div><div class="type-spec">14sp / lh 20sp / SemiBold</div><div class="type-role">color: textOnPrimary (Avatar initial)</div></div>
+  <div class="avatar-md">S</div>
 </div>
 <div class="type-row">
   <div class="type-meta"><div class="type-label">labelSmall</div><div class="type-spec">11sp / lh 16sp / SemiBold · 0 tracking</div><div class="type-role">color: textSecondary</div></div>
@@ -286,7 +281,7 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">Button</div>
-    <div class="component-subtitle">Generic configurable action button — variant: primary | secondary | floating</div>
+    <div class="component-subtitle">Generic configurable action button — variant: primary | floating</div>
   </div>
 
   <h3>variant = primary</h3>
@@ -311,25 +306,6 @@
         <svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
       </button>
       <div class="state-props">bg: colorPrimaryDisabled<br>icon: textDisabled<br>not clickable</div>
-    </div>
-  </div>
-
-  <h3>variant = secondary (outlined pill)</h3>
-  <div class="states-grid">
-    <div class="state-card">
-      <div class="state-label active">Default</div>
-      <button class="send-as-btn send-as-default">↩ Reply as Sarah</button>
-      <div class="state-props">bg: colorSurface<br>text: textSecondary<br>border: colorBorder<br>shape: 20dp pill</div>
-    </div>
-    <div class="state-card">
-      <div class="state-label active">Pressed</div>
-      <button class="send-as-btn send-as-pressed">↩ Reply as Sarah</button>
-      <div class="state-props">bg: colorInputBackground<br>border: colorBorderPressed<br>scale: 0.97</div>
-    </div>
-    <div class="state-card">
-      <div class="state-label">Disabled</div>
-      <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
-      <div class="state-props">text: textDisabled<br>border: colorBorder<br>opacity: 0.6<br>not clickable</div>
     </div>
   </div>
 
@@ -543,28 +519,30 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">MockChatInput</div>
-    <div class="component-subtitle">Mock data — adds "Reply as Sarah" above an unchanged ChatInput</div>
+    <div class="component-subtitle">Mock data — ChatInput with a "Reply as Sarah" button after Send</div>
   </div>
   <div class="states-grid">
     <div class="state-card" style="min-width:360px;">
       <div class="state-label active">Empty</div>
-      <div style="width:352px;"><div class="mock-strip"><button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button></div><div class="ci-bar">
+      <div style="width:352px;"><div class="ci-bar">
         <div class="preview-input-row">
           <input class="ci-field" placeholder="Message…" readonly />
           <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+          <button class="btn btn-floating-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></button>
         </div>
       </div></div>
-      <div class="state-props">Reply as Sarah: disabled<br>ChatInput: Empty</div>
+      <div class="state-props">ChatInput: Empty<br>Reply as Sarah: floating, ic_reply, disabled</div>
     </div>
     <div class="state-card" style="min-width:360px;">
       <div class="state-label active">Filled</div>
-      <div style="width:352px;"><div class="mock-strip"><button class="send-as-btn send-as-default">↩ Reply as Sarah</button></div><div class="ci-bar">
+      <div style="width:352px;"><div class="ci-bar">
         <div class="preview-input-row">
           <input class="ci-field" value="Hey, Sara looks great" readonly />
           <button class="ci-btn ci-btn-active"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+          <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></button>
         </div>
       </div></div>
-      <div class="state-props">Reply as Sarah: enabled, sends as Sarah<br>ChatInput: Filled</div>
+      <div class="state-props">ChatInput: Filled<br>Reply as Sarah: enabled, sends as Sarah through the mock server</div>
     </div>
   </div>
 </div>
@@ -599,11 +577,11 @@
       </div>
     </div>
   </div>
-  <div class="mock-strip"><button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button></div>
   <div class="ci-bar">
         <div class="preview-input-row">
           <input class="ci-field" placeholder="Message…" readonly />
           <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+          <button class="btn btn-floating-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg></button>
         </div>
       </div>
 </div>
