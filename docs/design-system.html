@@ -61,6 +61,9 @@
   .btn-primary-pressed { background: #C01048; color: white; border-radius: 50%; width: 44px; height: 44px; }
   .btn-primary-disabled { background: #F2F2F2; color: #BDBDBD; border-radius: 50%; width: 44px; height: 44px; cursor: not-allowed; }
   .btn-icon { font-size: 18px; }
+  .btn-floating { background: white; border: 1.5px solid #E0E0E0; border-radius: 50%; width: 44px; height: 44px; }
+  .btn-floating-pressed { background: #F5F5F5; border: 1.5px solid #BDBDBD; border-radius: 50%; width: 44px; height: 44px; transform: scale(0.95); }
+  .btn-floating-disabled { background: white; border: 1.5px solid #E0E0E0; border-radius: 50%; width: 44px; height: 44px; opacity: 0.6; cursor: not-allowed; }
 
   /* ── TextInput states ── */
   .text-input { width: 220px; border-radius: 24px; padding: 8px 16px; font-size: 14px; font-family: inherit; border: none; outline: none; }
@@ -111,7 +114,6 @@
   .send-as-disabled { background: white; color: #BDBDBD; border: 1.5px solid #E0E0E0; cursor: not-allowed; opacity: 0.6; }
 
   /* ── ChatInput states ── */
-  .chat-input-wrap { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: white; border: 1px solid #F0F0F0; border-radius: 12px; width: 320px; }
   .ci-field { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
   .ci-field::placeholder { color: #9E9E9E; }
   .ci-btn { width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
@@ -130,8 +132,9 @@
   .preview-msg-col { display: flex; flex-direction: column; align-items: flex-end; max-width: 80%; }
   .preview-msg-col .bubble { max-width: 100%; }
   .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 0; }
-  .preview-input { display: flex; flex-direction: column; gap: 8px; background: white; border-top: 1px solid #E0E0E0; padding: 8px 16px; }
-  .preview-input-row { display: flex; align-items: center; gap: 8px; }
+  .mock-strip { display: flex; justify-content: flex-end; background: white; padding: 8px 16px 0; }
+  .ci-bar { background: white; border-top: 1px solid #E0E0E0; padding: 8px 16px; }
+  .preview-input-row { display: flex; align-items: flex-end; gap: 8px; }
 </style>
 </head>
 <body>
@@ -283,7 +286,7 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">Button</div>
-    <div class="component-subtitle">Generic configurable action button — variant: primary | secondary</div>
+    <div class="component-subtitle">Generic configurable action button — variant: primary | secondary | floating</div>
   </div>
 
   <h3>variant = primary</h3>
@@ -327,6 +330,25 @@
       <div class="state-label">Disabled</div>
       <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
       <div class="state-props">text: textDisabled<br>border: colorBorder<br>opacity: 0.6<br>not clickable</div>
+    </div>
+  </div>
+
+  <h3>variant = floating (outlined circle)</h3>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">Default</div>
+      <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <div class="state-props">bg: colorSurface<br>icon: textPrimary<br>border: borderWidth colorBorder<br>shape: circle, 44dp</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label active">Pressed</div>
+      <button class="btn btn-floating-pressed"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <div class="state-props">bg: colorInputBackground<br>border: colorBorderPressed<br>scale: 0.95</div>
+    </div>
+    <div class="state-card">
+      <div class="state-label">Disabled</div>
+      <button class="btn btn-floating-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24" fill="#BDBDBD"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <div class="state-props">icon: textDisabled<br>border: colorBorder<br>opacity: 0.6<br>not clickable</div>
     </div>
   </div>
 </div>
@@ -491,38 +513,58 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">ChatInput</div>
-    <div class="component-subtitle">Composes TextInput + Button — chat-specific bottom bar</div>
+    <div class="component-subtitle">The message input — composes TextInput + Button (primary)</div>
   </div>
   <div class="states-grid">
     <div class="state-card" style="min-width:360px;">
-      <div class="state-label active">Empty — all disabled</div>
-      <div style="display:flex;flex-direction:column;gap:8px;background:white;border-top:1px solid #E0E0E0;padding:8px 16px;width:320px;">
-        <div style="display:flex;justify-content:flex-end;">
-          <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
-        </div>
-        <div class="chat-input-wrap" style="border:none;border-radius:0;padding:0;width:auto;background:none;">
+      <div class="state-label active">Empty</div>
+      <div class="ci-bar">
+        <div class="preview-input-row">
           <input class="ci-field" placeholder="Message…" readonly />
-          <button class="ci-btn ci-btn-disabled" disabled>
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-          </button>
+          <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
         </div>
       </div>
-      <div class="state-props">TextInput: empty<br>Button: disabled<br>SendAsOther: disabled<br>both enabled when text.isNotBlank()</div>
+      <div class="state-props">TextInput: empty<br>Send: disabled<br>enabled when text.isNotBlank()</div>
     </div>
     <div class="state-card" style="min-width:360px;">
-      <div class="state-label active">Filled — both enabled</div>
-      <div style="display:flex;flex-direction:column;gap:8px;background:white;border-top:1px solid #E0E0E0;padding:8px 16px;width:320px;">
-        <div style="display:flex;justify-content:flex-end;">
-          <button class="send-as-btn send-as-default">↩ Reply as Sarah</button>
-        </div>
-        <div class="chat-input-wrap" style="border:none;border-radius:0;padding:0;width:auto;background:none;">
+      <div class="state-label active">Filled</div>
+      <div class="ci-bar">
+        <div class="preview-input-row">
           <input class="ci-field" value="Hey, Sara looks great" readonly />
-          <button class="ci-btn ci-btn-active">
-            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-          </button>
+          <button class="ci-btn ci-btn-active"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
         </div>
       </div>
-      <div class="state-props">TextInput: filled<br>Send: enabled (sends as you)<br>SendAsOther: enabled (sends as Sarah)</div>
+      <div class="state-props">TextInput: filled, grows to 8 lines then scrolls<br>Send: enabled, bottom-aligned</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MockChatInput ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">MockChatInput</div>
+    <div class="component-subtitle">Mock data — adds "Reply as Sarah" above an unchanged ChatInput</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card" style="min-width:360px;">
+      <div class="state-label active">Empty</div>
+      <div style="width:352px;"><div class="mock-strip"><button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button></div><div class="ci-bar">
+        <div class="preview-input-row">
+          <input class="ci-field" placeholder="Message…" readonly />
+          <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+        </div>
+      </div></div>
+      <div class="state-props">Reply as Sarah: disabled<br>ChatInput: Empty</div>
+    </div>
+    <div class="state-card" style="min-width:360px;">
+      <div class="state-label active">Filled</div>
+      <div style="width:352px;"><div class="mock-strip"><button class="send-as-btn send-as-default">↩ Reply as Sarah</button></div><div class="ci-bar">
+        <div class="preview-input-row">
+          <input class="ci-field" value="Hey, Sara looks great" readonly />
+          <button class="ci-btn ci-btn-active"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+        </div>
+      </div></div>
+      <div class="state-props">Reply as Sarah: enabled, sends as Sarah<br>ChatInput: Filled</div>
     </div>
   </div>
 </div>
@@ -557,17 +599,13 @@
       </div>
     </div>
   </div>
-  <div class="preview-input">
-    <div style="display:flex;justify-content:flex-end;">
-      <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
-    </div>
-    <div class="preview-input-row">
-      <input class="ci-field" placeholder="Message…" readonly />
-      <button class="ci-btn ci-btn-disabled" disabled>
-        <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
-      </button>
-    </div>
-  </div>
+  <div class="mock-strip"><button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button></div>
+  <div class="ci-bar">
+        <div class="preview-input-row">
+          <input class="ci-field" placeholder="Message…" readonly />
+          <button class="ci-btn ci-btn-disabled" disabled><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+        </div>
+      </div>
 </div>
 
 </body>

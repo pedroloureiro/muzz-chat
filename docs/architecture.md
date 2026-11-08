@@ -45,7 +45,8 @@ com.pedroloureiro.muzzchat
     │       └── models        MessageDto, MessagePageDto, ContentDto, OutgoingMessageDto
     └── ui                    ChatScreen, ChatViewModel, ChatItemMapper
         ├── models            ChatItem, ChatUiState, MessageDirection
-        └── components        MessageBubble, MessageItem, SendingIndicator, SectionHeader, ChatInput
+        └── components        MessageBubble, MessageItem, SendingIndicator, SectionHeader, ChatInput,
+                              MockChatInput
 ```
 
 A new feature gets its own package beside `chat`, with the same layers. Code moves to the top level only when it knows nothing about any feature. Inside a layer, packages follow rule 22.
@@ -154,3 +155,4 @@ These are the places where the app knowingly departs from strict Clean Architect
 | 5 | `MessageEntity` stores the domain `ContentType` enum by name, so renaming a value changes what is stored | A separate enum for storage would duplicate it for little benefit | Add a storage-only enum or stable codes, and map them in `chat/data` |
 | 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
 | 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a private constant in `MainActivity.kt` marked as mock data. `MainActivity`, the app's entry point, passes it to `ChatScreen` as its `chatId` parameter, where a navigation argument would come from, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has one screen and no chat list to navigate from, so it has no navigation library | Add navigation, open `ChatScreen` from a chat list with the selected `chatId` as its navigation argument, and delete the constant |
+| 8 | `ChatScreen` shows `MockChatInput`, marked as mock data, which adds a "Reply as Sarah" button above the real `ChatInput`. It calls `ChatViewModel.sendAsOther`, which sends the input as Sarah | Sarah has no device in the exercise, so her messages are sent from this one | Show `ChatInput` alone, and delete `MockChatInput` and `sendAsOther`, once other users' messages arrive from the server |

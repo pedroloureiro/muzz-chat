@@ -36,8 +36,8 @@ Every value is listed here, in a token table or in its component's section.
 | colorSurface | White | Top bar, input bar surface |
 | colorSurfaceVariant | Neutral200 | Received bubble bg |
 | colorInputBackground | Neutral100 | TextInput field background |
-| colorBorder | Neutral50 | Dividers, input bar top border, secondary button border |
-| colorBorderPressed | Neutral300 | Secondary button border when pressed |
+| colorBorder | Neutral50 | Dividers, input bar top border, secondary and floating button border |
+| colorBorderPressed | Neutral300 | Secondary and floating button border when pressed |
 | textPrimary | Neutral900 | Message text on received bubbles, top bar |
 | textSecondary | Neutral500 | Section headers, timestamps, placeholder |
 | textDisabled | Neutral300 | Disabled input text, disabled button icon |
@@ -71,9 +71,9 @@ Every value is listed here, in a token table or in its component's section.
 ## Dimens
 | Token | Value | Usage |
 |---|---|---|
-| buttonPrimarySize | 44dp | Primary button diameter |
+| buttonPrimarySize | 44dp | Primary and floating button diameter |
 | iconSize | 18dp | Icons inside buttons, TopBar back icon |
-| borderWidth | 1.5dp | Secondary button border |
+| borderWidth | 1.5dp | Secondary and floating button border |
 | focusRingWidth | 2dp | TextInput focus ring |
 | dividerWidth | 1dp | ChatInput top border, TopBar bottom border |
 
@@ -82,7 +82,7 @@ Every value is listed here, in a token table or in its component's section.
 ## Alpha
 | Token | Value | Usage |
 |---|---|---|
-| disabled | 0.6 | Whole component, when disabled (secondary button, TextInput) |
+| disabled | 0.6 | Whole component, when disabled (secondary and floating button, TextInput) |
 | focusRing | 0.25 | colorPrimary, as the TextInput focus ring |
 
 ---
@@ -92,6 +92,7 @@ Every value is listed here, in a token table or in its component's section.
 |---|---|---|
 | buttonPrimaryPressed | 0.95 | Primary button, while pressed |
 | buttonSecondaryPressed | 0.97 | Secondary button, while pressed |
+| buttonFloatingPressed | 0.95 | Floating button, while pressed |
 
 ---
 
@@ -102,6 +103,7 @@ Every value is listed here, in a token table or in its component's section.
 | TextInput | 24dp (pill) | ComponentShapes.textInput |
 | Button (primary) | Circle | ComponentShapes.buttonPrimary |
 | Button (secondary) | 20dp (pill) | ComponentShapes.buttonSecondary |
+| Button (floating) | Circle | ComponentShapes.buttonFloating |
 
 ---
 
@@ -112,6 +114,7 @@ Icons are vector drawables in `res/drawable`, loaded with `ImageVector.vectorRes
 |---|---|
 | ic_send | Send button |
 | ic_reply | "Reply as Sarah" button |
+| ic_arrow_down | "Jump to latest" button |
 | ic_back | TopBar back button |
 
 ---
@@ -168,11 +171,22 @@ Generic action button. The caller passes a `MutableInteractionSource`, and the b
 | Pressed | colorInputBackground | textSecondary | colorBorderPressed, scale 0.97 |
 | Disabled | colorSurface | textDisabled | colorBorder, opacity 0.6 |
 
+**variant = floating** (outlined circle icon button, floating over content)
+- Size `buttonPrimarySize`, shape `ComponentShapes.buttonFloating`, border `borderWidth`, icon `iconSize`
+- Shows `icon` only. `label` is the icon's content description
+
+| State | bg | icon | border |
+|---|---|---|---|
+| Default | colorSurface | textPrimary | colorBorder |
+| Pressed | colorInputBackground | textPrimary | colorBorderPressed, scale 0.95 |
+| Disabled | colorSurface | textDisabled | colorBorder, opacity 0.6 |
+
 ---
 
 ### TextInput
 Generic configurable text field. The caller passes a `MutableInteractionSource`, and the field reads its focused state from it.
 - `BasicTextField`, shape `ComponentShapes.textInput`, padding `Spacing.md` horizontal and `Spacing.sm` vertical, text `bodyMedium`
+- Grows with its text up to `maxLines`, then scrolls. Unlimited unless the caller passes it
 - Focus ring: a `focusRingWidth` border in colorPrimary at `Alpha.focusRing`
 
 | State | bg | text |
@@ -239,25 +253,38 @@ Centred timestamp divider. Single state.
 ---
 
 ### ChatInput
-Composes `TextInput` + `Button (primary)` + `Button (secondary)`. The screen passes in an interaction source for each.
+The message input: composes `TextInput` + `Button (primary)`. The screen passes in an interaction source for each. Its values are private to `ChatInput.kt`.
 - Bar: `colorSurface`, with a `dividerWidth` `colorBorder` divider along its top, then padding `Spacing.md` horizontal and `Spacing.sm` vertical
-- Button secondary ("Reply as Sarah", `ic_reply`) is end-aligned, `Spacing.sm` above the input row
-- Input row: `TextInput` filling the space, then Button primary (`ic_send`, content description "Send"), `Spacing.sm` apart and centred vertically
+- Row: `TextInput` filling the space, then Button primary (`ic_send`, content description "Send"), `Spacing.sm` apart and aligned to the bottom, so Send stays beside the last line
+- TextInput grows to at most 8 lines, then scrolls
 - The screen applies the keyboard and navigation bar insets
 
-| State | TextInput | Button primary | Button secondary |
-|---|---|---|---|
-| Empty | empty | disabled | disabled |
-| Filled | filled | default | default |
+| State | TextInput | Button primary |
+|---|---|---|
+| Empty | empty | disabled |
+| Filled | filled | default |
 
-- Both buttons enabled when `text.isNotBlank()`
+- Send is enabled when `text.isNotBlank()`
+
+---
+
+### MockChatInput
+Mock data: stands in for Sarah's device, which the exercise does not have. Composes a "Reply as Sarah" `Button (secondary)` above an unchanged `ChatInput`. The real app shows `ChatInput` alone.
+- Strip: `colorSurface`, the button end-aligned, padding `Spacing.md` horizontal and `Spacing.sm` top. `ChatInput`, with its divider, sits below it
+- Button: `ic_reply`, label `R.string.reply_as` with Sarah's name, enabled when `text.isNotBlank()`. It sends the input as Sarah, through the same flow as Send
+
+| State | Button secondary | ChatInput |
+|---|---|---|
+| Empty | disabled | Empty |
+| Filled | default | Filled |
 
 ---
 
 ### ChatScreen
-Composes `TopBar`, the message list and `ChatInput` in a `Scaffold` on colorBackground. It remembers every interaction source and the list's scroll state, so every component below it is stateless.
+Composes `TopBar`, the message list and `MockChatInput` in a `Scaffold` on colorBackground. It remembers every interaction source and the list's scroll state, so every component below it is stateless.
 - TopBar: the title is Sarah's name
 - List: the newest message at the bottom, and scrolling up loads older pages. Messages render as `MessageItem` and timestamp headers as `SectionHeader`
 - List spacing: a `Spacing.md` side margin and no vertical padding. The gaps below the bubbles and SectionHeader's padding space the rows
-- When the newest message changes, the list scrolls to it
-- Insets: TopBar applies the status bar inset, and ChatInput the navigation bar and keyboard insets. The list sits between them and applies none, so the keyboard never covers the input
+- When the user sends a message, with Send or Reply as Sarah, the list scrolls to it once it appears. Other new messages leave the list where it is
+- Jump to latest: a `Button (floating)` with `ic_arrow_down`, content description `R.string.jump_to_latest` ("Jump to latest"), over the list's bottom end, `Spacing.md` from the edge and `Spacing.sm` above the input. It fades in while the newest message is scrolled out of view, and a tap snaps the list to the newest message with no animation
+- Insets: TopBar applies the status bar inset, and MockChatInput the navigation bar and keyboard insets. The list sits between them and applies none, so the keyboard never covers the input

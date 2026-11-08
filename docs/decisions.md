@@ -244,14 +244,13 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The message list scrolls to every new message
+## Only the user's own sends scroll the message list
 
-**Decision:** When the newest item in the list changes, `ChatScreen` scrolls the list to it, whoever sent it.
+**Decision:** When the user sends a message, with Send or Reply as Sarah, `ChatScreen` scrolls the list to it once it appears as the newest item. Other new messages leave the list where it is, and the jump-to-latest button shows while the newest message is out of view.
 
-**Limitation:** A message from Sarah that arrives while the user is reading older history pulls them down to it, and they lose their place.
+**Limitation:** A message that arrives while the user is reading older history gives no sign of itself beyond the jump-to-latest button, which shows whenever the newest message is out of view, new or not.
 
-**Trade-off:** The mock server sends nothing unprompted. Every new message comes from the user's own Send or Reply as Sarah, so scrolling on every change is the same as scrolling on their own sends, with no extra state in the screen.
+**Trade-off:** The user keeps their place in older history, and their own sends always land in view. A new-message count would need the screen to track what the user has seen.
 
-**To support a real backend:**
-1. Scroll on the user's own sends, and on incoming messages only when the newest message was already in view.
-2. Otherwise show a new-message chip above the input, which scrolls to the newest message when tapped.
+**To show new messages:**
+1. Count the messages that arrive while the newest message is out of view, and show the count on the jump-to-latest button.
