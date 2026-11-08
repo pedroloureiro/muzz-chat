@@ -17,20 +17,25 @@ class MessageRemoteMediator(
     private val loadOlder: suspend (beforeSeq: Long) -> Result<Unit>
 ) : RemoteMediator<Int, MessageWithNextRow>() {
 
-    override suspend fun load(loadType: LoadType, state: PagingState<Int, MessageWithNextRow>): MediatorResult {
-        val loaded = when (loadType) {
-            LoadType.REFRESH -> if (syncState() == null) loadNewest() else catchUp()
-            LoadType.PREPEND -> return MediatorResult.Success(endOfPaginationReached = true)
-            LoadType.APPEND -> {
-                val sync = syncState()
-                val beforeSeq = sync?.oldestSeq?.takeUnless { sync.reachedStart }
-                    ?: return MediatorResult.Success(endOfPaginationReached = true)
-                loadOlder(beforeSeq)
-            }
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, MessageWithNextRow>): MediatorResult =
+        when (loadType) {
+            LoadType.REFRESH -> refresh()
+            LoadType.PREPEND -> MediatorResult.Success(endOfPaginationReached = true)
+            LoadType.APPEND -> append()
         }
-        return loaded.fold(
-            onSuccess = { MediatorResult.Success(endOfPaginationReached = syncState()?.reachedStart ?: false) },
-            onFailure = { MediatorResult.Error(it) }
-        )
+
+    private suspend fun refresh(): MediatorResult =
+        (if (syncState() == null) loadNewest() else catchUp()).toMediatorResult()
+
+    private suspend fun append(): MediatorResult {
+        val sync = syncState()
+        val beforeSeq = sync?.oldestSeq?.takeUnless { sync.reachedStart }
+            ?: return MediatorResult.Success(endOfPaginationReached = true)
+        return loadOlder(beforeSeq).toMediatorResult()
     }
+
+    private suspend fun Result<Unit>.toMediatorResult(): MediatorResult = fold(
+        onSuccess = { MediatorResult.Success(endOfPaginationReached = syncState()?.reachedStart ?: false) },
+        onFailure = { MediatorResult.Error(it) }
+    )
 }
