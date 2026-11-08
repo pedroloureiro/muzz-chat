@@ -2,8 +2,6 @@
 
 The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), paging in [ADR-0003](adr/0003-cursor-paging.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
 
-Issues #7–#11 build out the parts of this structure that do not exist yet.
-
 ---
 
 ## Overview
@@ -29,7 +27,7 @@ di ──> ui, domain, data
 
 ```text
 com.pedroloureiro.muzzchat
-├── MainActivity, MuzzChatApplication, MOCK_SARAH_CHAT_ID
+├── MainActivity (and MOCK_SARAH_CHAT_ID), MuzzChatApplication
 ├── ui
 │   ├── theme                 Colours, typography, spacing, dimens, shapes, alpha, scale, theme
 │   └── components            Generic composables: Button, TextInput, TopBar, Avatar
@@ -60,7 +58,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 1. `chat/domain` imports no Android, Room, serialization, `chat/data` or `chat/ui` code. The one `androidx` package it may import is `androidx.paging`, from the plain Kotlin `paging-common` library.
 2. `chat/ui` imports nothing from `chat/data`.
 3. `chat/data` imports nothing from `chat/ui`.
-4. Only `chat/di` may see every layer.
+4. Only `chat/di` may see every layer. The top-level `ui` and `utils` packages import nothing from `chat`.
 
 ### Data
 5. `MessageEntity` and `MessageDto` stay inside `chat/data`. `ChatRepository` exposes only domain models.
@@ -133,7 +131,7 @@ Opening the Chat runs a REFRESH. With no sync state it fetches the newest page. 
 | DAO queries, including the paged `MessageWithNext` query | `MessageDaoTest`, using Robolectric and an in-memory Room database, so no emulator is needed |
 | Forwarding code | Not tested directly |
 | Composables | Not tested |
-| Architecture rules 1–3 | `ArchitectureTest` scans imports (#11) |
+| Dependency rules 1–4 | `ArchitectureTest` scans the imports of the Kotlin files under `chat`, `ui` and `utils` |
 
 ---
 
@@ -155,4 +153,4 @@ These are the places where the app knowingly departs from strict Clean Architect
 | 4 | `chat/domain` has `MessageWithNext`, a row model shaped by the paged list's needs | Paging maps one row at a time, and the bubble tail needs the next message. See [ADR-0003](adr/0003-cursor-paging.md) | Move the type into `chat/data` and map it to a UI-facing row in the ViewModel, if the domain should stay free of display concerns |
 | 5 | `MessageEntity` stores the domain `ContentType` enum by name, so renaming a value changes what is stored | A separate enum for storage would duplicate it for little benefit | Add a storage-only enum or stable codes, and map them in `chat/data` |
 | 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
-| 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a constant marked as mock data beside `MainActivity`, the navigation host. `MainActivity` passes it to `ChatScreen` as its navigation argument, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has no chat list to navigate from | Navigate to `ChatScreen` from a chat list with the selected `chatId`, and delete the constant |
+| 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a private constant in `MainActivity.kt` marked as mock data. `MainActivity`, the app's entry point, passes it to `ChatScreen` as its `chatId` parameter, where a navigation argument would come from, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has one screen and no chat list to navigate from, so it has no navigation library | Add navigation, open `ChatScreen` from a chat list with the selected `chatId` as its navigation argument, and delete the constant |
