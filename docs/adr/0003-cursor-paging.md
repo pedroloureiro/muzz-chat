@@ -33,7 +33,7 @@ Each Chat has a **sync state** row in `chat_sync`: `oldestSeq` (where older hist
 - **REFRESH** runs when the Chat is opened. With no sync state, it fetches the newest page. Otherwise it runs a **catch-up**: it fetches pages after `newestSeq` until `hasMore` is false, so messages missed while the app was away are filled in and nothing stored is dropped.
 - **APPEND** (scrolling up) fetches the page before `oldestSeq`. It ends at once when `reachedStart` is set, and a page with `hasMore = false` sets it.
 - **PREPEND** ends at once. New messages arrive through `syncIncomingMessages(chatId)`, not through paging.
-- The page size is `MESSAGE_PAGE_SIZE` in `chat/data/paging`, beside the mediator, and is also the `limit` sent to the server. It is 20, so the seed's history spans several pages and paging can be seen while scrolling.
+- The page size is `MESSAGE_PAGE_SIZE` in `chat/data`, beside the mediator, and is also the `limit` sent to the server. It is 20, so the seed's history spans several pages and paging can be seen while scrolling.
 
 ### Incoming messages and gaps
 `syncIncomingMessages(chatId)` stores the open Chat's messages and ignores the others. A message whose `seq` is `newestSeq + 1` moves `newestSeq` on. A message that skips a `seq` is stored, so it shows at once in its place, and a catch-up runs straight away to fetch the missing ones. An echo of this device's own send follows the same rule.

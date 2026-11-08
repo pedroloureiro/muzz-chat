@@ -36,30 +36,22 @@ com.pedroloureiro.muzzchat
 ├── utils                     Static utility functions: DateTimeUtils
 └── chat
     ├── di                    ChatModule
-    ├── domain
-    │   ├── model             Message (Pending, Confirmed), MessageWithNext, Content, ContentType,
-    │   │                     User + Users, MessageDeliveryStatus
-    │   ├── repository        ChatRepository (interface)
-    │   └── usecase           SendMessageUseCase
-    ├── data
-    │   ├── ChatRepositoryImpl, MessageMappers
-    │   ├── local
-    │   │   ├── ChatLocalDataSource, RoomChatLocalDataSource
-    │   │   └── db
-    │   │       ├── MessageDatabase, Converters
-    │   │       ├── dao       MessageDao
-    │   │       └── entity    MessageEntity, ChatSyncEntity, MessageWithNextRow
-    │   ├── paging            MessageRemoteMediator
-    │   ├── remote            ChatRemoteDataSource, MockChatRemoteDataSource
-    │   │   └── model         MessageDto, MessagePageDto, ContentDto, OutgoingMessageDto
-    │   └── mock              MockData
-    └── ui
-        ├── ChatScreen, ChatViewModel, ChatUiState, ChatItemMapper
-        ├── model             ChatItem, MessageDirection
-        └── components        MessageBubble, MessageItem, SectionHeader, ChatInput, TopBar, Avatar
+    ├── domain                ChatRepository (interface), SendMessageUseCase
+    │   └── models            Message (Pending, Confirmed), MessageWithNext, Content, ContentType,
+    │                         User + Users, MessageDeliveryStatus
+    ├── data                  ChatRepositoryImpl, MessageMappers, MessageRemoteMediator, MockData
+    │   ├── local             ChatLocalDataSource, RoomChatLocalDataSource
+    │   │   └── db            MessageDatabase, Converters, MessageDao
+    │   │       └── entities  MessageEntity, ChatSyncEntity, MessageWithNextRow
+    │   └── remote            ChatRemoteDataSource, MockChatRemoteDataSource
+    │       └── models        MessageDto, MessagePageDto, ContentDto, OutgoingMessageDto
+    └── ui                    ChatScreen, ChatViewModel, ChatItemMapper
+        ├── models            ChatItem, ChatUiState, MessageDirection
+        └── components        MessageBubble, MessageItem, SendingIndicator, SectionHeader, ChatInput,
+                              TopBar, Avatar
 ```
 
-A new feature gets its own package beside `chat`, with the same layers. Code moves to the top level only when it knows nothing about any feature.
+A new feature gets its own package beside `chat`, with the same layers. Code moves to the top level only when it knows nothing about any feature. Inside a layer, packages follow rule 22.
 
 ---
 
@@ -99,6 +91,9 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 
 ### Text
 21. Text shown to the user, including content descriptions, comes from `res/values/strings.xml` through `stringResource`. Names and other data go in as format arguments, such as `reply_as` = "Reply as %1$s". `@Preview` functions may use literal sample text.
+
+### Packages
+22. Files of one type, such as models, entities or components, get a package of their own when there is more than one of them, named for the type in the plural: `models`, `entities`, `components`. A file that is the only one of its type sits in its parent package. An interface and its implementations count as one file. Packages that group by role, not by type, are kept whatever their size: the layers (`domain`, `data`, `ui`, `di`, `utils`), `theme`, and `local`, `remote` and `db` in `data`.
 
 ---
 
