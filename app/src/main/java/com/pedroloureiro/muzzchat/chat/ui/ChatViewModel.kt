@@ -5,9 +5,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.OtherUserDevice
 import com.pedroloureiro.muzzchat.chat.domain.SendMessageUseCase
-import com.pedroloureiro.muzzchat.chat.domain.models.User
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
 import com.pedroloureiro.muzzchat.chat.ui.models.ChatUiState
 import java.time.ZoneId
@@ -23,7 +22,8 @@ import kotlinx.coroutines.launch
 class ChatViewModel(
     private val chatId: String,
     private val repository: ChatRepository,
-    private val sendMessageUseCase: SendMessageUseCase
+    private val sendMessageUseCase: SendMessageUseCase,
+    private val otherUser: OtherUserDevice
 ) : ViewModel() {
 
     val messages: Flow<PagingData<ChatItem>> = repository.getMessages(chatId)
@@ -39,14 +39,14 @@ class ChatViewModel(
 
     fun onInputChanged(text: String) = _uiState.update { it.copy(inputText = text) }
 
-    fun send() = sendAs(Users.ME)
+    fun send() = takeInput { text -> sendMessageUseCase(chatId, text) }
 
-    fun sendAsOther() = sendAs(Users.SARAH)
+    fun sendAsOther() = takeInput { text -> otherUser.send(chatId, text.trim()) }
 
-    private fun sendAs(sender: User) {
+    private fun takeInput(send: suspend (String) -> Unit) {
         val text = _uiState.value.inputText
         if (text.isBlank()) return
         _uiState.update { it.copy(inputText = "") }
-        viewModelScope.launch { sendMessageUseCase(chatId, text, sender) }
+        viewModelScope.launch { send(text) }
     }
 }

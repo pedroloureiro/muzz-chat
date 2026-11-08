@@ -8,10 +8,12 @@ import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
 import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.MockChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.OtherUserDevice
 import com.pedroloureiro.muzzchat.chat.domain.SendMessageUseCase
 import com.pedroloureiro.muzzchat.chat.ui.ChatViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel
+import org.koin.dsl.binds
 import org.koin.dsl.module
 
 private val localModule = module {
@@ -21,7 +23,7 @@ private val localModule = module {
 }
 
 private val mockBackendModule = module {
-    single<ChatRemoteDataSource> { MockChatRemoteDataSource(get()) }
+    single { MockChatRemoteDataSource(get()) } binds arrayOf(ChatRemoteDataSource::class, OtherUserDevice::class)
     single { MockData(androidContext()) }
 }
 
@@ -29,5 +31,5 @@ val chatModule = module {
     includes(localModule, mockBackendModule)
     single<ChatRepository> { ChatRepositoryImpl(local = get(), remote = get()) }
     factory { SendMessageUseCase(get()) }
-    viewModel { (chatId: String) -> ChatViewModel(chatId, get(), get()) }
+    viewModel { (chatId: String) -> ChatViewModel(chatId, get(), get(), get()) }
 }

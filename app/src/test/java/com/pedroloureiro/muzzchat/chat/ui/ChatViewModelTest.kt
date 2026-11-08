@@ -3,6 +3,7 @@ package com.pedroloureiro.muzzchat.chat.ui
 import androidx.paging.PagingData
 import androidx.paging.testing.asSnapshot
 import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.OtherUserDevice
 import com.pedroloureiro.muzzchat.chat.domain.SendMessageUseCase
 import com.pedroloureiro.muzzchat.chat.domain.models.Content
 import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
@@ -27,12 +28,13 @@ import org.junit.Test
 class ChatViewModelTest {
 
     private val repository = FakeChatRepository()
+    private val otherUser = FakeOtherUserDevice()
     private lateinit var viewModel: ChatViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = ChatViewModel(CHAT_ID, repository, SendMessageUseCase(repository))
+        viewModel = ChatViewModel(CHAT_ID, repository, SendMessageUseCase(repository), otherUser)
     }
 
     @After
@@ -73,12 +75,22 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun sendAsOther_sendsInputAsSarah() {
+    fun sendAsOther_sendsTrimmedInputThroughTheOtherUsersDevice() {
+        viewModel.onInputChanged("  hello  ")
+
+        viewModel.sendAsOther()
+
+        assertEquals(listOf(CHAT_ID to "hello"), otherUser.sent)
+        assertEquals(emptyList<Message.Pending>(), repository.sent)
+    }
+
+    @Test
+    fun sendAsOther_clearsInput() {
         viewModel.onInputChanged("hello")
 
         viewModel.sendAsOther()
 
-        assertEquals(Users.SARAH.id, repository.sent.single().senderId)
+        assertEquals("", viewModel.uiState.value.inputText)
     }
 
     @Test
@@ -107,7 +119,7 @@ class ChatViewModelTest {
 
         viewModel.sendAsOther()
 
-        assertEquals(emptyList<Message.Pending>(), repository.sent)
+        assertEquals(emptyList<Pair<String, String>>(), otherUser.sent)
         assertEquals("  \n ", viewModel.uiState.value.inputText)
     }
 
@@ -129,6 +141,14 @@ class ChatViewModelTest {
         override suspend fun sendMessage(message: Message.Pending) {
             sent += message
             awaitCancellation()
+        }
+    }
+
+    private class FakeOtherUserDevice : OtherUserDevice {
+        val sent = mutableListOf<Pair<String, String>>()
+
+        override suspend fun send(chatId: String, text: String) {
+            sent += chatId to text
         }
     }
 
