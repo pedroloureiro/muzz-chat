@@ -31,6 +31,21 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## The app supports English only
+
+**Decision:** UI text is in `res/values/strings.xml`, with no translations. `androidResources.localeFilters` keeps only English resources, so text from libraries, such as Compose's accessibility labels, is in English too.
+
+**Limitation:** On a device set to another language, the app is still in English. Timestamp headers use fixed patterns from `DateTimeFormat`, such as `d MMM yyyy HH:mm`, so their order follows English conventions. Month and day names follow the device locale.
+
+**Trade-off:** Strings are already resources, so adding a language needs no code changes. Translations, and checking each layout in them, would cost more than an exercise needs.
+
+**To add a language:**
+1. Add `res/values-<lang>/strings.xml` and the language to `localeFilters`.
+2. Format timestamp headers with locale-aware patterns, such as `DateTimeFormatterBuilder.getLocalizedDateTimePattern`, in place of the fixed ones.
+3. Check layouts with longer text and in right-to-left languages. The icons are already mirrored.
+
+---
+
 ## Opening a Chat catches up forward from the newest gap-free message
 
 **Decision:** REFRESH fetches the pages after the Chat sync state's `newestSeq` until the server reports `hasMore = false`. With no sync state, it fetches the newest page. An incoming message that skips a `seq` starts the same catch-up. See [ADR-0003](adr/0003-cursor-paging.md).

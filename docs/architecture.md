@@ -97,6 +97,9 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 19. A message is identified by its `senderId` and `clientMessageId` together: the Room primary key and the UI key. An echo confirms its pending message in place, by one upsert on that key. Every write of server messages, whether a history page or an incoming message, goes through the same insert, in the same transaction as the Chat's sync state it moves.
 20. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
 
+### Text
+21. Text shown to the user, including content descriptions, comes from `res/values/strings.xml` through `stringResource`. Names and other data go in as format arguments, such as `reply_as` = "Reply as %1$s". `@Preview` functions may use literal sample text.
+
 ---
 
 ## Sending a message
