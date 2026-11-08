@@ -31,7 +31,7 @@ di ──> ui, domain, data
 com.pedroloureiro.muzzchat
 ├── MainActivity, MuzzChatApplication, MOCK_SARAH_CHAT_ID
 ├── ui
-│   ├── theme                 Colours, typography, spacing, theme
+│   ├── theme                 Colours, typography, spacing, dimens, shapes, alpha, scale, theme
 │   └── components            Generic composables: Button, TextInput
 ├── utils                     Static utility functions: DateTimeUtils
 └── chat
@@ -83,7 +83,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 11. Use cases read the clock and generate IDs directly. Inject them only when logic depends on their values.
 
 ### Presentation
-12. Composables are stateless and receive only what they need to render.
+12. Composables are stateless and receive only what they need to render. A composable that reacts to press or focus receives a `MutableInteractionSource` from its caller, and the screen remembers it.
 13. Display rules, such as grouping and timestamp headers, belong to `ChatItemMapper`.
 14. `ChatItemMapper` has no Android dependencies, so it can run on the JVM.
 

@@ -63,7 +63,7 @@
   .btn-icon { font-size: 18px; }
 
   /* ── TextInput states ── */
-  .text-input { width: 220px; border-radius: 24px; padding: 10px 16px; font-size: 14px; font-family: inherit; border: none; outline: none; }
+  .text-input { width: 220px; border-radius: 24px; padding: 8px 16px; font-size: 14px; font-family: inherit; border: none; outline: none; }
   .text-input-empty { background: #F5F5F5; color: #9E9E9E; }
   .text-input-focused { background: #F5F5F5; color: #1A1A1A; box-shadow: 0 0 0 2px #E8175D40; }
   .text-input-filled { background: #F5F5F5; color: #1A1A1A; }
@@ -107,14 +107,14 @@
 
 
   /* ── SendAsOther button ── */
-  .send-as-btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.1s; }
+  .send-as-btn { display: inline-flex; align-items: center; gap: 4px; border-radius: 20px; padding: 8px 16px; font-size: 14px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.1s; }
   .send-as-default { background: white; color: #9E9E9E; border: 1.5px solid #E0E0E0; }
   .send-as-pressed { background: #F5F5F5; color: #9E9E9E; border: 1.5px solid #BDBDBD; transform: scale(0.97); }
-  .send-as-disabled { background: white; color: #BDBDBD; border: 1.5px solid #F0F0F0; cursor: not-allowed; opacity: 0.6; }
+  .send-as-disabled { background: white; color: #BDBDBD; border: 1.5px solid #E0E0E0; cursor: not-allowed; opacity: 0.6; }
 
   /* ── ChatInput states ── */
   .chat-input-wrap { display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: white; border: 1px solid #F0F0F0; border-radius: 12px; width: 320px; }
-  .ci-field { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 10px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
+  .ci-field { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
   .ci-field::placeholder { color: #9E9E9E; }
   .ci-btn { width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .ci-btn-active { background: #E8175D; }
@@ -135,7 +135,7 @@
   .pbubble.sent.g { border-top-right-radius: 18px; border-bottom-right-radius: 18px; }
   .pbubble.recv.g { border-top-left-radius: 18px; border-bottom-left-radius: 18px; }
   .preview-input-row { display: flex; align-items: center; gap: 8px; padding: 12px 16px; border-top: 1px solid #F0F0F0; }
-  .preview-input { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 10px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
+  .preview-input { flex: 1; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
   .preview-send { width: 40px; height: 40px; border-radius: 50%; background: #E8175D; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
   .preview-send svg { fill: white; }
 </style>
@@ -157,7 +157,7 @@
   <tr><td class="token-name">Pink700</td><td><span class="swatch" style="background:#C01048;"></span></td><td class="token-value">#C01048</td><td class="token-desc">Pressed state of Pink500</td></tr>
   <tr><td class="token-name">Neutral900</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="token-value">#1A1A1A</td><td class="token-desc">Near-black</td></tr>
   <tr><td class="token-name">Neutral500</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="token-value">#9E9E9E</td><td class="token-desc">Mid grey</td></tr>
-  <tr><td class="token-name">Neutral300</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="token-value">#BDBDBD</td><td class="token-desc">Disabled text / icons</td></tr>
+  <tr><td class="token-name">Neutral300</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="token-value">#BDBDBD</td><td class="token-desc">Disabled text / icons, pressed border</td></tr>
   <tr><td class="token-name">Neutral200</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="token-value">#F2F2F2</td><td class="token-desc">Light grey</td></tr>
   <tr><td class="token-name">Neutral100</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="token-value">#F5F5F5</td><td class="token-desc">Near-white surface</td></tr>
   <tr><td class="token-name">Neutral50</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="token-value">#E0E0E0</td><td class="token-desc">Border / divider</td></tr>
@@ -174,7 +174,8 @@
   <tr><td class="token-name">colorSurface</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Top bar, input bar surface</td></tr>
   <tr><td class="token-name">colorSurfaceVariant</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="role-ref">Neutral200</td><td class="token-desc">Received bubble bg, input focus ring bg</td></tr>
   <tr><td class="token-name">colorInputBackground</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="role-ref">Neutral100</td><td class="token-desc">TextInput field background</td></tr>
-  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border</td></tr>
+  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border, secondary button border</td></tr>
+  <tr><td class="token-name">colorBorderPressed</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Secondary button border when pressed</td></tr>
   <tr><td class="token-name">textPrimary</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="role-ref">Neutral900</td><td class="token-desc">Message text on received bubbles, top bar</td></tr>
   <tr><td class="token-name">textSecondary</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="role-ref">Neutral500</td><td class="token-desc">Section headers, timestamps, placeholder</td></tr>
   <tr><td class="token-name">textDisabled</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Disabled input text, disabled button icon</td></tr>
@@ -196,6 +197,10 @@
 <div class="type-row">
   <div class="type-meta"><div class="type-label">bodySmall</div><div class="type-spec">12sp / lh 16sp / Regular</div><div class="type-role">color: textSecondary</div></div>
   <div style="font-size:12px;line-height:16px;color:#9E9E9E;">11:59</div>
+</div>
+<div class="type-row">
+  <div class="type-meta"><div class="type-label">labelLarge</div><div class="type-spec">14sp / lh 20sp / SemiBold</div><div class="type-role">color: textSecondary</div></div>
+  <div style="font-size:14px;line-height:20px;font-weight:600;color:#9E9E9E;">Reply as Sarah</div>
 </div>
 <div class="type-row">
   <div class="type-meta"><div class="type-label">labelSmall</div><div class="type-spec">11sp / lh 16sp / SemiBold · 0 tracking</div><div class="type-role">color: textSecondary</div></div>
@@ -323,12 +328,12 @@
     <div class="state-card">
       <div class="state-label active">Pressed</div>
       <button class="send-as-btn send-as-pressed">↩ Reply as Sarah</button>
-      <div class="state-props">bg: colorInputBackground<br>border: Neutral300<br>scale: 0.97</div>
+      <div class="state-props">bg: colorInputBackground<br>border: colorBorderPressed<br>scale: 0.97</div>
     </div>
     <div class="state-card">
       <div class="state-label">Disabled</div>
       <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
-      <div class="state-props">opacity: 0.6<br>not clickable</div>
+      <div class="state-props">text: textDisabled<br>border: colorBorder<br>opacity: 0.6<br>not clickable</div>
     </div>
   </div>
 </div>

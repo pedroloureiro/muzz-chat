@@ -2,6 +2,8 @@
 
 > Visual reference: `design-system.html`
 
+Components take every colour, size, shape, opacity and scale from the theme tokens in `ui/theme`: `Color.kt`, `Typography`, `Spacing`, `Dimens`, `ComponentShapes`, `Alpha` and `Scale`. A component that needs a new value adds a token first, and never uses a literal.
+
 ---
 
 ## Colours
@@ -13,7 +15,7 @@
 | Pink700 | #C01048 | Pressed state of Pink500 |
 | Neutral900 | #1A1A1A | Near-black |
 | Neutral500 | #9E9E9E | Mid grey |
-| Neutral300 | #BDBDBD | Disabled text / icons |
+| Neutral300 | #BDBDBD | Disabled text / icons, pressed border |
 | Neutral200 | #F2F2F2 | Light grey |
 | Neutral100 | #F5F5F5 | Near-white surface |
 | Neutral50 | #E0E0E0 | Border / divider |
@@ -29,7 +31,8 @@
 | colorSurface | White | Top bar, input bar surface |
 | colorSurfaceVariant | Neutral200 | Received bubble bg |
 | colorInputBackground | Neutral100 | TextInput field background |
-| colorBorder | Neutral50 | Dividers, input bar top border |
+| colorBorder | Neutral50 | Dividers, input bar top border, secondary button border |
+| colorBorderPressed | Neutral300 | Secondary button border when pressed |
 | textPrimary | Neutral900 | Message text on received bubbles, top bar |
 | textSecondary | Neutral500 | Section headers, timestamps, placeholder |
 | textDisabled | Neutral300 | Disabled input text, disabled button icon |
@@ -41,8 +44,9 @@
 | Style | Size | Line height | Weight | Role mapping |
 |---|---|---|---|---|
 | bodyLarge | 16sp | 22sp | Regular | textPrimary — message body |
-| bodyMedium | 14sp | 20sp | Regular | textPrimary — message body (compact) |
+| bodyMedium | 14sp | 20sp | Regular | textPrimary — message body (compact), TextInput text |
 | bodySmall | 12sp | 16sp | Regular | textSecondary — timestamps |
+| labelLarge | 14sp | 20sp | SemiBold | textSecondary — button labels |
 | labelSmall | 11sp | 16sp | SemiBold, 0 tracking | textSecondary — section headers |
 
 ---
@@ -62,13 +66,49 @@
 
 ---
 
+## Dimens
+| Token | Value | Usage |
+|---|---|---|
+| buttonPrimarySize | 44dp | Primary button diameter |
+| iconSize | 18dp | Icons inside buttons |
+| borderWidth | 1.5dp | Secondary button border |
+| focusRingWidth | 2dp | TextInput focus ring |
+
+---
+
+## Alpha
+| Token | Value | Usage |
+|---|---|---|
+| disabled | 0.6 | Whole component, when disabled (secondary button, TextInput) |
+| focusRing | 0.25 | colorPrimary, as the TextInput focus ring |
+
+---
+
+## Scale
+| Token | Value | Usage |
+|---|---|---|
+| buttonPrimaryPressed | 0.95 | Primary button, while pressed |
+| buttonSecondaryPressed | 0.97 | Secondary button, while pressed |
+
+---
+
 ## Shapes
-| Component | Corner radius |
+| Component | Corner radius | Token |
+|---|---|---|
+| MessageBubble | 18dp all corners; tail corner 4dp | — |
+| TextInput | 24dp (pill) | ComponentShapes.textInput |
+| Button (primary) | Circle | ComponentShapes.buttonPrimary |
+| Button (secondary) | 20dp (pill) | ComponentShapes.buttonSecondary |
+
+---
+
+## Icons
+Icons are vector drawables in `res/drawable`, loaded with `ImageVector.vectorResource`. They are drawn in the colour the component tints them with.
+
+| Drawable | Usage |
 |---|---|
-| MessageBubble | 18dp all corners; tail corner 4dp |
-| TextInput | 24dp (pill) |
-| Button (primary) | Circle |
-| Button (secondary) | 20dp (pill) |
+| ic_send | Send button |
+| ic_reply | "Reply as Sarah" button |
 
 ---
 
@@ -95,8 +135,12 @@ Composes back button + Avatar + name.
 ---
 
 ### Button
+Generic action button. The caller passes a `MutableInteractionSource`, and the button reads its pressed state from it, so it holds no state of its own. The scale animates with `animateFloatAsState`. There is no ripple.
 
 **variant = primary** (circle icon button)
+- Size `buttonPrimarySize`, shape `ComponentShapes.buttonPrimary`, icon `iconSize`
+- Shows `icon` only. `label` is the icon's content description
+
 | State | bg | icon |
 |---|---|---|
 | Default | colorPrimary | textOnPrimary |
@@ -104,16 +148,21 @@ Composes back button + Avatar + name.
 | Disabled | colorPrimaryDisabled | textDisabled |
 
 **variant = secondary** (outlined pill)
+- Shape `ComponentShapes.buttonSecondary`, border `borderWidth`, padding `Spacing.md` horizontal and `Spacing.sm` vertical
+- Shows `icon` (`iconSize`) and `label` (`labelLarge`) in a row, `Spacing.xs` apart
+
 | State | bg | text | border |
 |---|---|---|---|
 | Default | colorSurface | textSecondary | colorBorder |
-| Pressed | colorInputBackground | textSecondary | Neutral300, scale 0.97 |
-| Disabled | colorSurface | textDisabled | Neutral50, opacity 0.6 |
+| Pressed | colorInputBackground | textSecondary | colorBorderPressed, scale 0.97 |
+| Disabled | colorSurface | textDisabled | colorBorder, opacity 0.6 |
 
 ---
 
 ### TextInput
-Generic configurable text field.
+Generic configurable text field. The caller passes a `MutableInteractionSource`, and the field reads its focused state from it.
+- `BasicTextField`, shape `ComponentShapes.textInput`, padding `Spacing.md` horizontal and `Spacing.sm` vertical, text `bodyMedium`
+- Focus ring: a `focusRingWidth` border in colorPrimary at `Alpha.focusRing`
 
 | State | bg | text |
 |---|---|---|
