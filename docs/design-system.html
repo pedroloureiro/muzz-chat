@@ -70,15 +70,15 @@
   .text-input-disabled { background: #F5F5F5; color: #BDBDBD; cursor: not-allowed; opacity: 0.6; }
 
   /* ── MessageBubble states ── */
-  .bubble { padding: 8px 12px; font-size: 14px; line-height: 20px; display: inline-block; max-width: 240px; }
+  .bubble { padding: 8px 12px; font-size: 14px; line-height: 20px; display: inline-block; max-width: 80%; }
   .bubble-sent { background: #E8175D; color: white; border-radius: 18px 18px 4px 18px; }
   .bubble-recv { background: #F2F2F2; color: #1A1A1A; border-radius: 18px 18px 18px 4px; }
   .bubble-sent-grouped { background: #E8175D; color: white; border-radius: 18px; }
   .bubble-recv-grouped { background: #F2F2F2; color: #1A1A1A; border-radius: 18px; }
   .bubble-sending { opacity: 0.5; }
-  .sending-indicator { font-size: 11px; color: #9E9E9E; margin-top: 3px; text-align: right; letter-spacing: 2px; }
+  .sending-indicator { display: flex; gap: 4px; margin-top: 4px; justify-content: flex-end; }
   @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
-  .sending-dots span { animation: pulse 1.2s infinite; display: inline-block; }
+  .sending-dots span { animation: pulse 1.2s infinite; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #9E9E9E; }
   .sending-dots span:nth-child(2) { animation-delay: 0.2s; }
   .sending-dots span:nth-child(3) { animation-delay: 0.4s; }
 
@@ -90,7 +90,7 @@
   .msg-row.grouped { margin-bottom: -6px; } /* 8px wrap gap − 6px = msgGrouped 2px below */
 
   /* ── SectionHeader ── */
-  .section-header-demo { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 4px 16px; letter-spacing: 0; }
+  .section-header-demo { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 16px; letter-spacing: 0; }
 
   /* ── Avatar ── */
   .avatar-lg { width: 48px; height: 48px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: 700; flex-shrink: 0; border: 2px solid #F2F2F2; }
@@ -128,8 +128,8 @@
   .avatar { width: 36px; height: 36px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; flex-shrink: 0; }
   .topbar-name { font-size: 16px; font-weight: 600; }
   .chat-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; min-height: 300px; }
-  .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 4px 0 8px; }
-  .pbubble { padding: 8px 12px; border-radius: 18px; max-width: 72%; font-size: 14px; line-height: 20px; }
+  .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 0; }
+  .pbubble { padding: 8px 12px; border-radius: 18px; max-width: 80%; font-size: 14px; line-height: 20px; }
   .pbubble.sent { background: #E8175D; color: white; border-bottom-right-radius: 4px; }
   .pbubble.recv { background: #F2F2F2; color: #1A1A1A; border-bottom-left-radius: 4px; }
   .pbubble.sent.g { border-top-right-radius: 18px; border-bottom-right-radius: 18px; }
@@ -213,14 +213,10 @@
 <h2>Spacing</h2>
 <div class="spacing-grid">
   <div class="spacing-row"><div class="spacing-label">xs</div><div class="spacing-bar" style="width:4px;"></div><div class="spacing-value">4dp</div><div class="spacing-desc">Icon gaps, tight nudges</div></div>
-  <div class="spacing-row"><div class="spacing-label">sm</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-value">8dp</div><div class="spacing-desc">Inner padding, standard message gap</div></div>
+  <div class="spacing-row"><div class="spacing-label">sm</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-value">8dp</div><div class="spacing-desc">Inner padding, small gaps</div></div>
   <div class="spacing-row"><div class="spacing-label">md</div><div class="spacing-bar" style="width:16px;"></div><div class="spacing-value">16dp</div><div class="spacing-desc">Screen horizontal margin</div></div>
   <div class="spacing-row"><div class="spacing-label">lg</div><div class="spacing-bar" style="width:24px;"></div><div class="spacing-value">24dp</div><div class="spacing-desc">Section spacing</div></div>
   <div class="spacing-row"><div class="spacing-label">xl</div><div class="spacing-bar" style="width:32px;"></div><div class="spacing-value">32dp</div><div class="spacing-desc">Large layout gaps</div></div>
-  <div class="spacing-row"><div class="spacing-label">bubblePadH</div><div class="spacing-bar" style="width:12px;"></div><div class="spacing-value">12dp</div><div class="spacing-desc">Bubble horizontal padding</div></div>
-  <div class="spacing-row"><div class="spacing-label">bubblePadV</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-value">8dp</div><div class="spacing-desc">Bubble vertical padding</div></div>
-  <div class="spacing-row"><div class="spacing-label">msgGrouped</div><div class="spacing-bar" style="width:2px;"></div><div class="spacing-value">2dp</div><div class="spacing-desc">Gap: same user, &lt;20s apart</div></div>
-  <div class="spacing-row"><div class="spacing-label">msgSeparated</div><div class="spacing-bar" style="width:8px;"></div><div class="spacing-value">8dp</div><div class="spacing-desc">Gap: different user or &gt;20s apart</div></div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
@@ -378,12 +374,12 @@
     <div class="state-card">
       <div class="state-label active">Sent — tail</div>
       <span class="bubble bubble-sent">Does 7pm work for you?</span>
-      <div class="state-props">bg: colorPrimary<br>text: textOnPrimary<br>tail: bottom-right 4dp</div>
+      <div class="state-props">bg: colorPrimary<br>text: textOnPrimary<br>tail: bottom-end 4dp</div>
     </div>
     <div class="state-card">
       <div class="state-label active">Received — tail</div>
       <span class="bubble bubble-recv">Yeh for sure, sounds fun</span>
-      <div class="state-props">bg: colorSurfaceVariant<br>text: textPrimary<br>tail: bottom-left 4dp</div>
+      <div class="state-props">bg: colorSurfaceVariant<br>text: textPrimary<br>tail: bottom-start 4dp</div>
     </div>
     <div class="state-card">
       <div class="state-label active">Sent — grouped</div>
@@ -398,8 +394,7 @@
     <div class="state-card">
       <div class="state-label active">Sent — sending</div>
       <span class="bubble bubble-sent bubble-sending">On my way!</span>
-      <div class="sending-indicator sending-dots"><span>●</span><span>●</span><span>●</span></div>
-      <div class="state-props">status: SENDING<br>opacity: 0.5<br>pulsing dots below bubble<br>transitions to SENT on echo</div>
+      <div class="state-props">status: SENDING<br>opacity: 0.5<br>animates to 1 on SENT</div>
     </div>
   </div>
 </div>
@@ -416,7 +411,7 @@
       <div class="msg-item-wrap" style="border:none;padding:0;">
         <div class="msg-row sent"><span class="bubble bubble-sent">Does 7pm work?</span></div>
       </div>
-      <div class="state-props">align: end<br>bottomPadding: msgSeparated (8dp)</div>
+      <div class="state-props">align: end<br>bottomPadding: 8dp</div>
     </div>
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Sent — grouped (same user, &lt;20s)</div>
@@ -424,14 +419,14 @@
         <div class="msg-row sent grouped"><span class="bubble bubble-sent-grouped">Does 7pm work?</span></div>
         <div class="msg-row sent"><span class="bubble bubble-sent">Or maybe 8pm?</span></div>
       </div>
-      <div class="state-props">align: end<br>bottomPadding: msgGrouped (2dp), no tail</div>
+      <div class="state-props">align: end<br>bottomPadding: 2dp, no tail</div>
     </div>
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Received — separated</div>
       <div class="msg-item-wrap" style="border:none;padding:0;">
         <div class="msg-row recv"><span class="bubble bubble-recv">Ok cool!</span></div>
       </div>
-      <div class="state-props">align: start<br>bottomPadding: msgSeparated (8dp)</div>
+      <div class="state-props">align: start<br>bottomPadding: 8dp</div>
     </div>
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Sent — sending (status: SENDING)</div>
@@ -439,11 +434,11 @@
         <div class="msg-row sent">
           <div style="display:flex;flex-direction:column;align-items:flex-end;">
             <span class="bubble bubble-sent bubble-sending">On my way!</span>
-            <div class="sending-indicator sending-dots"><span>●</span><span>●</span><span>●</span></div>
+            <div class="sending-indicator sending-dots"><span></span><span></span><span></span></div>
           </div>
         </div>
       </div>
-      <div class="state-props">align: end<br>opacity: 0.5 on bubble<br>pulsing dots below<br>→ snaps to SENT on echo (~200ms)</div>
+      <div class="state-props">align: end<br>opacity: 0.5 on bubble<br>SendingIndicator below<br>→ fades to SENT on echo (~200ms)</div>
     </div>
     <div class="state-card" style="min-width:300px;">
       <div class="state-label active">Sent — confirmed (status: SENT)</div>
@@ -458,7 +453,22 @@
         <div class="msg-row recv grouped"><span class="bubble bubble-recv-grouped">Nothing much</span></div>
         <div class="msg-row recv"><span class="bubble bubble-recv">Just about to go shopping</span></div>
       </div>
-      <div class="state-props">align: start<br>bottomPadding: msgGrouped (2dp), no tail</div>
+      <div class="state-props">align: start<br>bottomPadding: 2dp, no tail</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SendingIndicator ── -->
+<div class="component-section">
+  <div class="component-header">
+    <div class="component-title">SendingIndicator</div>
+    <div class="component-subtitle">Pulsing dots below a SENDING message</div>
+  </div>
+  <div class="states-grid">
+    <div class="state-card">
+      <div class="state-label active">Default (only state)</div>
+      <div class="sending-indicator sending-dots" style="justify-content:flex-start;"><span></span><span></span><span></span></div>
+      <div class="state-props">dots: 6dp circles, textSecondary<br>gap: Spacing.xs<br>opacity: 0.3 ↔ 1, 600ms each way<br>stagger: 200ms<br>description: "Sending"</div>
     </div>
   </div>
 </div>
@@ -489,11 +499,11 @@
   <div class="states-grid">
     <div class="state-card" style="min-width:360px;">
       <div class="state-label active">Empty — all disabled</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;justify-content:flex-end;padding:0 4px;">
+      <div style="display:flex;flex-direction:column;gap:8px;background:white;border-top:1px solid #E0E0E0;padding:8px 16px;width:320px;">
+        <div style="display:flex;justify-content:flex-end;">
           <button class="send-as-btn send-as-disabled" disabled>↩ Reply as Sarah</button>
         </div>
-        <div class="chat-input-wrap" style="border-top:1px solid #E0E0E0;border-radius:0 0 12px 12px;border-left:none;border-right:none;border-bottom:none;padding-top:8px;">
+        <div class="chat-input-wrap" style="border:none;border-radius:0;padding:0;width:auto;background:none;">
           <input class="ci-field" placeholder="Message…" readonly />
           <button class="ci-btn ci-btn-disabled" disabled>
             <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>
@@ -504,11 +514,11 @@
     </div>
     <div class="state-card" style="min-width:360px;">
       <div class="state-label active">Filled — both enabled</div>
-      <div style="display:flex;flex-direction:column;gap:8px;">
-        <div style="display:flex;justify-content:flex-end;padding:0 4px;">
+      <div style="display:flex;flex-direction:column;gap:8px;background:white;border-top:1px solid #E0E0E0;padding:8px 16px;width:320px;">
+        <div style="display:flex;justify-content:flex-end;">
           <button class="send-as-btn send-as-default">↩ Reply as Sarah</button>
         </div>
-        <div class="chat-input-wrap" style="border-top:1px solid #E0E0E0;border-radius:0 0 12px 12px;border-left:none;border-right:none;border-bottom:none;padding-top:8px;">
+        <div class="chat-input-wrap" style="border:none;border-radius:0;padding:0;width:auto;background:none;">
           <input class="ci-field" value="Hey, Sara looks great" readonly />
           <button class="ci-btn ci-btn-active">
             <svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg>

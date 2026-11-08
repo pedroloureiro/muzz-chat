@@ -2,7 +2,12 @@
 
 > Visual reference: `design-system.html`
 
-Components take every colour, size, shape, opacity and scale from the theme tokens in `ui/theme`: `Color.kt`, `Typography`, `Spacing`, `Dimens`, `ComponentShapes`, `Alpha` and `Scale`. A component that needs a new value adds a token first, and never uses a literal.
+Components never write a colour, size, shape, opacity, scale or duration inline. Each value is declared once, as close as possible to what uses it:
+- A value used by one component is a private constant in that component's file.
+- A value that several components use, or are likely to, is a token in `ui/theme`: `Color.kt`, `Typography`, `Spacing`, `Dimens`, `ComponentShapes`, `Alpha` and `Scale`.
+- Colours and text styles are always tokens.
+
+Every value is listed here, in a token table or in its component's section.
 
 ---
 
@@ -55,14 +60,10 @@ Components take every colour, size, shape, opacity and scale from the theme toke
 | Token | Value | Usage |
 |---|---|---|
 | xs | 4dp | Icon gaps, tight nudges |
-| sm | 8dp | Inner padding, standard message gap |
+| sm | 8dp | Inner padding, small gaps |
 | md | 16dp | Screen horizontal margin |
 | lg | 24dp | Section spacing |
 | xl | 32dp | Large layout gaps |
-| bubblePadH | 12dp | Bubble horizontal padding |
-| bubblePadV | 8dp | Bubble vertical padding |
-| msgGrouped | 2dp | Gap: same user, <20s apart |
-| msgSeparated | 8dp | Gap: different user or >20s apart |
 
 ---
 
@@ -73,6 +74,7 @@ Components take every colour, size, shape, opacity and scale from the theme toke
 | iconSize | 18dp | Icons inside buttons |
 | borderWidth | 1.5dp | Secondary button border |
 | focusRingWidth | 2dp | TextInput focus ring |
+| dividerWidth | 1dp | ChatInput top border, TopBar bottom border |
 
 ---
 
@@ -95,7 +97,7 @@ Components take every colour, size, shape, opacity and scale from the theme toke
 ## Shapes
 | Component | Corner radius | Token |
 |---|---|---|
-| MessageBubble | 18dp all corners; tail corner 4dp | — |
+| MessageBubble | 18dp all corners; tail corner 4dp | Private to `MessageBubble` |
 | TextInput | 24dp (pill) | ComponentShapes.textInput |
 | Button (primary) | Circle | ComponentShapes.buttonPrimary |
 | Button (secondary) | 20dp (pill) | ComponentShapes.buttonSecondary |
@@ -174,31 +176,46 @@ Generic configurable text field. The caller passes a `MutableInteractionSource`,
 ---
 
 ### MessageBubble
-Bubble shell — receives text, background colour, and tail direction.
+Bubble shell: the message text on its background. Its values are private to `MessageBubble.kt`.
+- Text `bodyMedium`, padding 12dp horizontal and 8dp vertical
+- Corners 18dp. The last bubble of a run has a 4dp tail corner on its own side: bottom-end when sent, bottom-start when received. Start and end follow the layout direction
+- SENDING: the whole bubble is at opacity 0.5. It animates to 1 with `animateFloatAsState` when the message is sent
 
 | State | bg | text | shape |
 |---|---|---|---|
-| Sent — tail | colorPrimary | textOnPrimary | 18dp, tail: bottom-right 4dp |
-| Received — tail | colorSurfaceVariant | textPrimary | 18dp, tail: bottom-left 4dp |
+| Sent — tail | colorPrimary | textOnPrimary | 18dp, tail: bottom-end 4dp |
+| Received — tail | colorSurfaceVariant | textPrimary | 18dp, tail: bottom-start 4dp |
 | Sent — grouped | colorPrimary | textOnPrimary | all corners 18dp |
 | Received — grouped | colorSurfaceVariant | textPrimary | all corners 18dp |
-| Sent — sending | colorPrimary | textOnPrimary | opacity 0.5, pulsing dots below |
+| Sent — sending | colorPrimary | textOnPrimary | as above, opacity 0.5 |
 
 ---
 
 ### MessageItem
-Wraps MessageBubble — handles alignment, spacing, and delivery status.
+Wraps MessageBubble and handles alignment, spacing, width and the SendingIndicator. Its values are private to `MessageItem.kt`.
+- The bubble sits in a column 80% of the row's width, aligned to the bubble's side. The bubble wraps its text inside the column
+- Bottom padding is the gap to the next bubble: 2dp when grouped, 8dp otherwise
+- While SENDING, a SendingIndicator sits `Spacing.xs` below the bubble, on its side. It shows and hides with `AnimatedVisibility`, so the row closes smoothly when the message is sent
+- No side padding: the message list adds the screen margin
 
 | State | Alignment | Bottom padding (gap to the next bubble) | Notes |
 |---|---|---|---|
-| Sent — separated | end | msgSeparated (8dp) | status: SENT |
-| Sent — grouped | end | msgGrouped (2dp) | status: SENT |
-| Sent — sending | end | msgGrouped or msgSeparated, as above | status: SENDING, opacity 0.5 + pulsing dots |
-| Sent — confirmed | end | — | status transitions SENDING → SENT on echo (~200ms) |
-| Received — separated | start | msgSeparated (8dp) | — |
-| Received — grouped | start | msgGrouped (2dp) | — |
+| Sent — separated | end | 8dp | status: SENT |
+| Sent — grouped | end | 2dp | status: SENT |
+| Sent — sending | end | 2dp or 8dp, as above | status: SENDING, bubble opacity 0.5, SendingIndicator below |
+| Sent — confirmed | end | — | SENDING → SENT on echo (~200ms): the bubble fades to opacity 1 and the indicator hides |
+| Received — separated | start | 8dp | — |
+| Received — grouped | start | 2dp | — |
 
 Grouped = next message is same user AND sent <20s later. A grouped bubble has no tail, and the small gap below it joins it to the next bubble.
+
+---
+
+### SendingIndicator
+Three pulsing dots below a message that is SENDING. Single state. Its values are private to `SendingIndicator.kt`.
+- Dots: 6dp circles in `textSecondary`, `Spacing.xs` apart
+- Each dot's opacity pulses between 0.3 and 1, 600ms each way, and each dot starts 200ms after the one before
+- Content description: `R.string.sending` ("Sending"), on the whole indicator
 
 ---
 
@@ -206,13 +223,18 @@ Grouped = next message is same user AND sent <20s later. A grouped bubble has no
 Centred timestamp divider. Single state.
 
 - Style: `labelSmall`, colour: `textSecondary`, alignment: centre
+- Padding: `Spacing.sm` top and bottom
 - Shown above a message when the gap from the older message is >1h, or above the oldest message
 - Format: today `11:59`, 1–6 days ago `Thursday 11:59`, otherwise `12 Mar 2026 11:59`
 
 ---
 
 ### ChatInput
-Composes `TextInput` + `Button (primary)` + `Button (secondary)`.
+Composes `TextInput` + `Button (primary)` + `Button (secondary)`. The screen passes in an interaction source for each.
+- Bar: `colorSurface`, with a `dividerWidth` `colorBorder` divider along its top, then padding `Spacing.md` horizontal and `Spacing.sm` vertical
+- Button secondary ("Reply as Sarah", `ic_reply`) is end-aligned, `Spacing.sm` above the input row
+- Input row: `TextInput` filling the space, then Button primary (`ic_send`, content description "Send"), `Spacing.sm` apart and centred vertically
+- The screen applies the keyboard and navigation bar insets
 
 | State | TextInput | Button primary | Button secondary |
 |---|---|---|---|
@@ -220,5 +242,3 @@ Composes `TextInput` + `Button (primary)` + `Button (secondary)`.
 | Filled | filled | default | default |
 
 - Both buttons enabled when `text.isNotBlank()`
-- Button secondary ("Reply as Sarah") sits above the input row
-- Bar bg: `colorSurface`, top border: `colorBorder`
