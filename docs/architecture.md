@@ -94,7 +94,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 
 ### Ordering and paging
 18. Every message belongs to one Chat, and every remote call and Room query is limited to one `chatId`. Confirmed messages are ordered by their server-assigned `seq`, and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
-19. An echo replaces its pending message by `localId` in one Room transaction. Every write of server messages, whether a history page or an incoming message, goes through the same insert, in the same transaction as the Chat's sync state it moves.
+19. A message is identified by its `senderId` and `clientMessageId` together: the Room primary key and the UI key. An echo confirms its pending message in place, by one upsert on that key. Every write of server messages, whether a history page or an incoming message, goes through the same insert, in the same transaction as the Chat's sync state it moves.
 20. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
 
 ---
@@ -103,10 +103,10 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 
 ```text
 ChatViewModel
-  → SendMessageUseCase          trims and validates text, builds Message.Pending(localId, device time)
+  → SendMessageUseCase          trims and validates text, builds Message.Pending(clientMessageId, device time)
   → ChatRepository.sendMessage
   → ChatRepositoryImpl          inserts the pending row into Room, then calls the remote data source
-  → Echo received               one transaction: delete the row with that localId, insert the confirmed message
+  → Echo or response received   upsert by (senderId, clientMessageId): the pending row is confirmed in place
   → Room PagingSource           invalidated, reloads PagingData<MessageWithNext>
   → ChatItemMapper              map → ChatItem.Message, insertSeparators → TimestampHeader
   → Flow<PagingData<ChatItem>>  rendered by ChatScreen
