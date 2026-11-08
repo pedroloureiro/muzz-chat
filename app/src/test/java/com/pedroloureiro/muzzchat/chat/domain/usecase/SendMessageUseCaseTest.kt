@@ -1,8 +1,10 @@
 package com.pedroloureiro.muzzchat.chat.domain.usecase
 
+import androidx.paging.PagingData
 import com.pedroloureiro.muzzchat.chat.domain.model.Content
 import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
 import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
 import java.util.UUID
@@ -21,22 +23,22 @@ class SendMessageUseCaseTest {
 
     @Test
     fun blankText_sendsNothing() = runTest {
-        sendMessage("  \n\t ", Users.ME)
+        sendMessage(CHAT_ID, "  \n\t ", Users.ME)
 
         assertEquals(emptyList<Message.Pending>(), repository.sent)
     }
 
     @Test
     fun textIsTrimmed() = runTest {
-        sendMessage("  hello  ", Users.ME)
+        sendMessage(CHAT_ID, "  hello  ", Users.ME)
 
         assertEquals("hello", repository.sent.single().content.value)
     }
 
     @Test
     fun message_localIdIsAUniqueUuid() = runTest {
-        sendMessage("hello", Users.ME)
-        sendMessage("hello", Users.ME)
+        sendMessage(CHAT_ID, "hello", Users.ME)
+        sendMessage(CHAT_ID, "hello", Users.ME)
 
         val (first, second) = repository.sent.map { it.localId }
         assertEquals(first, UUID.fromString(first).toString())
@@ -47,21 +49,28 @@ class SendMessageUseCaseTest {
     fun message_timestampIsTheDeviceTime() = runTest {
         val before = System.currentTimeMillis()
 
-        sendMessage("hello", Users.ME)
+        sendMessage(CHAT_ID, "hello", Users.ME)
 
         assertTrue(repository.sent.single().timestampMillis in before..System.currentTimeMillis())
     }
 
     @Test
     fun message_usesSenderId() = runTest {
-        sendMessage("hello", Users.SARAH)
+        sendMessage(CHAT_ID, "hello", Users.SARAH)
 
         assertEquals(Users.SARAH.id, repository.sent.single().senderId)
     }
 
     @Test
+    fun message_isInTheChat() = runTest {
+        sendMessage(CHAT_ID, "hello", Users.ME)
+
+        assertEquals(CHAT_ID, repository.sent.single().chatId)
+    }
+
+    @Test
     fun message_isText() = runTest {
-        sendMessage("hello", Users.ME)
+        sendMessage(CHAT_ID, "hello", Users.ME)
 
         assertEquals(Content(ContentType.TEXT, "hello"), repository.sent.single().content)
     }
@@ -69,12 +78,14 @@ class SendMessageUseCaseTest {
     private class FakeChatRepository : ChatRepository {
         val sent = mutableListOf<Message.Pending>()
 
-        override fun getMessages(): Flow<List<Message>> = emptyFlow()
+        override fun getMessages(chatId: String): Flow<PagingData<MessageWithNext>> = emptyFlow()
         override suspend fun sendMessage(message: Message.Pending) {
             sent += message
         }
-        override suspend fun syncIncomingMessages() = Unit
-        override suspend fun loadMessages() = Unit
-        override suspend fun clearMessages() = Unit
+        override suspend fun syncIncomingMessages(chatId: String) = Unit
+    }
+
+    private companion object {
+        const val CHAT_ID = "chat"
     }
 }

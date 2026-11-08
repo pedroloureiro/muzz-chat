@@ -104,16 +104,7 @@
   .topbar-info { flex: 1; display: flex; align-items: center; gap: 10px; }
   .topbar-name-block { display: flex; flex-direction: column; }
   .topbar-name-text { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 20px; }
-  .topbar-overflow { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; color: #9E9E9E; font-size: 20px; border-radius: 50%; flex-shrink: 0; }
-  .topbar-overflow:hover { background: #F5F5F5; }
-  .topbar-overflow-pressed { background: #F5F5F5; color: #1A1A1A; }
 
-  /* ── OverflowMenu ── */
-  .overflow-menu { background: white; border-radius: 8px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 180px; overflow: hidden; }
-  .overflow-item { padding: 14px 16px; font-size: 14px; color: #1A1A1A; cursor: pointer; border-bottom: 1px solid #F5F5F5; }
-  .overflow-item:last-child { border-bottom: none; }
-  .overflow-item:hover { background: #F9F9F9; }
-  .overflow-item-destructive { color: #E8175D; }
 
   /* ── SendAsOther button ── */
   .send-as-btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 20px; padding: 6px 14px; font-size: 13px; font-weight: 600; font-family: inherit; cursor: pointer; transition: all 0.1s; }
@@ -271,7 +262,7 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">TopBar</div>
-    <div class="component-subtitle">Composes back button + Avatar + name + overflow menu trigger</div>
+    <div class="component-subtitle">Composes back button + Avatar + name</div>
   </div>
   <div class="states-grid">
     <div class="state-card" style="padding:0;overflow:hidden;min-width:360px;">
@@ -284,49 +275,8 @@
             <span class="topbar-name-text">Sarah</span>
           </div>
         </div>
-        <button class="topbar-overflow">⋮</button>
       </div>
-      <div class="state-props" style="padding:12px 16px;">bg: colorSurface<br>border-bottom: colorBorder<br>back icon: textPrimary<br>overflow icon: textSecondary</div>
-    </div>
-    <div class="state-card" style="padding:0;overflow:hidden;min-width:360px;">
-      <div style="padding:12px 16px 8px 16px;"><div class="state-label active" style="margin-bottom:12px;">Overflow pressed</div></div>
-      <div class="topbar-demo" style="border-radius:0;border-top:none;border-left:none;border-right:none;">
-        <button class="topbar-back">‹</button>
-        <div class="topbar-info">
-          <div class="avatar-md">S</div>
-          <div class="topbar-name-block">
-            <span class="topbar-name-text">Sarah</span>
-          </div>
-        </div>
-        <button class="topbar-overflow topbar-overflow-pressed">⋮</button>
-      </div>
-      <div class="state-props" style="padding:12px 16px;">overflow bg: colorInputBackground<br>icon: textPrimary</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── OverflowMenu ── -->
-<div class="component-section">
-  <div class="component-header">
-    <div class="component-title">OverflowMenu</div>
-    <div class="component-subtitle">Dropdown anchored to the ⋮ button — two items</div>
-  </div>
-  <div class="states-grid">
-    <div class="state-card">
-      <div class="state-label active">Open</div>
-      <div class="overflow-menu">
-        <div class="overflow-item">Load sample data</div>
-        <div class="overflow-item overflow-item-destructive">Clear messages</div>
-      </div>
-      <div class="state-props">bg: colorSurface<br>shadow: 0 4dp 16dp #00000012<br>radius: 8dp<br>"Clear messages": colorPrimary (destructive)</div>
-    </div>
-    <div class="state-card">
-      <div class="state-label active">Item hovered</div>
-      <div class="overflow-menu">
-        <div class="overflow-item" style="background:#F9F9F9;">Load sample data</div>
-        <div class="overflow-item overflow-item-destructive">Clear messages</div>
-      </div>
-      <div class="state-props">item bg: colorInputBackground<br>on tap: execute action + dismiss</div>
+      <div class="state-props" style="padding:12px 16px;">bg: colorSurface<br>border-bottom: colorBorder<br>back icon: textPrimary</div>
     </div>
   </div>
 </div>
@@ -576,7 +526,6 @@
       <div class="avatar">S</div>
       <span style="font-size:16px;font-weight:600;">Sarah</span>
     </div>
-    <button style="background:none;border:none;font-size:20px;cursor:pointer;color:#9E9E9E;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;">⋮</button>
   </div>
   <div class="chat-body">
     <div class="preview-section-header">Thursday 11:59</div>

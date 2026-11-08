@@ -1,7 +1,11 @@
 package com.pedroloureiro.muzzchat.chat.ui
 
+import androidx.paging.PagingData
+import androidx.paging.insertSeparators
+import androidx.paging.map
 import com.pedroloureiro.muzzchat.chat.domain.model.Message
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
+import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
 import com.pedroloureiro.muzzchat.chat.domain.model.Users
 import com.pedroloureiro.muzzchat.chat.ui.model.ChatItem
 import com.pedroloureiro.muzzchat.chat.ui.model.MessageDirection
@@ -19,22 +23,31 @@ private val GROUPING_WINDOW_MILLIS = 20.seconds.inWholeMilliseconds
 private const val TODAY = 0L
 private val WITHIN_A_WEEK = 1L..6L
 
+fun PagingData<MessageWithNext>.toChatItems(nowMillis: Long, zoneId: ZoneId, locale: Locale): PagingData<ChatItem> =
+    map { ChatItemMapper.toMessageItem(it) }
+        .insertSeparators { newer: ChatItem.Message?, older: ChatItem.Message? ->
+            newer?.let { ChatItemMapper.headerAbove(it, older, nowMillis, zoneId, locale) }
+        }
+
 object ChatItemMapper {
 
-    fun toMessageItem(message: Message, newer: Message?) = ChatItem.Message(
-        messageId = when (message) {
-            is Message.Pending -> message.localId
-            is Message.Confirmed -> message.localId ?: message.id
-        },
-        direction = if (message.senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
-        content = message.content.value,
-        timestampMillis = message.timestampMillis,
-        isGrouped = newer != null && isGrouped(message, newer),
-        deliveryStatus = when (message) {
-            is Message.Pending -> MessageDeliveryStatus.SENDING
-            is Message.Confirmed -> MessageDeliveryStatus.SENT
-        }
-    )
+    fun toMessageItem(row: MessageWithNext): ChatItem.Message {
+        val message = row.message
+        return ChatItem.Message(
+            messageId = when (message) {
+                is Message.Pending -> message.localId
+                is Message.Confirmed -> message.localId ?: message.id
+            },
+            direction = if (message.senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
+            content = message.content.value,
+            timestampMillis = message.timestampMillis,
+            isGrouped = isGrouped(message, row.nextSenderId, row.nextTimestampMillis),
+            deliveryStatus = when (message) {
+                is Message.Pending -> MessageDeliveryStatus.SENDING
+                is Message.Confirmed -> MessageDeliveryStatus.SENT
+            }
+            )
+    }
 
     fun headerAbove(
         message: ChatItem.Message,
@@ -45,12 +58,16 @@ object ChatItemMapper {
     ): ChatItem.TimestampHeader? {
         if (older != null && message.timestampMillis - older.timestampMillis <= SECTION_GAP_MILLIS) return null
         val format = headerFormat(message.timestampMillis, nowMillis, zoneId)
-        return ChatItem.TimestampHeader(formatUtc(message.timestampMillis, zoneId, locale, format))
+        return ChatItem.TimestampHeader(
+            label = formatUtc(message.timestampMillis, zoneId, locale, format),
+            key = "header-${message.messageId}"
+        )
     }
 
-    private fun isGrouped(message: Message, newer: Message) =
-        newer.senderId == message.senderId &&
-            newer.timestampMillis - message.timestampMillis < GROUPING_WINDOW_MILLIS
+    private fun isGrouped(message: Message, nextSenderId: String?, nextTimestampMillis: Long?) =
+        nextSenderId == message.senderId &&
+            nextTimestampMillis != null &&
+            nextTimestampMillis - message.timestampMillis < GROUPING_WINDOW_MILLIS
 
     private fun headerFormat(timestampMillis: Long, nowMillis: Long, zoneId: ZoneId): DateTimeFormat {
         val daysAgo = calendarDaysBetween(timestampMillis, nowMillis, zoneId)

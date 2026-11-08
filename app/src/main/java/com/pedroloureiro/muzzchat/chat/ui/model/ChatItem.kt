@@ -12,5 +12,5 @@ sealed class ChatItem {
         val deliveryStatus: MessageDeliveryStatus
     ) : ChatItem()
 
-    data class TimestampHeader(val label: String) : ChatItem()
+    data class TimestampHeader(val label: String, val key: String) : ChatItem()
 }

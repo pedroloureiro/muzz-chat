@@ -7,12 +7,18 @@ import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
 
 @Entity(
     tableName = "messages",
-    indices = [Index(value = ["id"], unique = true), Index(value = ["localId"], unique = true)]
+    indices = [
+        Index(value = ["id"], unique = true),
+        Index(value = ["localId"], unique = true),
+        Index(value = ["chatId", "seq"], unique = true)
+    ]
 )
 data class MessageEntity(
     @PrimaryKey(autoGenerate = true) val rowId: Long = 0,
     val id: String?, // null while pending
+    val seq: Long?, // null while pending
     val localId: String?, // null for messages this device did not send
+    val chatId: String,
     val senderId: String,
     val contentType: ContentType,
     val contentValue: String,
