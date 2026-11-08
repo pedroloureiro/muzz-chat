@@ -42,7 +42,7 @@ fun MockChatInput(
             onClick = onSendAsOther,
             interactionSource = sendAsOtherInteractionSource,
             variant = ButtonVariant.FLOATING,
-            icon = ImageVector.vectorResource(R.drawable.ic_reply),
+            icon = ImageVector.vectorResource(R.drawable.ic_send_as_other),
             label = stringResource(R.string.reply_as, Users.SARAH.name),
             enabled = inputText.isNotBlank(),
         )
