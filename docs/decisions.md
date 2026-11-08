@@ -257,13 +257,13 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## Every local write invalidates the paged list
+## A change during a paging source's first load is not lost
 
-**Decision:** `RoomChatLocalDataSource` keeps the paging sources it hands out and invalidates them after each of its writes, as well as Room's own invalidation tracking.
+**Decision:** `RoomChatLocalDataSource` wraps each Room paging source in `FirstLoadSafePagingSource`. While the source's first load runs, it watches the `messages` table through Room's invalidation tracker. If the table changed during that load, it invalidates the source once the load returns. Later changes are left to Room.
 
-**Limitation:** A write reloads the visible page twice when Room also catches it: once for our invalidation and once for Room's. Both reads are local and small.
+**Limitation:** A change reported during the first load always causes one more refresh, even when the load already read it, for example a write that committed just before the load's read but was reported just after.
 
-**Trade-off:** Room 2.8.5 can miss a write that commits while a new paging source is on its first load. On the emulator the echo of a sent message landed during that load, and the bubble stayed `SENDING` while Room held it confirmed, until the next write. Invalidating after our own writes closes that gap without depending on Room's timing.
+**Trade-off:** Room 2.8.5's `LimitOffsetPagingSource` acts on a change only after its first load has completed (`if (refreshComplete.get()) invalidate()` in `CommonLimitOffsetImpl`), and drops one reported earlier. On the emulator, a sent message's echo committed during the refresh its pending insert had started, and the bubble stayed `SENDING` while Room held it confirmed. Watching only the first load fixes exactly that window. Invalidating after every local write fixed it too, but reloaded the list for writes Room already handles.
 
 **To remove it:**
-1. Delete the tracking once a Room release makes a paging source's first load and its invalidation observer atomic, and a test that writes during the first load passes without it.
+1. Delete `FirstLoadSafePagingSource` once a Room release keeps a change reported during the first load, and its test that changes the table during the first load passes against Room's own paging source.
