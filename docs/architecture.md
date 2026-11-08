@@ -32,7 +32,7 @@ com.pedroloureiro.muzzchat
 ├── MainActivity, MuzzChatApplication, MOCK_SARAH_CHAT_ID
 ├── ui
 │   ├── theme                 Colours, typography, spacing, dimens, shapes, alpha, scale, theme
-│   └── components            Generic composables: Button, TextInput
+│   └── components            Generic composables: Button, TextInput, TopBar, Avatar
 ├── utils                     Static utility functions: DateTimeUtils
 └── chat
     ├── di                    ChatModule
@@ -47,8 +47,7 @@ com.pedroloureiro.muzzchat
     │       └── models        MessageDto, MessagePageDto, ContentDto, OutgoingMessageDto
     └── ui                    ChatScreen, ChatViewModel, ChatItemMapper
         ├── models            ChatItem, ChatUiState, MessageDirection
-        └── components        MessageBubble, MessageItem, SendingIndicator, SectionHeader, ChatInput,
-                              TopBar, Avatar
+        └── components        MessageBubble, MessageItem, SendingIndicator, SectionHeader, ChatInput
 ```
 
 A new feature gets its own package beside `chat`, with the same layers. Code moves to the top level only when it knows nothing about any feature. Inside a layer, packages follow rule 22.

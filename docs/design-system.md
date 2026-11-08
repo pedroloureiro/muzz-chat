@@ -48,10 +48,11 @@ Every value is listed here, in a token table or in its component's section.
 ## Typography
 | Style | Size | Line height | Weight | Role mapping |
 |---|---|---|---|---|
+| titleMedium | 16sp | 20sp | SemiBold | textPrimary — TopBar title |
 | bodyLarge | 16sp | 22sp | Regular | textPrimary — message body |
 | bodyMedium | 14sp | 20sp | Regular | textPrimary — message body (compact), TextInput text |
 | bodySmall | 12sp | 16sp | Regular | textSecondary — timestamps |
-| labelLarge | 14sp | 20sp | SemiBold | textSecondary — button labels |
+| labelLarge | 14sp | 20sp | SemiBold | textSecondary — button labels; textOnPrimary — Avatar initial |
 | labelSmall | 11sp | 16sp | SemiBold, 0 tracking | textSecondary — section headers |
 
 ---
@@ -71,7 +72,7 @@ Every value is listed here, in a token table or in its component's section.
 | Token | Value | Usage |
 |---|---|---|
 | buttonPrimarySize | 44dp | Primary button diameter |
-| iconSize | 18dp | Icons inside buttons |
+| iconSize | 18dp | Icons inside buttons, TopBar back icon |
 | borderWidth | 1.5dp | Secondary button border |
 | focusRingWidth | 2dp | TextInput focus ring |
 | dividerWidth | 1dp | ChatInput top border, TopBar bottom border |
@@ -111,28 +112,36 @@ Icons are vector drawables in `res/drawable`, loaded with `ImageVector.vectorRes
 |---|---|
 | ic_send | Send button |
 | ic_reply | "Reply as Sarah" button |
+| ic_back | TopBar back button |
 
 ---
 
 ## Components
 
 ### Avatar
-User profile image — initials fallback when no image available.
+A circle with the initial of a name. Takes `name: String`. Its size is private to `Avatar.kt`.
+- 36dp circle in colorPrimary
+- The name's first character, uppercased, centred, in `labelLarge`
+- Single size and state. Every Avatar has a name, so there is no placeholder
 
 | State | Size | bg | text |
 |---|---|---|---|
-| md — default | 36dp | colorPrimary | textOnPrimary |
-| lg | 48dp | colorPrimary | textOnPrimary + 2dp colorSurfaceVariant border |
-| placeholder | 36dp | colorSurfaceVariant | textSecondary |
+| Default | 36dp | colorPrimary | textOnPrimary |
 
 ---
 
 ### TopBar
-Composes back button + Avatar + name.
+Composes a back button, `Avatar` and a title. Takes `title`, `onBack` and `backInteractionSource`. The screen remembers the source, and the back button reads its pressed state from it. Its values are private to `TopBar.kt`.
+- Bar: colorSurface, padding `Spacing.sm` horizontal and `Spacing.xs` vertical, then a `dividerWidth` colorBorder divider along its bottom. The row is 56dp tall
+- Back button: `ic_back` at `iconSize` in textPrimary, centred in a 36dp circle, in a 48dp touch target. There is no ripple: while pressed, the circle is colorInputBackground. Content description: `R.string.back` ("Back")
+- `Avatar(title)` sits `Spacing.xs` after the back button's touch target, and the title `Spacing.sm` after the Avatar
+- Title: `titleMedium` in textPrimary, filling the rest of the row, on one line, ellipsized when too long
+- The screen applies the status bar inset
 
-| State | Notes |
-|---|---|
-| Default | bg: colorSurface, border-bottom: colorBorder, back/name: textPrimary |
+| State | bg | back button |
+|---|---|---|
+| Default | colorSurface | colorSurface circle, ic_back textPrimary |
+| Back pressed | colorSurface | colorInputBackground circle, ic_back textPrimary |
 
 ---
 
