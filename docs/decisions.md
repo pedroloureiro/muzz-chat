@@ -231,13 +231,13 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The mock backend keeps sent messages only in memory
+## The mock backend keeps sent messages in a file
 
-**Decision:** `MockData` keeps sent messages in memory, after the seed messages.
+**Decision:** `MockData` writes the messages sent to it to a JSON file in the app's files directory after each one, and reads them back when it is created, after the seed messages.
 
-**Limitation:** The mock forgets them when the process dies, so after a restart they survive only in Room.
+**Limitation:** The file is rewritten in full on every send, and it is cleared only with the app's data, along with Room.
 
-**Trade-off:** This makes the mock behave like a server without adding storage to a fake one.
+**Trade-off:** A server never reuses a `seq`. A mock that forgot its sent messages on restart would give the next send a `seq` Room already stores, and storing it would break the unique `(chatId, seq)` key. The file keeps the mock's history in step with Room, without a database for a fake server.
 
 **To support a real backend:**
 1. Replace `mockBackendModule`. The server then owns history and it survives restarts.
