@@ -1,14 +1,14 @@
 package com.pedroloureiro.muzzchat.chat.di
 
 import com.pedroloureiro.muzzchat.chat.data.ChatRepositoryImpl
+import com.pedroloureiro.muzzchat.chat.data.MockData
 import com.pedroloureiro.muzzchat.chat.data.local.ChatLocalDataSource
 import com.pedroloureiro.muzzchat.chat.data.local.RoomChatLocalDataSource
 import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
-import com.pedroloureiro.muzzchat.chat.data.mock.MockData
 import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.MockChatRemoteDataSource
-import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
-import com.pedroloureiro.muzzchat.chat.domain.usecase.SendMessageUseCase
+import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.SendMessageUseCase
 import com.pedroloureiro.muzzchat.chat.ui.ChatViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.viewModel

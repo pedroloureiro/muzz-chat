@@ -6,13 +6,11 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.pedroloureiro.muzzchat.chat.data.local.ChatLocalDataSource
-import com.pedroloureiro.muzzchat.chat.data.paging.MESSAGE_PAGE_SIZE
-import com.pedroloureiro.muzzchat.chat.data.paging.MessageRemoteMediator
 import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
-import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
-import com.pedroloureiro.muzzchat.chat.domain.model.Message
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
+import com.pedroloureiro.muzzchat.chat.data.remote.models.MessageDto
+import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.models.Message
+import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.map

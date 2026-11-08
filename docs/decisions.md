@@ -46,6 +46,19 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Values live next to their only user
+
+**Decision:** A value that only one component uses, such as the bubble's corners or the sending dots' timing, is a private constant in that component's file. A value that several components use, or are likely to, is a token in `ui/theme`. Colours and text styles are always tokens. `docs/design-system.md` lists every value, either way.
+
+**Limitation:** Values are declared in two kinds of place, so finding one means checking the component as well as `ui/theme`. A value that gains a second user has to move to `ui/theme` first.
+
+**Trade-off:** `ui/theme` holds only the shared design language, and a component's one-off values sit beside the code they shape. Making every value a token keeps them in one place, but fills the theme with names that only one file uses.
+
+**To make every value a token:**
+1. Move each component's private constants into the matching `ui/theme` object, such as `ComponentShapes` or `Alpha`, and its durations into a new `Motion` object.
+
+---
+
 ## Opening a Chat catches up forward from the newest gap-free message
 
 **Decision:** REFRESH fetches the pages after the Chat sync state's `newestSeq` until the server reports `hasMore = false`. With no sync state, it fetches the newest page. An incoming message that skips a `seq` starts the same catch-up. See [ADR-0003](adr/0003-cursor-paging.md).

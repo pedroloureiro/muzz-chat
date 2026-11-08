@@ -5,9 +5,8 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.pedroloureiro.muzzchat.chat.data.local.db.dao.MessageDao
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.ChatSyncEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.ChatSyncEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageEntity
 
 private const val DATABASE_NAME = "messages.db"
 private const val DATABASE_VERSION = 1

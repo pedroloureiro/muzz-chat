@@ -1,8 +1,8 @@
 package com.pedroloureiro.muzzchat.chat.data.remote
 
-import com.pedroloureiro.muzzchat.chat.data.remote.model.MessageDto
-import com.pedroloureiro.muzzchat.chat.data.remote.model.MessagePageDto
-import com.pedroloureiro.muzzchat.chat.data.remote.model.OutgoingMessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.MessageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.MessagePageDto
+import com.pedroloureiro.muzzchat.chat.data.remote.models.OutgoingMessageDto
 import kotlinx.coroutines.flow.Flow
 
 interface ChatRemoteDataSource {

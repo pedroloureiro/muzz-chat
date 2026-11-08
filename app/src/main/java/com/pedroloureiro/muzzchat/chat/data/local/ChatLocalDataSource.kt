@@ -1,9 +1,9 @@
 package com.pedroloureiro.muzzchat.chat.data.local
 
 import androidx.paging.PagingSource
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.ChatSyncEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.ChatSyncEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
 
 interface ChatLocalDataSource {
     suspend fun insertPending(entity: MessageEntity)

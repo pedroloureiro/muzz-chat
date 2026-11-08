@@ -1,7 +1,7 @@
 # Muzz Chat — Domain Glossary
 
 ## User
-A participant in the conversation. Two fixed users exist: `ME` (the local user) and `SARAH` (the other participant). Each has a stable UUID and a display name. No authentication exists — users are hardcoded constants in `chat/domain/model`.
+A participant in the conversation. Two fixed users exist: `ME` (the local user) and `SARAH` (the other participant). Each has a stable UUID and a display name. No authentication exists — users are hardcoded constants in `chat/domain/models`.
 
 ## Chat
 A conversation between Users, identified by a server `chatId`. Every Message belongs to exactly one Chat, and its `seq` counts within that Chat. The app opens a single Chat, with Sarah. Use "Chat" and `chatId`, not "conversation" or `conversationId`.
@@ -79,4 +79,4 @@ The interface over Room, and the single source of truth for the UI. Stores pendi
 The Paging 3 `RemoteMediator` in `chat/data`, one per open Chat. When the Chat opens, it runs a catch-up, or fetches the newest page when nothing is stored. When the user scrolls past the stored history, it fetches the page before the sync state's oldest `seq`. History is complete when the server reports `hasMore = false` for older messages. See [ADR-0003](docs/adr/0003-cursor-paging.md).
 
 ## MockData
-The fake server's messages, in `chat/data/mock/`. Holds a pre-written conversation from `assets/mock_messages.json`, all in the one Chat that `MainActivity` opens, numbered by `seq` from 1 and large enough to fill several pages, plus any messages sent since the app started. Every message has a `clientMessageId`. It gives each sent message a random UUID `serverMessageId`, the Chat's next `seq` and the server time, returns the stored message when the same sender resends a `clientMessageId`, and answers history pages by `seq` with `nextCursor` and `hasMore`. Only `MockChatRemoteDataSource` uses it.
+The fake server's messages, in `chat/data`. Holds a pre-written conversation from `assets/mock_messages.json`, all in the one Chat that `MainActivity` opens, numbered by `seq` from 1 and large enough to fill several pages, plus any messages sent since the app started. Every message has a `clientMessageId`. It gives each sent message a random UUID `serverMessageId`, the Chat's next `seq` and the server time, returns the stored message when the same sender resends a `clientMessageId`, and answers history pages by `seq` with `nextCursor` and `hasMore`. Only `MockChatRemoteDataSource` uses it.

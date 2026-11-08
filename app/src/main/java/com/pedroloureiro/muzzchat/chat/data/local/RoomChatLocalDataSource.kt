@@ -1,10 +1,10 @@
 package com.pedroloureiro.muzzchat.chat.data.local
 
 import androidx.paging.PagingSource
-import com.pedroloureiro.muzzchat.chat.data.local.db.dao.MessageDao
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.ChatSyncEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageWithNextRow
+import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDao
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.ChatSyncEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageEntity
+import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
 
 class RoomChatLocalDataSource(private val dao: MessageDao) : ChatLocalDataSource {
     override suspend fun insertPending(entity: MessageEntity) = dao.insertPending(entity)

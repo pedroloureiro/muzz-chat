@@ -2,14 +2,14 @@ package com.pedroloureiro.muzzchat.chat.ui
 
 import androidx.paging.PagingData
 import androidx.paging.testing.asSnapshot
-import com.pedroloureiro.muzzchat.chat.domain.model.Content
-import com.pedroloureiro.muzzchat.chat.domain.model.ContentType
-import com.pedroloureiro.muzzchat.chat.domain.model.Message
-import com.pedroloureiro.muzzchat.chat.domain.model.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.model.Users
-import com.pedroloureiro.muzzchat.chat.domain.repository.ChatRepository
-import com.pedroloureiro.muzzchat.chat.domain.usecase.SendMessageUseCase
-import com.pedroloureiro.muzzchat.chat.ui.model.ChatItem
+import com.pedroloureiro.muzzchat.chat.domain.ChatRepository
+import com.pedroloureiro.muzzchat.chat.domain.SendMessageUseCase
+import com.pedroloureiro.muzzchat.chat.domain.models.Content
+import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
+import com.pedroloureiro.muzzchat.chat.domain.models.Message
+import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
+import com.pedroloureiro.muzzchat.chat.domain.models.Users
+import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
