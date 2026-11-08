@@ -29,7 +29,7 @@ di ──> ui, domain, data
 
 ```text
 com.pedroloureiro.muzzchat
-├── MainActivity, MuzzChatApplication
+├── MainActivity, MuzzChatApplication, MOCK_SARAH_CHAT_ID
 ├── ui
 │   ├── theme                 Colours, typography, spacing, theme
 │   └── components            Generic composables: Button, TextInput
@@ -52,7 +52,7 @@ com.pedroloureiro.muzzchat
     │   ├── paging            MessageRemoteMediator
     │   ├── remote            ChatRemoteDataSource, MockChatRemoteDataSource
     │   │   └── model         MessageDto, MessagePageDto, ContentDto, OutgoingMessageDto
-    │   └── mock              MockData, MOCK_SARAH_CHAT_ID
+    │   └── mock              MockData
     └── ui
         ├── ChatScreen, ChatViewModel, ChatUiState, ChatItemMapper
         ├── model             ChatItem, MessageDirection
@@ -158,4 +158,4 @@ These are the places where the app knowingly departs from strict Clean Architect
 | 4 | `chat/domain` has `MessageWithNext`, a row model shaped by the paged list's needs | Paging maps one row at a time, and the bubble tail needs the next message. See [ADR-0003](adr/0003-cursor-paging.md) | Move the type into `chat/data` and map it to a UI-facing row in the ViewModel, if the domain should stay free of display concerns |
 | 5 | `MessageEntity` stores the domain `ContentType` enum by name, so renaming a value changes what is stored | A separate enum for storage would duplicate it for little benefit | Add a storage-only enum or stable codes, and map them in `chat/data` |
 | 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
-| 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a constant marked as mock data in `chat/data/mock`. `MainActivity` passes it to `ChatScreen` as its navigation argument, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has no chat list to navigate from | Navigate to `ChatScreen` from a chat list with the selected `chatId`, and delete the constant |
+| 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a constant marked as mock data beside `MainActivity`, the navigation host. `MainActivity` passes it to `ChatScreen` as its navigation argument, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has no chat list to navigate from | Navigate to `ChatScreen` from a chat list with the selected `chatId`, and delete the constant |

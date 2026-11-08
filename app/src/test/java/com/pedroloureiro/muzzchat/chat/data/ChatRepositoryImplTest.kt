@@ -8,7 +8,6 @@ import androidx.test.core.app.ApplicationProvider
 import com.pedroloureiro.muzzchat.chat.data.local.RoomChatLocalDataSource
 import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
 import com.pedroloureiro.muzzchat.chat.data.local.db.entity.MessageEntity
-import com.pedroloureiro.muzzchat.chat.data.mock.MOCK_SARAH_CHAT_ID
 import com.pedroloureiro.muzzchat.chat.data.mock.MockData
 import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.MockChatRemoteDataSource
@@ -51,9 +50,10 @@ class ChatRepositoryImplTest {
     private val remote = FakeChatRemoteDataSource()
     private val mockData = MockData(ApplicationProvider.getApplicationContext())
     private val mockRemote = MockChatRemoteDataSource(mockData)
+    private val chat = mockData.loadSeedMessages().first().chatId
     private val message = Message.Pending(
         localId = "local",
-        chatId = CHAT,
+        chatId = chat,
         senderId = "sender",
         content = Content(ContentType.TEXT, "text"),
         timestampMillis = 1L
@@ -62,7 +62,7 @@ class ChatRepositoryImplTest {
         id = "server",
         seq = 1,
         localId = "local",
-        chatId = CHAT,
+        chatId = chat,
         senderId = "sender",
         content = ContentDto(type = "TEXT", value = "text"),
         timestampMillis = 2L
@@ -84,37 +84,37 @@ class ChatRepositoryImplTest {
                 MessageWithNext(message, null, null),
                 MessageWithNext(otherDeviceMessage.toEntity().toMessage(), message.senderId, message.timestampMillis)
             ),
-            repository().getMessages(CHAT).asSnapshot()
+            repository().getMessages(chat).asSnapshot()
         )
     }
 
     @Test
     fun `opening a chat with nothing stored shows the newest messages with no gaps`() = runTest {
-        val snapshot = repository(mockRemote).getMessages(CHAT).asSnapshot()
+        val snapshot = repository(mockRemote).getMessages(chat).asSnapshot()
 
         assertEquals(SEED_SIZE, seqs(snapshot).first())
         assertContiguous(seqs(snapshot))
-        assertEquals(SEED_SIZE, local.syncState(CHAT)?.newestSeq)
+        assertEquals(SEED_SIZE, local.syncState(chat)?.newestSeq)
     }
 
     @Test
     fun `scrolling to the end pages through the whole history once and reaches the start`() = runTest {
-        repository(mockRemote).getMessages(CHAT).asSnapshot { appendScrollWhile { true } }
+        repository(mockRemote).getMessages(chat).asSnapshot { appendScrollWhile { true } }
 
         assertEquals((SEED_SIZE downTo 1L).toList(), storedSeqs())
-        assertTrue(local.syncState(CHAT)!!.reachedStart)
+        assertTrue(local.syncState(chat)!!.reachedStart)
     }
 
     @Test
     fun `opening a chat again catches up on more than a page of missed messages, keeping stored history`() = runTest {
         val repository = repository(mockRemote)
-        val firstOpen = seqs(repository.getMessages(CHAT).asSnapshot())
-        repeat(30) { mockData.store(CHAT, outgoing("missed-$it")) }
+        val firstOpen = seqs(repository.getMessages(chat).asSnapshot())
+        repeat(30) { mockData.store(chat, outgoing("missed-$it")) }
 
-        val snapshot = repository.getMessages(CHAT).asSnapshot()
+        val snapshot = repository.getMessages(chat).asSnapshot()
 
         assertEquals(SEED_SIZE + 30, seqs(snapshot).first())
-        assertEquals(SEED_SIZE + 30, local.syncState(CHAT)?.newestSeq)
+        assertEquals(SEED_SIZE + 30, local.syncState(chat)?.newestSeq)
         assertContiguous(storedSeqs())
         assertTrue(storedSeqs().containsAll(firstOpen))
     }
@@ -123,43 +123,43 @@ class ChatRepositoryImplTest {
     fun `opening a chat stores nothing when the newest page fails`() = runTest {
         remote.pages = Result.failure(IllegalStateException("unavailable"))
 
-        runCatching { repository().getMessages(CHAT).asSnapshot() }
+        runCatching { repository().getMessages(chat).asSnapshot() }
 
         assertEquals(emptyList<MessageEntity>(), stored())
-        assertNull(local.syncState(CHAT))
+        assertNull(local.syncState(chat))
     }
 
     @Test
     fun `a sent message whose seq follows the stored history moves the chat forward`() = runTest {
         val repository = repository(mockRemote)
-        repository.getMessages(CHAT).asSnapshot()
+        repository.getMessages(chat).asSnapshot()
 
         repository.sendMessage(message)
 
-        assertEquals(SEED_SIZE + 1, local.syncState(CHAT)?.newestSeq)
+        assertEquals(SEED_SIZE + 1, local.syncState(chat)?.newestSeq)
     }
 
     @Test
     fun `a message that skips a seq is stored and the missing messages are caught up`() = runTest {
         val repository = repository(mockRemote)
-        repository.getMessages(CHAT).asSnapshot()
-        repeat(2) { mockData.store(CHAT, outgoing("missed-$it")) }
+        repository.getMessages(chat).asSnapshot()
+        repeat(2) { mockData.store(chat, outgoing("missed-$it")) }
 
         repository.sendMessage(message)
 
-        assertEquals(SEED_SIZE + 3, local.syncState(CHAT)?.newestSeq)
+        assertEquals(SEED_SIZE + 3, local.syncState(chat)?.newestSeq)
         assertEquals((SEED_SIZE + 3 downTo SEED_SIZE + 1).toList(), storedSeqs().take(3))
     }
 
     @Test
     fun `syncIncomingMessages stores the chat's incoming messages and moves it forward`() = runTest {
         val repository = repository(mockRemote)
-        repository.getMessages(CHAT).asSnapshot()
+        repository.getMessages(chat).asSnapshot()
         startSync(repository)
 
-        mockRemote.sendMessage(CHAT, outgoing("from-another-device"))
+        mockRemote.sendMessage(chat, outgoing("from-another-device"))
 
-        assertEquals(SEED_SIZE + 1, local.syncState(CHAT)?.newestSeq)
+        assertEquals(SEED_SIZE + 1, local.syncState(chat)?.newestSeq)
     }
 
     @Test
@@ -188,7 +188,7 @@ class ChatRepositoryImplTest {
     fun `sendMessage sends the message to its chat as an outgoing dto`() = runTest {
         repository().sendMessage(message)
 
-        assertEquals(listOf(CHAT to message.toDto()), remote.sent)
+        assertEquals(listOf(chat to message.toDto()), remote.sent)
     }
 
     @Test
@@ -253,9 +253,9 @@ class ChatRepositoryImplTest {
     private fun repository(remote: ChatRemoteDataSource = this.remote) = ChatRepositoryImpl(local = local, remote = remote)
 
     private fun TestScope.startSync(repository: ChatRepositoryImpl) =
-        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.syncIncomingMessages(CHAT) }
+        backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { repository.syncIncomingMessages(chat) }
 
-    private suspend fun stored(chatId: String = CHAT): List<MessageEntity> {
+    private suspend fun stored(chatId: String = chat): List<MessageEntity> {
         val params = PagingSource.LoadParams.Refresh<Int>(key = null, loadSize = 1_000, placeholdersEnabled = false)
         val page = local.pagingSource(chatId).load(params) as PagingSource.LoadResult.Page
         return page.data.map { it.message.copy(rowId = 0) }
@@ -295,7 +295,6 @@ class ChatRepositoryImplTest {
     }
 
     private companion object {
-        const val CHAT = MOCK_SARAH_CHAT_ID
         const val OTHER_CHAT = "other-chat"
         const val SEED_SIZE = 200L
     }
