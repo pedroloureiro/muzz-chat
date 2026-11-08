@@ -12,8 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -42,9 +40,8 @@ import com.pedroloureiro.muzzchat.ui.theme.colorSurface
 import com.pedroloureiro.muzzchat.ui.theme.textDisabled
 import com.pedroloureiro.muzzchat.ui.theme.textOnPrimary
 import com.pedroloureiro.muzzchat.ui.theme.textPrimary
-import com.pedroloureiro.muzzchat.ui.theme.textSecondary
 
-enum class ButtonVariant { PRIMARY, SECONDARY, FLOATING }
+enum class ButtonVariant { PRIMARY, FLOATING }
 
 @Composable
 fun Button(
@@ -58,7 +55,6 @@ fun Button(
 ) {
     when (variant) {
         ButtonVariant.PRIMARY -> PrimaryButton(onClick, interactionSource, modifier, icon, label, enabled)
-        ButtonVariant.SECONDARY -> SecondaryButton(onClick, interactionSource, modifier, icon, label, enabled)
         ButtonVariant.FLOATING -> FloatingButton(onClick, interactionSource, modifier, icon, label, enabled)
     }
 }
@@ -97,47 +93,6 @@ private fun PrimaryButton(
                 modifier = Modifier.size(Dimens.iconSize),
                 tint = if (enabled) textOnPrimary else textDisabled,
             )
-        }
-    }
-}
-
-@Composable
-private fun SecondaryButton(
-    onClick: () -> Unit,
-    interactionSource: MutableInteractionSource,
-    modifier: Modifier,
-    icon: ImageVector?,
-    label: String?,
-    enabled: Boolean,
-) {
-    val isPressed by interactionSource.collectIsPressedAsState()
-    val scale by animateFloatAsState(
-        targetValue = if (isPressed) Scale.buttonSecondaryPressed else 1f,
-        label = "secondaryButtonScale",
-    )
-    val shape = ComponentShapes.buttonSecondary
-    val contentColor = if (enabled) textSecondary else textDisabled
-    Row(
-        modifier = modifier
-            .scale(scale)
-            .alpha(if (enabled) 1f else Alpha.disabled)
-            .background(if (isPressed) colorInputBackground else colorSurface, shape)
-            .border(Dimens.borderWidth, if (isPressed) colorBorderPressed else colorBorder, shape)
-            .clickable(interactionSource, indication = null, enabled = enabled, role = Role.Button, onClick = onClick)
-            .padding(horizontal = Spacing.md, vertical = Spacing.sm),
-        horizontalArrangement = Arrangement.spacedBy(Spacing.xs),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        if (icon != null) {
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(Dimens.iconSize),
-                tint = contentColor,
-            )
-        }
-        if (label != null) {
-            Text(text = label, style = MaterialTheme.typography.labelLarge, color = contentColor)
         }
     }
 }
@@ -192,28 +147,6 @@ private fun PrimaryButtonPreview() {
                     interactionSource = remember { MutableInteractionSource() },
                     icon = ImageVector.vectorResource(R.drawable.ic_send),
                     label = "Send",
-                    enabled = enabled,
-                )
-            }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun SecondaryButtonPreview() {
-    MuzzChatTheme {
-        Row(
-            modifier = Modifier.padding(Spacing.md),
-            horizontalArrangement = Arrangement.spacedBy(Spacing.md),
-        ) {
-            listOf(true, false).forEach { enabled ->
-                Button(
-                    onClick = {},
-                    interactionSource = remember { MutableInteractionSource() },
-                    variant = ButtonVariant.SECONDARY,
-                    icon = ImageVector.vectorResource(R.drawable.ic_reply),
-                    label = "Reply as Sarah",
                     enabled = enabled,
                 )
             }
