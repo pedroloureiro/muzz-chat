@@ -285,6 +285,6 @@ Composes `TopBar`, the message list and `MockChatInput` in a `Scaffold` on color
 - TopBar: the title is Sarah's name
 - List: the newest message at the bottom, and scrolling up loads older pages. Messages render as `MessageItem` and timestamp headers as `SectionHeader`
 - List spacing: a `Spacing.md` side margin and no vertical padding. The gaps below the bubbles and SectionHeader's padding space the rows
-- When the user sends a message, with Send or Reply as Sarah, the list scrolls to it once it appears. Other new messages leave the list where it is
+- When the user sends a message, with Send or Reply as Sarah, the list snaps to the newest message, as Jump to latest does, and scrolls the sent message into view when it appears. Other new messages leave the list where it is
 - Jump to latest: a `Button (floating)` with `ic_arrow_down`, content description `R.string.jump_to_latest` ("Jump to latest"), over the list's bottom end, `Spacing.md` from the edge and `Spacing.sm` above the input. It fades in while the newest message is scrolled out of view, and a tap snaps the list to the newest message with no animation
 - Insets: TopBar applies the status bar inset, and MockChatInput the navigation bar and keyboard insets. The list sits between them and applies none, so the keyboard never covers the input

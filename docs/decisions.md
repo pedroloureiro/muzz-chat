@@ -246,7 +246,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## Only the user's own sends scroll the message list
 
-**Decision:** When the user sends a message, with Send or Reply as Sarah, `ChatScreen` scrolls the list to it once it appears as the newest item. Other new messages leave the list where it is, and the jump-to-latest button shows while the newest message is out of view.
+**Decision:** When the user sends a message, with Send or Reply as Sarah, `ChatScreen` snaps the list to the newest message, then scrolls whenever the newest item is a `SENDING` message. Only this device's sends are pending, so this needs no remembered flag. The snap comes first because, deep in history, the newest rows are unloaded paging placeholders, so the sent message could not be seen arriving. Other new messages leave the list where it is, and the jump-to-latest button shows while the newest message is out of view.
 
 **Limitation:** A message that arrives while the user is reading older history gives no sign of itself beyond the jump-to-latest button, which shows whenever the newest message is out of view, new or not.
 
