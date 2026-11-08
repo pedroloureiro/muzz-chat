@@ -7,4 +7,5 @@ object Dimens {
     val iconSize = 18.dp
     val borderWidth = 1.5.dp
     val focusRingWidth = 2.dp
+    val dividerWidth = 1.dp
 }

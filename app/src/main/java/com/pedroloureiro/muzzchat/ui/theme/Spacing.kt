@@ -8,8 +8,4 @@ object Spacing {
     val md = 16.dp
     val lg = 24.dp
     val xl = 32.dp
-    val bubblePadH = 12.dp
-    val bubblePadV = 8.dp
-    val msgGrouped = 2.dp
-    val msgSeparated = 8.dp
 }
