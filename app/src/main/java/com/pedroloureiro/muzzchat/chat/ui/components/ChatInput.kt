@@ -35,6 +35,7 @@ fun ChatInput(
     inputInteractionSource: MutableInteractionSource,
     sendInteractionSource: MutableInteractionSource,
     modifier: Modifier = Modifier,
+    trailing: @Composable () -> Unit = {},
 ) {
     Column(
         modifier = modifier
@@ -62,6 +63,7 @@ fun ChatInput(
                 label = stringResource(R.string.send),
                 enabled = inputText.isNotBlank(),
             )
+            trailing()
         }
     }
 }
