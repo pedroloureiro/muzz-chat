@@ -31,7 +31,7 @@ di ──> ui, domain, data
 com.pedroloureiro.muzzchat
 ├── MainActivity, MuzzChatApplication, MOCK_SARAH_CHAT_ID
 ├── ui
-│   ├── theme                 Colours, typography, spacing, theme
+│   ├── theme                 Colours, typography, spacing, dimens, shapes, alpha, scale, theme
 │   └── components            Generic composables: Button, TextInput
 ├── utils                     Static utility functions: DateTimeUtils
 └── chat
@@ -83,7 +83,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 11. Use cases read the clock and generate IDs directly. Inject them only when logic depends on their values.
 
 ### Presentation
-12. Composables are stateless and receive only what they need to render.
+12. Composables are stateless and receive only what they need to render. A composable that reacts to press or focus receives a `MutableInteractionSource` from its caller, and the screen remembers it.
 13. Display rules, such as grouping and timestamp headers, belong to `ChatItemMapper`.
 14. `ChatItemMapper` has no Android dependencies, so it can run on the JVM.
 
@@ -96,6 +96,9 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 18. Every message belongs to one Chat, and every remote call and Room query is limited to one `chatId`. Confirmed messages are ordered by their server-assigned `seq`, and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
 19. A message is identified by its `senderId` and `clientMessageId` together: the Room primary key and the UI key. An echo confirms its pending message in place, by one upsert on that key. Every write of server messages, whether a history page or an incoming message, goes through the same insert, in the same transaction as the Chat's sync state it moves.
 20. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
+
+### Text
+21. Text shown to the user, including content descriptions, comes from `res/values/strings.xml` through `stringResource`. Names and other data go in as format arguments, such as `reply_as` = "Reply as %1$s". `@Preview` functions may use literal sample text.
 
 ---
 

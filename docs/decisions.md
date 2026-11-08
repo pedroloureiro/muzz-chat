@@ -18,6 +18,34 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Interaction sources are hoisted to the screen
+
+**Decision:** `Button` and `TextInput` receive a `MutableInteractionSource` as a required parameter, and read their pressed or focused state from it. They never create one themselves. The screen remembers one source per control and passes it down, through `ChatInput`.
+
+**Limitation:** Every call site, and every composable between it and the screen, has one more parameter for each control.
+
+**Trade-off:** The components remember nothing, so the screen owns all state, press and focus included. Material's components remember a source themselves when none is passed, which costs no parameters but keeps that state inside the component.
+
+**To reduce the parameters:**
+1. Make `interactionSource` nullable with a default of `null`, and remember a source inside the component when it is `null`, as Material does.
+
+---
+
+## The app supports English only
+
+**Decision:** UI text is in `res/values/strings.xml`, with no translations. `androidResources.localeFilters` keeps only English resources, so text from libraries, such as Compose's accessibility labels, is in English too.
+
+**Limitation:** On a device set to another language, the app is still in English. Timestamp headers use fixed patterns from `DateTimeFormat`, such as `d MMM yyyy HH:mm`, so their order follows English conventions. Month and day names follow the device locale.
+
+**Trade-off:** Strings are already resources, so adding a language needs no code changes. Translations, and checking each layout in them, would cost more than an exercise needs.
+
+**To add a language:**
+1. Add `res/values-<lang>/strings.xml` and the language to `localeFilters`.
+2. Format timestamp headers with locale-aware patterns, such as `DateTimeFormatterBuilder.getLocalizedDateTimePattern`, in place of the fixed ones.
+3. Check layouts with longer text and in right-to-left languages. The icons are already mirrored.
+
+---
+
 ## Opening a Chat catches up forward from the newest gap-free message
 
 **Decision:** REFRESH fetches the pages after the Chat sync state's `newestSeq` until the server reports `hasMore = false`. With no sync state, it fetches the newest page. An incoming message that skips a `seq` starts the same catch-up. See [ADR-0003](adr/0003-cursor-paging.md).
