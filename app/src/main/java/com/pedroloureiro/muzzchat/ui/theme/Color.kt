@@ -22,6 +22,7 @@ val colorSurface = White
 val colorSurfaceVariant = Neutral200
 val colorInputBackground = Neutral100
 val colorBorder = Neutral50
+val colorBorderPressed = Neutral300
 val textPrimary = Neutral900
 val textSecondary = Neutral500
 val textDisabled = Neutral300
