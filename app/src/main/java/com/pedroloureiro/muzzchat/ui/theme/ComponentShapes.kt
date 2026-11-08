@@ -7,5 +7,6 @@ import androidx.compose.ui.unit.dp
 object ComponentShapes {
     val buttonPrimary = CircleShape
     val buttonSecondary = RoundedCornerShape(20.dp)
+    val buttonFloating = CircleShape
     val textInput = RoundedCornerShape(24.dp)
 }

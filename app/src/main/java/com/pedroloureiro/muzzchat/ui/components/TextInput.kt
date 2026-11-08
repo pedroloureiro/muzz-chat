@@ -38,6 +38,7 @@ fun TextInput(
     modifier: Modifier = Modifier,
     placeholder: String = "",
     enabled: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
 ) {
     val isFocused by interactionSource.collectIsFocusedAsState()
     val shape = ComponentShapes.textInput
@@ -55,6 +56,7 @@ fun TextInput(
             .background(colorInputBackground, shape)
             .then(focusRing),
         enabled = enabled,
+        maxLines = maxLines,
         textStyle = textStyle.copy(color = if (enabled) textPrimary else textDisabled),
         interactionSource = interactionSource,
         cursorBrush = SolidColor(colorPrimary),

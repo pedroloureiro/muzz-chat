@@ -41,9 +41,10 @@ import com.pedroloureiro.muzzchat.ui.theme.colorPrimaryPressed
 import com.pedroloureiro.muzzchat.ui.theme.colorSurface
 import com.pedroloureiro.muzzchat.ui.theme.textDisabled
 import com.pedroloureiro.muzzchat.ui.theme.textOnPrimary
+import com.pedroloureiro.muzzchat.ui.theme.textPrimary
 import com.pedroloureiro.muzzchat.ui.theme.textSecondary
 
-enum class ButtonVariant { PRIMARY, SECONDARY }
+enum class ButtonVariant { PRIMARY, SECONDARY, FLOATING }
 
 @Composable
 fun Button(
@@ -58,6 +59,7 @@ fun Button(
     when (variant) {
         ButtonVariant.PRIMARY -> PrimaryButton(onClick, interactionSource, modifier, icon, label, enabled)
         ButtonVariant.SECONDARY -> SecondaryButton(onClick, interactionSource, modifier, icon, label, enabled)
+        ButtonVariant.FLOATING -> FloatingButton(onClick, interactionSource, modifier, icon, label, enabled)
     }
 }
 
@@ -140,6 +142,42 @@ private fun SecondaryButton(
     }
 }
 
+@Composable
+private fun FloatingButton(
+    onClick: () -> Unit,
+    interactionSource: MutableInteractionSource,
+    modifier: Modifier,
+    icon: ImageVector?,
+    contentDescription: String?,
+    enabled: Boolean,
+) {
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = if (isPressed) Scale.buttonFloatingPressed else 1f,
+        label = "floatingButtonScale",
+    )
+    val shape = ComponentShapes.buttonFloating
+    Box(
+        modifier = modifier
+            .scale(scale)
+            .alpha(if (enabled) 1f else Alpha.disabled)
+            .size(Dimens.buttonPrimarySize)
+            .background(if (isPressed) colorInputBackground else colorSurface, shape)
+            .border(Dimens.borderWidth, if (isPressed) colorBorderPressed else colorBorder, shape)
+            .clickable(interactionSource, indication = null, enabled = enabled, role = Role.Button, onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        if (icon != null) {
+            Icon(
+                imageVector = icon,
+                contentDescription = contentDescription,
+                modifier = Modifier.size(Dimens.iconSize),
+                tint = if (enabled) textPrimary else textDisabled,
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun PrimaryButtonPreview() {
@@ -176,6 +214,28 @@ private fun SecondaryButtonPreview() {
                     variant = ButtonVariant.SECONDARY,
                     icon = ImageVector.vectorResource(R.drawable.ic_reply),
                     label = "Reply as Sarah",
+                    enabled = enabled,
+                )
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun FloatingButtonPreview() {
+    MuzzChatTheme {
+        Row(
+            modifier = Modifier.padding(Spacing.md),
+            horizontalArrangement = Arrangement.spacedBy(Spacing.md),
+        ) {
+            listOf(true, false).forEach { enabled ->
+                Button(
+                    onClick = {},
+                    interactionSource = remember { MutableInteractionSource() },
+                    variant = ButtonVariant.FLOATING,
+                    icon = ImageVector.vectorResource(R.drawable.ic_arrow_down),
+                    label = "Jump to latest",
                     enabled = enabled,
                 )
             }
