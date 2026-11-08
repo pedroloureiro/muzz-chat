@@ -216,6 +216,21 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## The chat has no clear or reset action
+
+**Decision:** `TopBar` has no overflow menu. Nothing clears a Chat's messages or resets the mock conversation to its seed.
+
+**Limitation:** Messages sent while trying the app stay in Room beside the seed. The only way to start over is to clear the app's data.
+
+**Trade-off:** Room is a copy of the server's history, so deleting a Chat's rows alone would bring them back on the next catch-up or scroll. A clear that lasts needs the server's part, which is out of scope, like edits and deletes.
+
+**To support clearing a Chat:**
+1. Add an overflow menu to `TopBar` that takes its actions from the caller, so it stays generic.
+2. Store the `seq` a Chat was cleared up to, on the server for each user and in the Chat sync state. The paged query and the history pages skip messages up to it, so cleared messages never come back.
+3. For the mock, a reset action that restores `MockData` to its seed and deletes the Chat's messages and sync state from Room in one transaction.
+
+---
+
 ## The mock backend keeps sent messages only in memory
 
 **Decision:** `MockData` keeps sent messages in memory, after the seed messages.

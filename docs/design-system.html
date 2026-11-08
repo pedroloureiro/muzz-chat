@@ -93,17 +93,15 @@
   .section-header-demo { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 16px; letter-spacing: 0; }
 
   /* ── Avatar ── */
-  .avatar-lg { width: 48px; height: 48px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 18px; font-weight: 700; flex-shrink: 0; border: 2px solid #F2F2F2; }
-  .avatar-md { width: 36px; height: 36px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; flex-shrink: 0; }
-  .avatar-placeholder { background: #F2F2F2; color: #9E9E9E; }
+  .avatar-md { width: 36px; height: 36px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; line-height: 20px; font-weight: 600; flex-shrink: 0; }
 
   /* ── TopBar ── */
-  .topbar-demo { display: flex; align-items: center; padding: 12px 16px; background: white; border-bottom: 1px solid #E0E0E0; gap: 12px; width: 360px; border-radius: 12px 12px 0 0; }
-  .topbar-back { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border: none; background: none; cursor: pointer; color: #1A1A1A; font-size: 20px; flex-shrink: 0; border-radius: 50%; }
-  .topbar-back:hover { background: #F5F5F5; }
-  .topbar-info { flex: 1; display: flex; align-items: center; gap: 10px; }
-  .topbar-name-block { display: flex; flex-direction: column; }
-  .topbar-name-text { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 20px; }
+  .topbar-demo { display: flex; align-items: center; padding: 4px 8px; background: white; border-bottom: 1px solid #E0E0E0; gap: 4px; width: 360px; border-radius: 12px 12px 0 0; }
+  /* 36px circle; the 6px margin makes up the 48dp touch target */
+  .topbar-back { width: 36px; height: 36px; margin: 6px; display: flex; align-items: center; justify-content: center; border: none; background: white; cursor: pointer; color: #1A1A1A; font-size: 18px; flex-shrink: 0; border-radius: 50%; }
+  .topbar-back:active, .topbar-back-pressed { background: #F5F5F5; }
+  .topbar-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
+  .topbar-name-text { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 
   /* ── SendAsOther button ── */
@@ -124,9 +122,7 @@
 
   /* ── Chat Preview ── */
   .chat-preview { background: #FFF; border-radius: 24px; border: 1px solid #E0E0E0; overflow: hidden; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-  .chat-topbar { display: flex; align-items: center; padding: 16px; border-bottom: 1px solid #F0F0F0; gap: 12px; }
-  .avatar { width: 36px; height: 36px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; font-weight: 600; flex-shrink: 0; }
-  .topbar-name { font-size: 16px; font-weight: 600; }
+  .chat-topbar { display: flex; align-items: center; padding: 4px 8px; border-bottom: 1px solid #E0E0E0; gap: 4px; }
   .chat-body { padding: 12px 16px; display: flex; flex-direction: column; gap: 8px; background: #FFFFFF; min-height: 300px; }
   .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 0; }
   .pbubble { padding: 8px 12px; border-radius: 18px; max-width: 80%; font-size: 14px; line-height: 20px; }
@@ -187,6 +183,10 @@
      ══════════════════════════════════════════════════════ -->
 <h2>Typography</h2>
 <div class="type-row">
+  <div class="type-meta"><div class="type-label">titleMedium</div><div class="type-spec">16sp / lh 20sp / SemiBold</div><div class="type-role">color: textPrimary</div></div>
+  <div style="font-size:16px;line-height:20px;font-weight:600;">Sarah</div>
+</div>
+<div class="type-row">
   <div class="type-meta"><div class="type-label">bodyLarge</div><div class="type-spec">16sp / lh 22sp / Regular</div><div class="type-role">color: textPrimary</div></div>
   <div style="font-size:16px;line-height:22px;">Does 7pm work for you?</div>
 </div>
@@ -199,7 +199,7 @@
   <div style="font-size:12px;line-height:16px;color:#9E9E9E;">11:59</div>
 </div>
 <div class="type-row">
-  <div class="type-meta"><div class="type-label">labelLarge</div><div class="type-spec">14sp / lh 20sp / SemiBold</div><div class="type-role">color: textSecondary</div></div>
+  <div class="type-meta"><div class="type-label">labelLarge</div><div class="type-spec">14sp / lh 20sp / SemiBold</div><div class="type-role">color: textSecondary · textOnPrimary (Avatar initial)</div></div>
   <div style="font-size:14px;line-height:20px;font-weight:600;color:#9E9E9E;">Reply as Sarah</div>
 </div>
 <div class="type-row">
@@ -238,23 +238,13 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">Avatar</div>
-    <div class="component-subtitle">User profile image — initials fallback when no image available</div>
+    <div class="component-subtitle">A circle with the initial of a name — Avatar(name)</div>
   </div>
   <div class="states-grid">
     <div class="state-card">
-      <div class="state-label active">md — with initials (default)</div>
+      <div class="state-label active">Default</div>
       <div class="avatar-md">S</div>
-      <div class="state-props">size: 36dp<br>bg: colorPrimary<br>text: textOnPrimary<br>shape: circle</div>
-    </div>
-    <div class="state-card">
-      <div class="state-label active">lg — with initials</div>
-      <div class="avatar-lg">S</div>
-      <div class="state-props">size: 48dp<br>bg: colorPrimary<br>border: colorSurfaceVariant 2dp<br>shape: circle</div>
-    </div>
-    <div class="state-card">
-      <div class="state-label">placeholder (no user)</div>
-      <div class="avatar-md avatar-placeholder">?</div>
-      <div class="state-props">size: 36dp<br>bg: colorSurfaceVariant<br>text: textSecondary</div>
+      <div class="state-props">size: 36dp<br>bg: colorPrimary<br>text: labelLarge, textOnPrimary<br>shape: circle</div>
     </div>
   </div>
 </div>
@@ -263,21 +253,30 @@
 <div class="component-section">
   <div class="component-header">
     <div class="component-title">TopBar</div>
-    <div class="component-subtitle">Composes back button + Avatar + name</div>
+    <div class="component-subtitle">Composes back button + Avatar + title — TopBar(title, onBack, backInteractionSource)</div>
   </div>
   <div class="states-grid">
     <div class="state-card" style="padding:0;overflow:hidden;min-width:360px;">
       <div style="padding:12px 16px 8px 16px;"><div class="state-label active" style="margin-bottom:12px;">Default</div></div>
       <div class="topbar-demo" style="border-radius:0;border-top:none;border-left:none;border-right:none;">
-        <button class="topbar-back">‹</button>
+        <button class="topbar-back">←</button>
         <div class="topbar-info">
           <div class="avatar-md">S</div>
-          <div class="topbar-name-block">
-            <span class="topbar-name-text">Sarah</span>
-          </div>
+          <span class="topbar-name-text">Sarah</span>
         </div>
       </div>
-      <div class="state-props" style="padding:12px 16px;">bg: colorSurface<br>border-bottom: colorBorder<br>back icon: textPrimary</div>
+      <div class="state-props" style="padding:12px 16px;">bg: colorSurface, padding: 8dp × 4dp, height: 56dp<br>border-bottom: dividerWidth colorBorder<br>back: ic_back iconSize textPrimary, 36dp circle, 48dp target<br>gaps: back → avatar xs, avatar → title sm<br>title: titleMedium textPrimary, 1 line, ellipsis</div>
+    </div>
+    <div class="state-card" style="padding:0;overflow:hidden;min-width:360px;">
+      <div style="padding:12px 16px 8px 16px;"><div class="state-label active" style="margin-bottom:12px;">Back pressed</div></div>
+      <div class="topbar-demo" style="border-radius:0;border-top:none;border-left:none;border-right:none;">
+        <button class="topbar-back topbar-back-pressed">←</button>
+        <div class="topbar-info">
+          <div class="avatar-md">S</div>
+          <span class="topbar-name-text">Sarah</span>
+        </div>
+      </div>
+      <div class="state-props" style="padding:12px 16px;">back circle: colorInputBackground<br>no ripple</div>
     </div>
   </div>
 </div>
@@ -535,11 +534,11 @@
      ══════════════════════════════════════════════════════ -->
 <h2>Full Chat Preview</h2>
 <div class="chat-preview">
-  <div class="chat-topbar" style="justify-content:space-between;">
-    <button style="background:none;border:none;font-size:20px;cursor:pointer;color:#1A1A1A;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;">‹</button>
-    <div style="display:flex;align-items:center;gap:10px;flex:1;margin-left:4px;">
-      <div class="avatar">S</div>
-      <span style="font-size:16px;font-weight:600;">Sarah</span>
+  <div class="chat-topbar">
+    <button class="topbar-back">←</button>
+    <div class="topbar-info">
+      <div class="avatar-md">S</div>
+      <span class="topbar-name-text">Sarah</span>
     </div>
   </div>
   <div class="chat-body">
