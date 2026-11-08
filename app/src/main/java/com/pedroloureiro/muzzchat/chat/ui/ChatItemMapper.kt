@@ -23,7 +23,6 @@ private val GROUPING_WINDOW_MILLIS = 20.seconds.inWholeMilliseconds
 private const val TODAY = 0L
 private val WITHIN_A_WEEK = 1L..6L
 
-// Newest first, so insertSeparators sees each message before the older one it follows.
 fun PagingData<MessageWithNext>.toChatItems(nowMillis: Long, zoneId: ZoneId, locale: Locale): PagingData<ChatItem> =
     map { ChatItemMapper.toMessageItem(it) }
         .insertSeparators { newer: ChatItem.Message?, older: ChatItem.Message? ->
