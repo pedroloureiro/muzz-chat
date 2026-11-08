@@ -19,6 +19,10 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+data class ChatUiState(
+    val inputText: String = ""
+)
+
 class ChatViewModel(
     private val chatId: String,
     private val repository: ChatRepository,
