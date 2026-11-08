@@ -45,7 +45,7 @@ class ChatRepositoryImplTest {
         ApplicationProvider.getApplicationContext<Context>(),
         MessageDatabase::class.java
     ).allowMainThreadQueries().setQueryExecutor { it.run() }.setTransactionExecutor { it.run() }.build()
-    private val local = RoomChatLocalDataSource(database.messageDao())
+    private val local = RoomChatLocalDataSource(database)
     private val remote = FakeChatRemoteDataSource()
     private val mockData = MockData(ApplicationProvider.getApplicationContext())
     private val mockRemote = MockChatRemoteDataSource(mockData)

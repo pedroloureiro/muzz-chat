@@ -18,7 +18,6 @@ import org.koin.dsl.module
 
 private val localModule = module {
     single { MessageDatabase.create(androidContext()) }
-    single { get<MessageDatabase>().messageDao() }
     single<ChatLocalDataSource> { RoomChatLocalDataSource(get()) }
 }
 
