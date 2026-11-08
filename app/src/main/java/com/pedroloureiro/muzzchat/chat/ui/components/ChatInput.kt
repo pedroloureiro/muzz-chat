@@ -17,9 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pedroloureiro.muzzchat.R
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.ui.components.Button
-import com.pedroloureiro.muzzchat.ui.components.ButtonVariant
 import com.pedroloureiro.muzzchat.ui.components.TextInput
 import com.pedroloureiro.muzzchat.ui.theme.Dimens
 import com.pedroloureiro.muzzchat.ui.theme.MuzzChatTheme
@@ -27,56 +25,43 @@ import com.pedroloureiro.muzzchat.ui.theme.Spacing
 import com.pedroloureiro.muzzchat.ui.theme.colorBorder
 import com.pedroloureiro.muzzchat.ui.theme.colorSurface
 
+private const val MAX_INPUT_LINES = 8
+
 @Composable
 fun ChatInput(
     inputText: String,
     onInputChanged: (String) -> Unit,
     onSend: () -> Unit,
-    onSendAsOther: () -> Unit,
     inputInteractionSource: MutableInteractionSource,
     sendInteractionSource: MutableInteractionSource,
-    sendAsOtherInteractionSource: MutableInteractionSource,
     modifier: Modifier = Modifier,
 ) {
-    val canSend = inputText.isNotBlank()
     Column(
         modifier = modifier
             .fillMaxWidth()
             .background(colorSurface),
     ) {
         HorizontalDivider(thickness = Dimens.dividerWidth, color = colorBorder)
-        Column(
+        Row(
             modifier = Modifier.padding(horizontal = Spacing.md, vertical = Spacing.sm),
-            verticalArrangement = Arrangement.spacedBy(Spacing.sm),
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
         ) {
-            Button(
-                onClick = onSendAsOther,
-                interactionSource = sendAsOtherInteractionSource,
-                modifier = Modifier.align(Alignment.End),
-                variant = ButtonVariant.SECONDARY,
-                icon = ImageVector.vectorResource(R.drawable.ic_reply),
-                label = stringResource(R.string.reply_as, Users.SARAH.name),
-                enabled = canSend,
+            TextInput(
+                value = inputText,
+                onValueChange = onInputChanged,
+                interactionSource = inputInteractionSource,
+                modifier = Modifier.weight(1f),
+                placeholder = stringResource(R.string.message_placeholder),
+                maxLines = MAX_INPUT_LINES,
             )
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(Spacing.sm),
-            ) {
-                TextInput(
-                    value = inputText,
-                    onValueChange = onInputChanged,
-                    interactionSource = inputInteractionSource,
-                    modifier = Modifier.weight(1f),
-                    placeholder = stringResource(R.string.message_placeholder),
-                )
-                Button(
-                    onClick = onSend,
-                    interactionSource = sendInteractionSource,
-                    icon = ImageVector.vectorResource(R.drawable.ic_send),
-                    label = stringResource(R.string.send),
-                    enabled = canSend,
-                )
-            }
+            Button(
+                onClick = onSend,
+                interactionSource = sendInteractionSource,
+                icon = ImageVector.vectorResource(R.drawable.ic_send),
+                label = stringResource(R.string.send),
+                enabled = inputText.isNotBlank(),
+            )
         }
     }
 }
@@ -86,15 +71,13 @@ fun ChatInput(
 private fun ChatInputPreview() {
     MuzzChatTheme {
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
-            listOf("", "Hey, Sara looks great").forEach { inputText ->
+            listOf("", "Hey, Sara looks great", (1..10).joinToString("\n") { "Line $it" }).forEach { inputText ->
                 ChatInput(
                     inputText = inputText,
                     onInputChanged = {},
                     onSend = {},
-                    onSendAsOther = {},
                     inputInteractionSource = remember { MutableInteractionSource() },
                     sendInteractionSource = remember { MutableInteractionSource() },
-                    sendAsOtherInteractionSource = remember { MutableInteractionSource() },
                 )
             }
         }
