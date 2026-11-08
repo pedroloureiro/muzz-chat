@@ -3,8 +3,10 @@ package com.pedroloureiro.muzzchat.chat.ui.model
 import com.pedroloureiro.muzzchat.chat.domain.model.MessageDeliveryStatus
 
 sealed class ChatItem {
+    abstract val key: String
+
     data class Message(
-        val messageId: String,
+        override val key: String,
         val direction: MessageDirection,
         val content: String,
         val timestampMillis: Long,
@@ -12,5 +14,5 @@ sealed class ChatItem {
         val deliveryStatus: MessageDeliveryStatus
     ) : ChatItem()
 
-    data class TimestampHeader(val label: String, val key: String) : ChatItem()
+    data class TimestampHeader(val label: String, override val key: String) : ChatItem()
 }

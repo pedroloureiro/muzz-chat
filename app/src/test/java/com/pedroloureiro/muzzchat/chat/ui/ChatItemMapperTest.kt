@@ -36,7 +36,7 @@ class ChatItemMapperTest {
     fun toMessageItem_mapsAllFields() {
         assertEquals(
             ChatItem.Message(
-                messageId = "alice/1",
+                key = "alice/1",
                 direction = MessageDirection.INCOMING,
                 content = "text 1",
                 timestampMillis = t0,
@@ -88,23 +88,23 @@ class ChatItemMapperTest {
     }
 
     @Test
-    fun messageId_pendingIsSenderAndClientMessageId() {
-        assertEquals("alice/local", toItem(pending("local", alice)).messageId)
+    fun key_pendingIsSenderAndClientMessageId() {
+        assertEquals("alice/local", toItem(pending("local", alice)).key)
     }
 
     @Test
-    fun messageId_confirmedIsSenderAndClientMessageId() {
-        assertEquals("alice/1", toItem(message("1", alice, t0)).messageId)
+    fun key_confirmedIsSenderAndClientMessageId() {
+        assertEquals("alice/1", toItem(message("1", alice, t0)).key)
     }
 
     @Test
-    fun messageId_unchangedWhenPendingIsConfirmed() {
-        assertEquals(toItem(pending("local", alice)).messageId, toItem(message("local", alice, t0)).messageId)
+    fun key_unchangedWhenPendingIsConfirmed() {
+        assertEquals(toItem(pending("local", alice)).key, toItem(message("local", alice, t0)).key)
     }
 
     @Test
-    fun messageId_differsBetweenSendersOfTheSameClientMessageId() {
-        assertNotEquals(toItem(message("1", alice, t0)).messageId, toItem(message("1", bob, t0)).messageId)
+    fun key_differsBetweenSendersOfTheSameClientMessageId() {
+        assertNotEquals(toItem(message("1", alice, t0)).key, toItem(message("1", bob, t0)).key)
     }
 
     @Test
