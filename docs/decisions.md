@@ -254,3 +254,16 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 **To show new messages:**
 1. Count the messages that arrive while the newest message is out of view, and show the count on the jump-to-latest button.
+
+---
+
+## Every local write invalidates the paged list
+
+**Decision:** `RoomChatLocalDataSource` keeps the paging sources it hands out and invalidates them after each of its writes, as well as Room's own invalidation tracking.
+
+**Limitation:** A write reloads the visible page twice when Room also catches it: once for our invalidation and once for Room's. Both reads are local and small.
+
+**Trade-off:** Room 2.8.5 can miss a write that commits while a new paging source is on its first load. On the emulator the echo of a sent message landed during that load, and the bubble stayed `SENDING` while Room held it confirmed, until the next write. Invalidating after our own writes closes that gap without depending on Room's timing.
+
+**To remove it:**
+1. Delete the tracking once a Room release makes a paging source's first load and its invalidation observer atomic, and a test that writes during the first load passes without it.

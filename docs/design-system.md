@@ -111,7 +111,7 @@ Icons are vector drawables in `res/drawable`, loaded with `ImageVector.vectorRes
 | Drawable | Usage |
 |---|---|
 | ic_send | Send button |
-| ic_reply | "Reply as Sarah" button |
+| ic_send_as_other | "Reply as Sarah" button: an "S" monogram with a small send arrow at its bottom end, so it can't be mistaken for replying to a message |
 | ic_arrow_down | "Jump to latest" button |
 | ic_back | TopBar back button |
 
@@ -259,7 +259,7 @@ The message input: composes `TextInput` + `Button (primary)`. The screen passes 
 
 ### MockChatInput
 Mock data: stands in for Sarah's device, which the exercise does not have. It is `ChatInput` with a "Reply as Sarah" button in its `trailing` slot. The real app shows `ChatInput` alone.
-- Button: `Button (floating)` with `ic_reply`, content description `R.string.reply_as` with Sarah's name ("Reply as Sarah"), enabled when `text.isNotBlank()`. It sends the input as Sarah, through the mock server, and the message arrives on the incoming stream like any message from another device
+- Button: `Button (floating)` with `ic_send_as_other`, content description `R.string.reply_as` with Sarah's name ("Reply as Sarah"), enabled when `text.isNotBlank()`. It sends the input as Sarah, through the mock server, and the message arrives on the incoming stream like any message from another device
 
 | State | ChatInput | Reply as Sarah |
 |---|---|---|
