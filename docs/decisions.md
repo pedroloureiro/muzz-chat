@@ -139,16 +139,19 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The UI shows no loading or error state
+## The UI shows loading only for a Chat's first load, and no error state
 
-**Decision:** `ChatUiState` contains only `inputText`, and the screen does not render the paged list's `LoadState`.
+**Decision:** `ChatUiState` contains only `inputText`. `ChatScreen` shows a loading indicator while the paged list's first load runs and nothing is stored yet, read from `LazyPagingItems.loadState.refresh` and `itemCount`. It renders no other `LoadState`.
 
-**Limitation:** The UI cannot show a loading indicator while a page is fetched, or report a failure. A failed send or page load would have no visible feedback.
+**Limitation:**
+- Once messages are stored, the catch-up on opening the Chat runs with no indicator, and older pages load with none either: their rows are blank until they arrive.
+- On a cold start with stored messages, the indicator can flash for the moment Room takes to read the first page, because the list is empty until then.
+- The UI cannot report a failure. A failed send or page load would have no visible feedback.
 
-**Trade-off:** There is no network connection, only a mocked one that always succeeds after a fixed delay of a few hundred milliseconds, so there are no failures to display and no slow requests. Modelling those states now would add UI paths that never run.
+**Trade-off:** Only a fresh install has nothing to show while the first page loads, so that is the one blank screen worth covering. Stored messages show at once, and the mock answers in ~250ms. There is no network connection, only a mocked one that always succeeds, so there are no failures to display and no slow requests. Modelling those states now would add UI paths that never run.
 
 **To support a real backend:**
-1. Render the paged list's `LoadState` for page loading and errors, and add connection state to `ChatUiState`.
+1. Render the paged list's `LoadState` for older pages and errors, and add connection state to `ChatUiState`.
 2. Show failed sends, as described in "Sends are not retried and cannot fail".
 
 ---
@@ -190,7 +193,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 - If the ViewModel is cleared after the pending row is inserted and before the send finishes, the send is cancelled and the message stays pending for good. Nothing resends it.
 - A send that fails stays `SENDING`, and the user cannot retry it.
 
-**Trade-off:** The mock never fails and answers in ~200ms. Retries, failure states and an outbox would add paths that never run here.
+**Trade-off:** The mock never fails and answers in ~250ms. Retries, failure states and an outbox would add paths that never run here.
 
 **To support a real backend:**
 1. Keep pending messages as an outbox in the same table, and send each from a WorkManager job with a network constraint and exponential backoff, so a send outlives the screen and the process.

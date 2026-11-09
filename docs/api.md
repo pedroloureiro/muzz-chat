@@ -37,10 +37,10 @@ What the app expects of the backend, which the exercise does not have. Every gua
 
 ## Left out
 
-The client assumes the backend is always reachable and always succeeds. The mock never fails and answers after a fixed ~200ms delay, so the paths below would never run:
+The client assumes the backend is always reachable and always succeeds. The mock never fails and answers after a fixed ~250ms delay, so the paths below would never run:
 
 - No network errors, timeouts, 4xx or 5xx responses. A failed send would stay `SENDING`, and nothing retries it. See "Sends are not retried and cannot fail" in [`decisions.md`](decisions.md).
-- No loading, error or connection state in the UI. See "The UI shows no loading or error state" in [`decisions.md`](decisions.md).
+- No error or connection state in the UI, and loading is shown only for a Chat's first load. See "The UI shows loading only for a Chat's first load, and no error state" in [`decisions.md`](decisions.md).
 - No reconnection or catch-up after the stream drops. Opening a Chat catches up, and so does a message that skips a `seq`.
 - No sign-in, token refresh or sign-out, and no expired token handling.
 - No rate limits, payload size limits or content types beyond `TEXT`.
@@ -53,7 +53,7 @@ Everything here is marked `MOCK DATA` in the code and is replaced by a real back
 
 ### Chat: `MockChatApi` and `MockChatRemoteDataSource`
 
-`MockChatApi` in `chat/data` plays the server. `MockChatRemoteDataSource` in `chat/data/remote` implements `ChatRemoteDataSource` on top of it, adds a ~200ms delay to every call, and pushes each stored message on a `MutableSharedFlow` that stands in for the WebSocket.
+`MockChatApi` in `chat/data` plays the server. `MockChatRemoteDataSource` in `chat/data/remote` implements `ChatRemoteDataSource` on top of it, adds a ~250ms delay to every call, and pushes each stored message on a `MutableSharedFlow` that stands in for the WebSocket.
 
 - **Seed**: `app/src/main/assets/mock_messages.json`, a JSON array of `MessageDto`. It holds 200 messages in one Chat, `00000000-0000-0000-0000-000000000c01`, with `seq` 1 to 200, between the current user (`…0001`) and Sarah (`…0002`). It is read from the APK's assets every time messages are listed, and never written.
 - **Sent messages**: `mock_sent_messages.json` in the app's files directory (`Context.filesDir`), a JSON array of `MessageDto`. It is read once when `MockChatApi` is created, and rewritten in full after every new message, so the mock never reuses a `seq` that Room already stores. It is deleted only with the app's data. See "The mock backend keeps sent messages in a file" in [`decisions.md`](decisions.md).

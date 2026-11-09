@@ -232,7 +232,7 @@ Wraps MessageBubble and handles alignment, spacing, width and the SendingIndicat
 | Sent — separated | end | 8dp | status: SENT |
 | Sent — grouped | end | 2dp | status: SENT |
 | Sent — sending | end | 2dp or 8dp, as above | status: SENDING, bubble opacity 0.5, SendingIndicator below |
-| Sent — confirmed | end | — | SENDING → SENT on echo (~200ms): the bubble fades to opacity 1 and the indicator hides |
+| Sent — confirmed | end | — | SENDING → SENT on echo (~250ms): the bubble fades to opacity 1 and the indicator hides |
 | Received — separated | start | 8dp | — |
 | Received — grouped | start | 2dp | — |
 
@@ -294,6 +294,7 @@ Composes `TopBar`, the message list and `MockChatInput` in a `Scaffold` on color
 - TopBar: the title is Sarah's name
 - List: the newest message at the bottom, and scrolling up loads older pages. Messages render as `MessageItem` and timestamp headers as `SectionHeader`
 - List spacing: a `Spacing.md` side margin and no vertical padding. The gaps below the bubbles and SectionHeader's padding space the rows
+- First load: while the paged list's first load runs and the list is empty, a Material `CircularProgressIndicator` at its default size (40dp, 4dp stroke) in colorPrimary is centred in the list area. Content description: `R.string.loading` ("Loading messages"). Stored messages show as soon as Room reads them, so in practice it appears only on a fresh install
 - A row not loaded yet is a blank 44dp space, the height of a one-line message with its gap, private to `ChatScreen.kt`. Paging's placeholders would otherwise take no space, so a jump to the newest message would land among older rows
 - When a new message becomes the newest and the list was showing the newest rows, the list scrolls to it. Reading older history is never interrupted
 - Send first snaps the list to the newest message, as Jump to latest does, so the message it sends always comes into view. Reply as Sarah does not snap: it stands in for a received message, which the list follows only when the newest rows are in view
