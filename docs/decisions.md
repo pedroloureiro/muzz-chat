@@ -72,20 +72,6 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## Paged history has no memory or storage cap
-
-**Decision:** `PagingConfig` keeps its default `maxSize`, and nothing deletes old messages from Room. Paging replaced the window of the newest 500 messages.
-
-**Limitation:** Every page the user scrolls past stays in memory until the list is recreated, and the `messages` table grows with every page fetched.
-
-**Trade-off:** Paging already reads from Room only the pages near the screen, which was the reason for the old cap. The seed has 200 messages, so neither limit is reached, and dropping pages can make scrolling back less smooth.
-
-**To support long histories:**
-1. Set `PagingConfig.maxSize` so pages far from the screen are dropped. It must be at least `pageSize + 2 * prefetchDistance`.
-2. Trim the oldest confirmed messages when storage runs low, resetting the Chat's `oldestSeq` and `reachedStart` in the same transaction. Scrolling back to them fetches them again through `MessageRemoteMediator`.
-
----
-
 ## Message timestamps are epoch millis
 
 **Decision:** Messages carry `timestampMillis: Long`, milliseconds since 1970-01-01T00:00Z, in every layer, including the Room column and the JSON field. It is used for display and grouping, and never for order, which `seq` decides.
@@ -125,17 +111,18 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## Message history pages from Room
+## Message history pages from Room, with no memory or storage cap
 
-**Decision:** The message list is paged with Paging 3. Room is the paging source, and `MessageRemoteMediator` fetches a Chat's history from the server by `seq`, following the server's `nextCursor` and `hasMore`. See [ADR-0003](adr/0003-cursor-paging.md).
+**Decision:** The message list is paged with Paging 3. Room is the paging source, and `MessageRemoteMediator` fetches a Chat's history from the server by `seq`, following the server's `nextCursor` and `hasMore`. `PagingConfig` keeps its default `maxSize`, and nothing deletes old messages from Room. Paging replaced the window of the newest 500 messages. See [ADR-0003](adr/0003-cursor-paging.md).
 
-**Limitation:** Nothing deletes old messages from Room, so the table grows with the history the user has scrolled through. Room's generated `PagingSource` uses `LIMIT/OFFSET`, which gets slower on very large local tables.
+**Limitation:** Every page the user scrolls past stays in memory until the list is recreated, and the `messages` table grows with every page fetched. Room's generated `PagingSource` uses `LIMIT/OFFSET`, which gets slower on very large local tables.
 
-**Trade-off:** Keeping what was loaded makes scrolling back instant and works offline. A local offset over indexed rows stays fast at the sizes a single Chat reaches.
+**Trade-off:** Paging reads from Room only the pages near the screen, and keeping what was loaded makes scrolling back instant and works offline. The seed has 200 messages, so neither limit is reached, and a local offset over indexed rows stays fast at the sizes a single Chat reaches. Dropping pages can make scrolling back less smooth.
 
 **To support very large histories:**
-1. Keep the newest N messages per Chat, delete older ones, and in the same transaction set the Chat's `oldestSeq` to the oldest kept `seq` and `reachedStart` to false, so scrolling back fetches them again.
-2. Replace the generated `PagingSource` with one keyed by `seq`.
+1. Set `PagingConfig.maxSize` so pages far from the screen are dropped. It must be at least `pageSize + 2 * prefetchDistance`.
+2. Keep the newest N messages per Chat, delete older ones, and in the same transaction set the Chat's `oldestSeq` to the oldest kept `seq` and `reachedStart` to false, so scrolling back fetches them again through `MessageRemoteMediator`.
+3. Replace the generated `PagingSource` with one keyed by `seq`.
 
 ---
 

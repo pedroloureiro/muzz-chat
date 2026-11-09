@@ -292,10 +292,6 @@ Mock data: stands in for Sarah's device, which the exercise does not have. It is
 | Empty | Empty | disabled |
 | Filled | Filled | default |
 
----|---|---|
-| Empty | disabled | Empty |
-| Filled | default | Filled |
-
 ---
 
 ### ChatScreen
