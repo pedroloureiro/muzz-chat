@@ -22,7 +22,7 @@ Requirements: Android Studio (latest stable) or JDK 11+, and the Android SDK wit
 Or open the project in Android Studio and run the `app` configuration.
 
 Using the app:
-- **Send** (pink button) sends the typed text as you. It shows faded with three pulsing dots while it is sending, then as sent ~200ms later.
+- **Send** (pink button) sends the typed text as you. It shows faded with three pulsing dots while it is sending, then as sent ~250ms later.
 - **Reply as Sarah** (the "S" button) sends the typed text as Sarah, as if from her phone.
 - Scroll up to load older messages. **Jump to latest** (the arrow button) appears when the newest message is out of view.
 - To start again from the seed conversation, clear the app's data.
@@ -33,7 +33,7 @@ The brief leaves these open. Each one is a choice I made, and the linked doc giv
 
 | Assumption | Why |
 |---|---|
-| **There is no backend.** A mock server in the app (`MockChatApi`) stores messages, assigns their order and echoes them back after ~200ms. It never fails. | The brief asks for a local app. The mock acts like a real server, so a real one can replace it without changes above the repository. See [`docs/api.md`](docs/api.md). |
+| **There is no backend.** A mock server in the app (`MockChatApi`) stores messages, assigns their order and echoes them back after ~250ms. It never fails. | The brief asks for a local app. The mock acts like a real server, so a real one can replace it without changes above the repository. See [`docs/api.md`](docs/api.md). |
 | **The app opens a single Chat, with Sarah.** Its id, Sarah's name and her user id are mock constants in `MainActivity`, passed to the screen where a chat list would pass navigation arguments. | The brief shows one conversation. See accepted deviation 6 in [`docs/architecture.md`](docs/architecture.md#accepted-deviations). |
 | **You are a fixed user, given by a mock user service.** There is no sign-in. | The brief has no accounts. `UserRepository.currentUser()` stands where a signed-in user would come from. See [ADR-0004](docs/adr/0004-cross-feature-dependencies.md). |
 | **Sarah's messages are sent from this device**, through the mock server, and arrive on the incoming stream like messages from any other device. This device never writes them to Room directly. | The brief asks for a way to trigger the other user's messages. The "Reply as Sarah" path is mock-only and isolated, so it can be deleted. See accepted deviation 7 in [`docs/architecture.md`](docs/architecture.md#accepted-deviations). |
@@ -103,14 +103,14 @@ Classes with logic are written test-first: `ChatItemMapper`, `SendMessageUseCase
 
 ## Limitations and next steps
 
-- **No failure handling.** The mock never fails, so a failed send would stay "sending", nothing retries it, and the UI shows no loading, error or connection state.
+- **No failure handling.** The mock never fails, so a failed send would stay "sending", nothing retries it, and the UI shows no error or connection state. Loading is shown only for a Chat's first load.
 - **Sends do not outlive the screen.** If the screen closes before the server answers, a message can stay pending for good.
 - **Outgoing messages show only sending and sent.** There are no delivered or seen states and no sent or seen times.
 - **Text only**, with no edit, delete, reply, or clearing the chat.
 - **One Chat, with no chat list.** Incoming messages are stored only while the chat is open, and timestamp headers update only when messages change.
 - **Light theme and English only.**
 
-With more time I would add, in this order: sent and seen times on outgoing messages, delivered and seen states, network errors and retries, delete, edit, simple account information for Sarah, replying to a specific message, dark mode, images, documents and videos, and audio messages. Then a chat list with app-level sync, a WorkManager outbox for sends, loading and error states, Room migrations, more languages and separate Gradle modules. The PDF explains each one. [`docs/decisions.md`](docs/decisions.md) has, for each limitation, the steps to remove it.
+With more time I would add, in this order: sent and seen times on outgoing messages, delivered and seen states, network errors and retries, delete, edit, simple account information for Sarah, replying to a specific message, dark mode, images, documents and videos, and audio messages. Then a chat list with app-level sync, a WorkManager outbox for sends, error states and loading for older pages, Room migrations, more languages and separate Gradle modules. The PDF explains each one. [`docs/decisions.md`](docs/decisions.md) has, for each limitation, the steps to remove it.
 
 ## Documentation
 
