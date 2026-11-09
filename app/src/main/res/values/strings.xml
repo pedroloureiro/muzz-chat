@@ -6,4 +6,5 @@
     <string name="sending">Sending</string>
     <string name="back">Back</string>
     <string name="jump_to_latest">Jump to latest</string>
+    <string name="loading">Loading messages</string>
 </resources>

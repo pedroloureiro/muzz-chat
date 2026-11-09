@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,8 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.pedroloureiro.muzzchat.R
@@ -42,6 +46,7 @@ import com.pedroloureiro.muzzchat.ui.components.ButtonVariant
 import com.pedroloureiro.muzzchat.ui.components.TopBar
 import com.pedroloureiro.muzzchat.ui.theme.Spacing
 import com.pedroloureiro.muzzchat.ui.theme.colorBackground
+import com.pedroloureiro.muzzchat.ui.theme.colorPrimary
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -125,6 +130,15 @@ fun ChatScreen(
                         null -> Spacer(Modifier.height(UnloadedRowHeight))
                     }
                 }
+            }
+            if (messages.loadState.refresh is LoadState.Loading && messages.itemCount == 0) {
+                val loadingDescription = stringResource(R.string.loading)
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .semantics { contentDescription = loadingDescription },
+                    color = colorPrimary,
+                )
             }
             AnimatedVisibility(
                 visible = isNewestOutOfView,
