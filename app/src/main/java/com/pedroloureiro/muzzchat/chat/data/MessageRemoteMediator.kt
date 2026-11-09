@@ -10,8 +10,7 @@ import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageWithNextRow
 
 val MESSAGE_PAGING_CONFIG = PagingConfig(pageSize = 20, prefetchDistance = 20, initialLoadSize = 40)
 
-// More than half of a first load, so the generation a stored page starts stops short of the end of stored
-// history and requests the next APPEND only later, once this one has returned. Paging drops it otherwise.
+// Above half of initialLoadSize, or Paging drops the APPEND that a stored page's new generation requests.
 const val REMOTE_PAGE_SIZE = 60
 
 @OptIn(ExperimentalPagingApi::class)
@@ -29,9 +28,6 @@ class MessageRemoteMediator(
             LoadType.APPEND -> append()
         }
 
-    // Each load returns as soon as its page is stored, with whether it reached the start, and reads
-    // nothing after. Storing a page starts a new generation that may request the next APPEND, and
-    // Paging drops that request if it arrives before the running APPEND returns.
     private suspend fun refresh(): MediatorResult {
         val sync = syncState() ?: return loadNewest().toMediatorResult()
         return catchUp().map { sync.reachedStart }.toMediatorResult()

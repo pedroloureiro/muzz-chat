@@ -152,7 +152,6 @@ fun ChatScreen(
                     color = colorPrimary,
                 )
             }
-            // An overlay, not a list row, so rows never shift when it appears or goes.
             AnimatedVisibility(
                 visible = messages.loadState.mediator?.append is LoadState.Loading,
                 modifier = Modifier

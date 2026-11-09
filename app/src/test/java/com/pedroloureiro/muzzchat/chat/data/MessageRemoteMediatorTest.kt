@@ -107,8 +107,6 @@ class MessageRemoteMediatorTest {
         assertEndOfPagination(true, mediator().load(LoadType.REFRESH, state))
     }
 
-    // Paging drops an APPEND requested while an APPEND runs, and the page's write starts a new
-    // generation that requests one. Reading after the write widens that window until it is lost.
     @Test
     fun `append reads the sync state only before loading`() = runTest {
         syncState = sync(oldestSeq = 5, reachedStart = false)
@@ -118,8 +116,6 @@ class MessageRemoteMediatorTest {
         assertEquals(1, syncStateReads)
     }
 
-    // The generation a stored page starts must not read to the end of stored history on its first load,
-    // or it requests the next APPEND while this one runs, and Paging drops that request.
     @Test
     fun `a server page holds more than half of a first load`() {
         assertTrue(REMOTE_PAGE_SIZE > MESSAGE_PAGING_CONFIG.initialLoadSize / 2)
