@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -40,6 +41,7 @@ import com.pedroloureiro.muzzchat.R
 import com.pedroloureiro.muzzchat.chat.ui.components.MessageItem
 import com.pedroloureiro.muzzchat.chat.ui.components.MockChatInput
 import com.pedroloureiro.muzzchat.chat.ui.components.SectionHeader
+import com.pedroloureiro.muzzchat.chat.ui.components.StartOfChatMarker
 import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
 import com.pedroloureiro.muzzchat.ui.components.Button
 import com.pedroloureiro.muzzchat.ui.components.ButtonVariant
@@ -53,6 +55,8 @@ import org.koin.core.parameter.parametersOf
 
 // A one-line message and its gap. A zero-height placeholder would let a jump land among older rows.
 private val UnloadedRowHeight = 44.dp
+private val OlderPagesIndicatorSize = 24.dp
+private val OlderPagesIndicatorStroke = 2.dp
 
 @Composable
 fun ChatScreen(
@@ -127,6 +131,7 @@ fun ChatScreen(
                     when (val item = messages[index]) {
                         is ChatItem.Message -> MessageItem(item)
                         is ChatItem.TimestampHeader -> SectionHeader(item.label)
+                        is ChatItem.StartOfChat -> StartOfChatMarker()
                         null -> Spacer(Modifier.height(UnloadedRowHeight))
                     }
                 }
@@ -138,6 +143,24 @@ fun ChatScreen(
                         .align(Alignment.Center)
                         .semantics { contentDescription = loadingDescription },
                     color = colorPrimary,
+                )
+            }
+            // An overlay, not a list row, so rows never shift when it appears or goes.
+            AnimatedVisibility(
+                visible = messages.loadState.mediator?.append is LoadState.Loading,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = Spacing.sm),
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                val loadingOlderDescription = stringResource(R.string.loading_older)
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(OlderPagesIndicatorSize)
+                        .semantics { contentDescription = loadingOlderDescription },
+                    color = colorPrimary,
+                    strokeWidth = OlderPagesIndicatorStroke,
                 )
             }
             AnimatedVisibility(
