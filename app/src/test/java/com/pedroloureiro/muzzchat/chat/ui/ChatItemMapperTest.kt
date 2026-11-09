@@ -195,7 +195,8 @@ class ChatItemMapperTest {
                 ChatItem.TimestampHeader("13:59", key = "header-alice/3"),
                 toItem(rowsOf(newestFirst)[2]),
                 toItem(rowsOf(newestFirst)[3]),
-                ChatItem.TimestampHeader("11:58", key = "header-bob/1")
+                ChatItem.TimestampHeader("11:58", key = "header-bob/1"),
+                ChatItem.StartOfChat
             ),
             items
         )
@@ -213,7 +214,23 @@ class ChatItemMapperTest {
         assertTrue(pagedItems.asSnapshot().none { it is ChatItem.TimestampHeader })
         assertEquals(
             ChatItem.TimestampHeader("11:59", key = "header-alice/1"),
-            pagedItems.asSnapshot { appendScrollWhile { true } }.last()
+            pagedItems.asSnapshot { appendScrollWhile { true } }.dropLast(1).last()
+        )
+    }
+
+    @Test
+    fun paging_startOfChatAboveTheOldestHeaderOnlyOnceLoaded() = runTest {
+        val newestFirst = listOf(
+            message("3", alice, t0 + 2_000),
+            message("2", alice, t0 + 1_000),
+            message("1", alice, t0)
+        )
+        val pagedItems = pagedChatItems(newestFirst)
+
+        assertTrue(pagedItems.asSnapshot().none { it is ChatItem.StartOfChat })
+        assertEquals(
+            listOf(ChatItem.TimestampHeader("11:59", key = "header-alice/1"), ChatItem.StartOfChat),
+            pagedItems.asSnapshot { appendScrollWhile { true } }.takeLast(2)
         )
     }
 

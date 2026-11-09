@@ -55,7 +55,7 @@ class ChatViewModelTest {
         val items = flowOf(viewModel.messages.first()).asSnapshot()
 
         assertEquals(listOf(CHAT_ID), repository.requestedChatIds)
-        assertEquals(listOf("${SARAH.id}/1", "header-${SARAH.id}/1"), items.map(ChatItem::key))
+        assertEquals(listOf("${SARAH.id}/1", "header-${SARAH.id}/1", ChatItem.StartOfChat.key), items.map(ChatItem::key))
     }
 
     @Test

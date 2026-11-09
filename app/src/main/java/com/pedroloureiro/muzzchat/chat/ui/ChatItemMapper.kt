@@ -32,6 +32,10 @@ fun PagingData<MessageWithNext>.toChatItems(
         .insertSeparators { newer: ChatItem.Message?, older: ChatItem.Message? ->
             newer?.let { ChatItemMapper.headerAbove(it, older, nowMillis, zoneId, locale) }
         }
+        // Paging passes older = null only once Room and the server both report the end of the history.
+        .insertSeparators { newer: ChatItem?, older: ChatItem? ->
+            if (newer != null && older == null) ChatItem.StartOfChat else null
+        }
 
 object ChatItemMapper {
 
