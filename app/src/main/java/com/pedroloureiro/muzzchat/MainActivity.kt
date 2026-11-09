@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.pedroloureiro.muzzchat.chat.ui.ChatScreen
 import com.pedroloureiro.muzzchat.ui.theme.MuzzChatTheme
 
@@ -14,6 +15,7 @@ private const val MOCK_SARAH_USER_ID = "00000000-0000-0000-0000-000000000002"
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
