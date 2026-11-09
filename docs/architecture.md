@@ -1,6 +1,6 @@
 # Architecture
 
-The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), paging in [ADR-0003](adr/0003-cursor-paging.md), dependencies between features in [ADR-0004](adr/0004-cross-feature-dependencies.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
+The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), paging in [ADR-0003](adr/0003-cursor-paging.md), dependencies between features in [ADR-0004](adr/0004-cross-feature-dependencies.md), what the app assumes of the backend in [`api.md`](api.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
 
 ---
 

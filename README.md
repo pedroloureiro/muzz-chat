@@ -40,6 +40,7 @@ Under `com.pedroloureiro.muzzchat`:
 - [`docs/architecture.md`](docs/architecture.md) — architecture rules and accepted deviations
 - [`docs/adr/`](docs/adr/) — architecture decision records
 - [`docs/decisions.md`](docs/decisions.md) — smaller decisions and known limitations
+- [`docs/api.md`](docs/api.md) — what the app assumes of the backend, and how the mock backend works
 - [`docs/design-system.md`](docs/design-system.md) — colours, spacing, shapes (visual reference: [`design-system.html`](docs/design-system.html))
 - [`CLAUDE.md`](CLAUDE.md) — project conventions
 
