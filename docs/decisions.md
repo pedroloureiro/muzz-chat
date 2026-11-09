@@ -139,6 +139,19 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
+## Server pages are larger than the paged list's first load
+
+**Decision:** Each history request asks the server for `REMOTE_PAGE_SIZE` (60) messages, while Room is read in pages of 20 with a first load of 40. A test keeps `REMOTE_PAGE_SIZE` above half the first load. See [ADR-0003](adr/0003-cursor-paging.md).
+
+**Limitation:** The ratio guards a race inside Paging rather than removing it. Paging 3.5.3 drops an APPEND requested while the mediator's APPEND runs (`RemoteMediatorAccessor.launchBoundary` clears the pending request when the load returns). When server and Room pages were both 20, the generation started by each stored page read to the end of stored history on its first load and requested the next page at that moment, so scrolling up stopped for good after a page or two.
+
+**Trade-off:** Larger requests mean fewer round trips and a first page that fills the screen, at the cost of fetching up to 60 messages the user may never scroll to. Re-requesting from the UI when the list sits at its end, or replacing `RemoteMediator` with explicit loads, would remove the race but add code to work around the library.
+
+**To remove the workaround:**
+1. Once a Paging release keeps an APPEND requested during a running APPEND, the sizes can be chosen freely again.
+
+---
+
 ## The UI shows loading only for a Chat's first load, and no error state
 
 **Decision:** `ChatUiState` contains only `inputText`. `ChatScreen` shows a loading indicator while the paged list's first load runs and nothing is stored yet, read from `LazyPagingItems.loadState.refresh` and `itemCount`. It renders no other `LoadState`.
