@@ -11,7 +11,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.pedroloureiro.muzzchat.R
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.ui.components.Button
 import com.pedroloureiro.muzzchat.ui.components.ButtonVariant
 import com.pedroloureiro.muzzchat.ui.theme.MuzzChatTheme
@@ -21,6 +20,7 @@ import com.pedroloureiro.muzzchat.ui.theme.Spacing
 // The real app shows ChatInput alone.
 @Composable
 fun MockChatInput(
+    otherUserName: String,
     inputText: String,
     onInputChanged: (String) -> Unit,
     onSend: () -> Unit,
@@ -43,7 +43,7 @@ fun MockChatInput(
             interactionSource = sendAsOtherInteractionSource,
             variant = ButtonVariant.FLOATING,
             icon = ImageVector.vectorResource(R.drawable.ic_send_as_other),
-            label = stringResource(R.string.reply_as, Users.SARAH.name),
+            label = stringResource(R.string.reply_as, otherUserName),
             enabled = inputText.isNotBlank(),
         )
     }
@@ -56,6 +56,7 @@ private fun MockChatInputPreview() {
         Column(verticalArrangement = Arrangement.spacedBy(Spacing.md)) {
             listOf("", "Hey, Sara looks great").forEach { inputText ->
                 MockChatInput(
+                    otherUserName = "Sarah",
                     inputText = inputText,
                     onInputChanged = {},
                     onSend = {},

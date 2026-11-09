@@ -33,7 +33,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.pedroloureiro.muzzchat.R
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.chat.ui.components.MessageItem
 import com.pedroloureiro.muzzchat.chat.ui.components.MockChatInput
 import com.pedroloureiro.muzzchat.chat.ui.components.SectionHeader
@@ -53,8 +52,10 @@ private val UnloadedRowHeight = 44.dp
 @Composable
 fun ChatScreen(
     chatId: String,
+    title: String,
+    otherUserId: String,
     onBack: () -> Unit,
-    viewModel: ChatViewModel = koinViewModel { parametersOf(chatId) },
+    viewModel: ChatViewModel = koinViewModel { parametersOf(chatId, otherUserId) },
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val messages = viewModel.messages.collectAsLazyPagingItems()
@@ -82,7 +83,7 @@ fun ChatScreen(
     Scaffold(
         topBar = {
             TopBar(
-                title = Users.SARAH.name,
+                title = title,
                 onBack = onBack,
                 backInteractionSource = backInteractionSource,
                 modifier = Modifier.statusBarsPadding(),
@@ -90,6 +91,7 @@ fun ChatScreen(
         },
         bottomBar = {
             MockChatInput(
+                otherUserName = title,
                 inputText = uiState.inputText,
                 onInputChanged = viewModel::onInputChanged,
                 onSend = { sendThenShow(viewModel::send) },

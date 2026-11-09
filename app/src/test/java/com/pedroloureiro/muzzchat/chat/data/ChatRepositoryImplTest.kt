@@ -18,7 +18,6 @@ import com.pedroloureiro.muzzchat.chat.domain.models.Content
 import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.models.Message
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,9 +46,9 @@ class ChatRepositoryImplTest {
     ).allowMainThreadQueries().setQueryExecutor { it.run() }.setTransactionExecutor { it.run() }.build()
     private val local = RoomChatLocalDataSource(database)
     private val remote = FakeChatRemoteDataSource()
-    private val mockData = MockData(ApplicationProvider.getApplicationContext())
-    private val mockRemote = MockChatRemoteDataSource(mockData)
-    private val chat = mockData.loadSeedMessages().first().chatId
+    private val server = MockChatServer(ApplicationProvider.getApplicationContext())
+    private val mockRemote = MockChatRemoteDataSource(server)
+    private val chat = server.loadSeedMessages().first().chatId
     private val message = Message.Pending(
         clientMessageId = "client",
         chatId = chat,
@@ -108,7 +107,7 @@ class ChatRepositoryImplTest {
     fun `opening a chat again catches up on more than a page of missed messages, keeping stored history`() = runTest {
         val repository = repository(mockRemote)
         val firstOpen = seqs(repository.getMessages(chat).asSnapshot())
-        repeat(30) { mockData.store(chat, outgoing("missed-$it")) }
+        repeat(30) { server.store(chat, outgoing("missed-$it")) }
 
         val snapshot = repository.getMessages(chat).asSnapshot()
 
@@ -142,7 +141,7 @@ class ChatRepositoryImplTest {
     fun `a message that skips a seq is stored and the missing messages are caught up`() = runTest {
         val repository = repository(mockRemote)
         repository.getMessages(chat).asSnapshot()
-        repeat(2) { mockData.store(chat, outgoing("missed-$it")) }
+        repeat(2) { server.store(chat, outgoing("missed-$it")) }
 
         repository.sendMessage(message)
 
@@ -313,7 +312,7 @@ class ChatRepositoryImplTest {
 
     private fun outgoing(clientMessageId: String) = OutgoingMessageDto(
         clientMessageId = clientMessageId,
-        senderId = Users.SARAH.id,
+        senderId = "sarah",
         content = ContentDto(type = "TEXT", value = "text"),
         timestampMillis = 1L
     )

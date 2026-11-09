@@ -5,7 +5,8 @@ import com.pedroloureiro.muzzchat.chat.domain.models.Content
 import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.models.Message
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
+import com.pedroloureiro.muzzchat.user.domain.User
+import com.pedroloureiro.muzzchat.user.domain.UserRepository
 import java.util.UUID
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -18,7 +19,7 @@ import org.junit.Test
 class SendMessageUseCaseTest {
 
     private val repository = FakeChatRepository()
-    private val sendMessage = SendMessageUseCase(repository)
+    private val sendMessage = SendMessageUseCase(repository, FakeUserRepository())
 
     @Test
     fun blankText_sendsNothing() = runTest {
@@ -54,10 +55,10 @@ class SendMessageUseCaseTest {
     }
 
     @Test
-    fun message_isFromMe() = runTest {
+    fun message_isFromTheCurrentUser() = runTest {
         sendMessage(CHAT_ID, "hello")
 
-        assertEquals(Users.ME.id, repository.sent.single().senderId)
+        assertEquals(CURRENT_USER.id, repository.sent.single().senderId)
     }
 
     @Test
@@ -84,7 +85,12 @@ class SendMessageUseCaseTest {
         override suspend fun syncIncomingMessages(chatId: String) = Unit
     }
 
+    private class FakeUserRepository : UserRepository {
+        override suspend fun currentUser() = CURRENT_USER
+    }
+
     private companion object {
         const val CHAT_ID = "chat"
+        val CURRENT_USER = User("me", "Me")
     }
 }

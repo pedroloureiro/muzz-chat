@@ -14,7 +14,8 @@ import kotlinx.serialization.json.Json
 private const val SEED_MESSAGES_ASSET = "mock_messages.json"
 private const val SENT_MESSAGES_FILE = "mock_sent_messages.json"
 
-class MockData(private val context: Context) {
+// MOCK DATA: the fake chat server behind MockChatRemoteDataSource. A real backend replaces both.
+class MockChatServer(private val context: Context) {
     private val sentMessagesFile = File(context.filesDir, SENT_MESSAGES_FILE)
     private val storedMessages = MutableStateFlow(loadSentMessages())
 

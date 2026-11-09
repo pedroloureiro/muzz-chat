@@ -9,10 +9,9 @@ import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.models.Message
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageDeliveryStatus
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.models.User
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
 import com.pedroloureiro.muzzchat.chat.ui.models.MessageDirection
+import com.pedroloureiro.muzzchat.user.domain.User
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -31,6 +30,7 @@ class ChatItemMapperTest {
     private val t0 = millis("2026-03-12T11:59:00Z")
     private val alice = User("alice", "Alice")
     private val bob = User("bob", "Bob")
+    private val me = User("me", "Me")
 
     @Test
     fun toMessageItem_mapsAllFields() {
@@ -49,32 +49,32 @@ class ChatItemMapperTest {
 
     @Test
     fun grouping_sameUser_within20s() {
-        assertGrouped(true, message("1", Users.ME, t0), newer = message("2", Users.ME, t0 + 19_999))
+        assertGrouped(true, message("1", me, t0), newer = message("2", me, t0 + 19_999))
     }
 
     @Test
     fun grouping_sameUser_over20s() {
-        assertGrouped(false, message("1", Users.ME, t0), newer = message("2", Users.ME, t0 + 20_000))
+        assertGrouped(false, message("1", me, t0), newer = message("2", me, t0 + 20_000))
     }
 
     @Test
     fun grouping_differentUser() {
-        assertGrouped(false, message("1", Users.ME, t0), newer = message("2", Users.SARAH, t0 + 1_000))
+        assertGrouped(false, message("1", me, t0), newer = message("2", alice, t0 + 1_000))
     }
 
     @Test
     fun grouping_newestMessage() {
-        assertGrouped(false, message("1", Users.ME, t0), newer = null)
+        assertGrouped(false, message("1", me, t0), newer = null)
     }
 
     @Test
-    fun direction_meSender() {
-        assertEquals(MessageDirection.OUTGOING, item(Users.ME, t0).direction)
+    fun direction_currentUserSender_isOutgoing() {
+        assertEquals(MessageDirection.OUTGOING, item(me, t0).direction)
     }
 
     @Test
-    fun direction_sarahSender() {
-        assertEquals(MessageDirection.INCOMING, item(Users.SARAH, t0).direction)
+    fun direction_otherSender_isIncoming() {
+        assertEquals(MessageDirection.INCOMING, item(alice, t0).direction)
     }
 
     @Test
@@ -84,7 +84,7 @@ class ChatItemMapperTest {
 
     @Test
     fun deliveryStatus_confirmedIsSent() {
-        assertEquals(MessageDeliveryStatus.SENT, toItem(message("1", Users.ME, t0)).deliveryStatus)
+        assertEquals(MessageDeliveryStatus.SENT, toItem(message("1", me, t0)).deliveryStatus)
     }
 
     @Test
@@ -121,7 +121,7 @@ class ChatItemMapperTest {
 
     @Test
     fun sectionHeader_gapUnder1h() {
-        assertNull(headerAbove(item(Users.ME, t0 + 3_600_000), older = item(Users.ME, t0)))
+        assertNull(headerAbove(item(me, t0 + 3_600_000), older = item(me, t0)))
     }
 
     @Test
@@ -220,8 +220,8 @@ class ChatItemMapperTest {
     @Test
     fun paging_groupingAcrossPageBoundary() = runTest {
         val newestFirst = listOf(
-            message("2", Users.ME, t0 + 1_000),
-            message("1", Users.ME, t0)
+            message("2", me, t0 + 1_000),
+            message("1", me, t0)
         )
 
         val items = pagedChatItems(newestFirst).asSnapshot { appendScrollWhile { true } }
@@ -230,7 +230,7 @@ class ChatItemMapperTest {
     }
 
     private fun assertGrouped(expected: Boolean, message: Message, newer: Message?) {
-        assertEquals(expected, ChatItemMapper.toMessageItem(row(message, newer)).isGrouped)
+        assertEquals(expected, ChatItemMapper.toMessageItem(row(message, newer), me.id).isGrouped)
     }
 
     private fun item(sender: User, timestamp: Long) = toItem(message("1", sender, timestamp))
@@ -239,11 +239,11 @@ class ChatItemMapperTest {
         ChatItemMapper.headerAbove(item, older, now, zoneId, Locale.UK)
 
     private fun headerFor(timestamp: String, now: Long = this.now, zoneId: ZoneId = ZoneOffset.UTC): String? =
-        headerAbove(item(Users.ME, millis(timestamp)), older = null, now, zoneId)?.label
+        headerAbove(item(me, millis(timestamp)), older = null, now, zoneId)?.label
 
-    private fun toItem(message: Message) = ChatItemMapper.toMessageItem(row(message, newer = null))
+    private fun toItem(message: Message) = ChatItemMapper.toMessageItem(row(message, newer = null), me.id)
 
-    private fun toItem(row: MessageWithNext) = ChatItemMapper.toMessageItem(row)
+    private fun toItem(row: MessageWithNext) = ChatItemMapper.toMessageItem(row, me.id)
 
     private fun row(message: Message, newer: Message?) =
         MessageWithNext(message, nextSenderId = newer?.senderId, nextTimestampMillis = newer?.timestampMillis)
@@ -255,7 +255,7 @@ class ChatItemMapperTest {
     private fun pagedChatItems(newestFirst: List<Message>) =
         Pager(PagingConfig(pageSize = 1, prefetchDistance = 1, initialLoadSize = 1, enablePlaceholders = false)) {
             rowsOf(newestFirst).asPagingSourceFactory().invoke()
-        }.flow.map { it.toChatItems(now, ZoneOffset.UTC, Locale.UK) }
+        }.flow.map { it.toChatItems(me.id, now, ZoneOffset.UTC, Locale.UK) }
 
     private fun message(clientMessageId: String, sender: User, timestamp: Long) = Message.Confirmed(
         clientMessageId = clientMessageId,
@@ -267,7 +267,7 @@ class ChatItemMapperTest {
         timestampMillis = timestamp
     )
 
-    private fun pending(clientMessageId: String, sender: User = Users.ME) = Message.Pending(
+    private fun pending(clientMessageId: String, sender: User = me) = Message.Pending(
         clientMessageId = clientMessageId,
         chatId = "chat",
         senderId = sender.id,

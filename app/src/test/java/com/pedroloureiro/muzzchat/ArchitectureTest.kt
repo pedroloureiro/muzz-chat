@@ -10,38 +10,57 @@ private const val ROOT_PACKAGE = "com.pedroloureiro.muzzchat"
 // Unit tests run with the module directory as their working directory.
 private val SourceRoot = File("src/main/java/com/pedroloureiro/muzzchat")
 
+// Each feature and the features whose domain it may import. Features depend one way.
+private val FeatureDependencies = mapOf(
+    "chat" to listOf("user"),
+    "user" to emptyList(),
+)
+
+private val TopLevelPackages = listOf("ui", "utils")
+
 class ArchitectureTest {
 
     @Test
-    fun domain_importsNoFrameworkOrOtherLayer() = assertNoImports(
-        directory = "chat/domain",
-        forbidden = listOf("android.", "androidx.", "kotlinx.serialization.", "$ROOT_PACKAGE.chat.data.", "$ROOT_PACKAGE.chat.ui."),
-        allowed = listOf("androidx.paging."),
-    )
+    fun everyFeatureIsDeclared() {
+        val packages = SourceRoot.listFiles(File::isDirectory)!!.map(File::getName).toSet()
+        assertEquals(FeatureDependencies.keys + TopLevelPackages, packages)
+    }
 
     @Test
-    fun ui_importsNothingFromData() = assertNoImports(
-        directory = "chat/ui",
-        forbidden = listOf("$ROOT_PACKAGE.chat.data."),
-    )
+    fun domain_importsNoFrameworkOrOtherLayer() = featuresWith("domain").forEach { feature ->
+        assertNoImports(
+            directory = "$feature/domain",
+            forbidden = listOf("android.", "androidx.", "kotlinx.serialization.") +
+                listOf("data", "ui", "di").map { "$ROOT_PACKAGE.$feature.$it." },
+            allowed = listOf("androidx.paging."),
+        )
+    }
 
     @Test
-    fun data_importsNothingFromUi() = assertNoImports(
-        directory = "chat/data",
-        forbidden = listOf("$ROOT_PACKAGE.chat.ui."),
-    )
+    fun ui_importsNothingFromData() = featuresWith("ui").forEach { feature ->
+        assertNoImports(directory = "$feature/ui", forbidden = listOf("$ROOT_PACKAGE.$feature.data."))
+    }
 
     @Test
-    fun topLevelUi_importsNothingFromChat() = assertNoImports(
-        directory = "ui",
-        forbidden = listOf("$ROOT_PACKAGE.chat."),
-    )
+    fun data_importsNothingFromUi() = featuresWith("data").forEach { feature ->
+        assertNoImports(directory = "$feature/data", forbidden = listOf("$ROOT_PACKAGE.$feature.ui."))
+    }
 
     @Test
-    fun utils_importsNothingFromChat() = assertNoImports(
-        directory = "utils",
-        forbidden = listOf("$ROOT_PACKAGE.chat."),
-    )
+    fun feature_importsOnlyTheDomainOfFeaturesItDependsOn() = FeatureDependencies.forEach { (feature, dependencies) ->
+        assertNoImports(
+            directory = feature,
+            forbidden = (FeatureDependencies.keys - feature).map { "$ROOT_PACKAGE.$it." },
+            allowed = dependencies.map { "$ROOT_PACKAGE.$it.domain." },
+        )
+    }
+
+    @Test
+    fun topLevelPackages_importNothingFromAnyFeature() = TopLevelPackages.forEach { directory ->
+        assertNoImports(directory = directory, forbidden = FeatureDependencies.keys.map { "$ROOT_PACKAGE.$it." })
+    }
+
+    private fun featuresWith(layer: String) = FeatureDependencies.keys.filter { File(SourceRoot, "$it/$layer").isDirectory }
 
     private fun assertNoImports(directory: String, forbidden: List<String>, allowed: List<String> = emptyList()) {
         val root = File(SourceRoot, directory)
