@@ -122,7 +122,7 @@ Icons are vector drawables in `res/drawable`, loaded with `ImageVector.vectorRes
 ## Launcher icon and splash screen
 Both show the white Muzz butterfly from the press kit on MuzzPink.
 
-- Launcher icon: an adaptive icon in `mipmap-anydpi-v26`, as `ic_launcher` and `ic_launcher_round`. minSdk is 26, so there are no density mipmaps
+- Launcher icon: an adaptive icon in `mipmap-anydpi`, as `ic_launcher` and `ic_launcher_round`. minSdk is 26, so the folder needs no `-v26` qualifier and there are no density mipmaps
   - Background: the colour `ic_launcher_background`, MuzzPink
   - Foreground: `ic_launcher_foreground`, the butterfly path from the press kit's SVG in white, on the 108dp canvas inside the 66dp safe zone
   - Monochrome: `ic_launcher_foreground`, for themed icons
