@@ -24,7 +24,8 @@ Or open the project in Android Studio and run the `app` configuration.
 Using the app:
 - **Send** (pink button) sends the typed text as you. It shows faded with three pulsing dots while it is sending, then as sent ~250ms later.
 - **Reply as Sarah** (the "S" button) sends the typed text as Sarah, as if from her phone.
-- Scroll up to load older messages. **Jump to latest** (the arrow button) appears when the newest message is out of view.
+- Scroll up to load older messages. A small spinner shows at the top while an older page comes from the server, and a "Start of conversation" pill marks the oldest message. **Jump to latest** (the arrow button) appears when the newest message is out of view.
+- On a fresh install, a spinner shows until the first messages arrive.
 - To start again from the seed conversation, clear the app's data.
 
 ## Assumptions
@@ -76,7 +77,7 @@ The identity changed three times as I tested it against what a real server and a
 The trade-offs: the server must number each Chat's messages atomically, which serialises writes per Chat, and a deleted message must keep its `seq`. In return, every message has one key from the moment it is sent, confirming is one idempotent write, retries are safe, and missed messages are found exactly. The PDF has the full story.
 
 ### Order and paging
-Confirmed messages are ordered by the server's `seq`, never by timestamp. Pending ones come after them. The list is paged with Paging 3, with Room as the paging source and a `RemoteMediator` that fetches older pages of 20 by `seq`. A sync state is stored per Chat. When the Chat opens, or when a message arrives with a `seq` gap, the app fetches every missed message. The paged query also returns each message's next neighbour, because the bubble tail depends on it. See [ADR-0003](docs/adr/0003-cursor-paging.md).
+Confirmed messages are ordered by the server's `seq`, never by timestamp. Pending ones come after them. The list is paged with Paging 3, with Room as the paging source and a `RemoteMediator` that fetches older history by `seq`. Room is read 20 rows at a time, and each server request fetches 60 messages: more than half of Room's 40-row first read. That ratio works around a race in Paging that stopped older history loading after a page or two. A sync state is stored per Chat. When the Chat opens, or when a message arrives with a `seq` gap, the app fetches every missed message. The paged query also returns each message's next neighbour, because the bubble tail depends on it. See [ADR-0003](docs/adr/0003-cursor-paging.md).
 
 ### Scrolling
 When you are at the bottom, new messages scroll into view, whoever sent them. When you are reading older messages, the list stays where it is and Jump to latest appears. Send first jumps to the newest message, so what you send always comes into view. Reply as Sarah stands in for a received message, so it does not jump. See [`docs/decisions.md`](docs/decisions.md).
@@ -103,14 +104,15 @@ Classes with logic are written test-first: `ChatItemMapper`, `SendMessageUseCase
 
 ## Limitations and next steps
 
-- **No failure handling.** The mock never fails, so a failed send would stay "sending", nothing retries it, and the UI shows no error or connection state. Loading is shown only for a Chat's first load.
+- **No failure handling.** The mock never fails, so a failed send would stay "sending", nothing retries it, and the UI shows no error or connection state.
 - **Sends do not outlive the screen.** If the screen closes before the server answers, a message can stay pending for good.
 - **Outgoing messages show only sending and sent.** There are no delivered or seen states and no sent or seen times.
 - **Text only**, with no edit, delete, reply, or clearing the chat.
 - **One Chat, with no chat list.** Incoming messages are stored only while the chat is open, and timestamp headers update only when messages change.
+- **No sign of a new message while reading history**, beyond the Jump to latest button, which shows whenever the newest message is out of view.
 - **Light theme and English only.**
 
-With more time I would add, in this order: sent and seen times on outgoing messages, delivered and seen states, network errors and retries, delete, edit, simple account information for Sarah, replying to a specific message, dark mode, images, documents and videos, and audio messages. Then a chat list with app-level sync, a WorkManager outbox for sends, error states and loading for older pages, Room migrations, more languages and separate Gradle modules. The PDF explains each one. [`docs/decisions.md`](docs/decisions.md) has, for each limitation, the steps to remove it.
+With more time I would add, in this order: sent and seen times on outgoing messages, delivered and seen states, network errors and retries, delete, edit, simple account information for Sarah, replying to a specific message, dark mode, images, documents and videos, audio messages, and a "new message" pill when one arrives while you read older history. Then a chat list with app-level sync, a WorkManager outbox for sends, error states, Room migrations, more languages and separate Gradle modules. The PDF explains each one. [`docs/decisions.md`](docs/decisions.md) has, for each limitation, the steps to remove it.
 
 ## Documentation
 
