@@ -23,7 +23,7 @@ Every message carries a `chatId`. Every remote call takes it, as part of the end
 - Both return a `MessagePageDto(messages, nextCursor, hasMore)`. `nextCursor` is the `seq` to continue from in the same direction, and `hasMore` says whether more messages remain in that direction.
 - `incomingMessages()` carries every Chat's messages on one stream, and each message carries its `chatId` and `seq`.
 
-The mock answers these by filtering and slicing the list in `MockData`.
+The mock answers these by filtering and slicing the list in `MockChatApi`.
 
 ### Room is the paging source, with a `RemoteMediator`
 Paging 3 reads from Room, and a `RemoteMediator` fetches from the server into Room. Room is the single source of truth: the paged list, optimistic sends and echoes all go through the same table.

@@ -18,7 +18,8 @@ import com.pedroloureiro.muzzchat.chat.domain.models.Content
 import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.models.Message
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
+import com.pedroloureiro.muzzchat.user.domain.User
+import com.pedroloureiro.muzzchat.user.domain.UserRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -47,9 +48,9 @@ class ChatRepositoryImplTest {
     ).allowMainThreadQueries().setQueryExecutor { it.run() }.setTransactionExecutor { it.run() }.build()
     private val local = RoomChatLocalDataSource(database)
     private val remote = FakeChatRemoteDataSource()
-    private val mockData = MockData(ApplicationProvider.getApplicationContext())
-    private val mockRemote = MockChatRemoteDataSource(mockData)
-    private val chat = mockData.loadSeedMessages().first().chatId
+    private val api = MockChatApi(ApplicationProvider.getApplicationContext(), FakeUserRepository())
+    private val mockRemote = MockChatRemoteDataSource(api)
+    private val chat = api.loadSeedMessages().first().chatId
     private val message = Message.Pending(
         clientMessageId = "client",
         chatId = chat,
@@ -108,7 +109,7 @@ class ChatRepositoryImplTest {
     fun `opening a chat again catches up on more than a page of missed messages, keeping stored history`() = runTest {
         val repository = repository(mockRemote)
         val firstOpen = seqs(repository.getMessages(chat).asSnapshot())
-        repeat(30) { mockData.store(chat, outgoing("missed-$it")) }
+        repeat(30) { api.sendAs(chat, OTHER_SENDER, outgoing("missed-$it")) }
 
         val snapshot = repository.getMessages(chat).asSnapshot()
 
@@ -142,7 +143,7 @@ class ChatRepositoryImplTest {
     fun `a message that skips a seq is stored and the missing messages are caught up`() = runTest {
         val repository = repository(mockRemote)
         repository.getMessages(chat).asSnapshot()
-        repeat(2) { mockData.store(chat, outgoing("missed-$it")) }
+        repeat(2) { api.sendAs(chat, OTHER_SENDER, outgoing("missed-$it")) }
 
         repository.sendMessage(message)
 
@@ -171,10 +172,11 @@ class ChatRepositoryImplTest {
         startSync(repository)
         repository.sendMessage(message)
 
-        mockRemote.sendMessage(chat, outgoing(message.clientMessageId).copy(senderId = "other-sender"))
+        api.sendAs(chat, OTHER_SENDER, outgoing(message.clientMessageId))
+        repository.getMessages(chat).asSnapshot()
 
         assertEquals(
-            listOf("other-sender" to SEED_SIZE + 2, message.senderId to SEED_SIZE + 1),
+            listOf(OTHER_SENDER to SEED_SIZE + 2, message.senderId to SEED_SIZE + 1),
             stored().filter { it.clientMessageId == message.clientMessageId }.map { it.senderId to it.seq }
         )
     }
@@ -185,7 +187,7 @@ class ChatRepositoryImplTest {
         repository.getMessages(chat).asSnapshot()
         startSync(repository)
 
-        mockRemote.sendMessage(chat, outgoing("from-another-device"))
+        mockRemote.sendAsAnother(chat, OTHER_SENDER, "from another device")
 
         assertEquals(SEED_SIZE + 1, local.syncState(chat)?.newestSeq)
     }
@@ -194,7 +196,7 @@ class ChatRepositoryImplTest {
     fun `syncIncomingMessages ignores another chat's messages`() = runTest {
         startSync(repository(mockRemote))
 
-        mockRemote.sendMessage(OTHER_CHAT, outgoing("elsewhere"))
+        mockRemote.sendAsAnother(OTHER_CHAT, OTHER_SENDER, "elsewhere")
 
         assertEquals(emptyList<MessageEntity>(), stored(OTHER_CHAT))
     }
@@ -313,7 +315,6 @@ class ChatRepositoryImplTest {
 
     private fun outgoing(clientMessageId: String) = OutgoingMessageDto(
         clientMessageId = clientMessageId,
-        senderId = Users.SARAH.id,
         content = ContentDto(type = "TEXT", value = "text"),
         timestampMillis = 1L
     )
@@ -336,8 +337,14 @@ class ChatRepositoryImplTest {
         override fun incomingMessages(): Flow<MessageDto> = incoming
     }
 
+    // The signed-in user the mock API sends as, matching the pending message's sender.
+    private inner class FakeUserRepository : UserRepository {
+        override suspend fun currentUser() = User(message.senderId, "Me")
+    }
+
     private companion object {
         const val OTHER_CHAT = "other-chat"
+        const val OTHER_SENDER = "other-sender"
         const val SEED_SIZE = 200L
     }
 }

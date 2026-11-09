@@ -29,7 +29,7 @@ The sender's device generates a `clientMessageId`, a random UUID, for each messa
 
 A device only generates ids for its own messages, so a `clientMessageId` is unique per sender, not across senders. Another sender can reuse one, by accident or on purpose, and every member of the Chat sees each message's `clientMessageId`. A message is therefore identified by its `senderId` and `clientMessageId` together:
 
-- On the server, `(senderId, clientMessageId)` is unique, and it is the idempotency key. If the device resends a pending message, for example after the app was killed before the echo arrived, the server recognises the pair and returns the message it already stored instead of storing a second one. The same `clientMessageId` from another sender is a different message.
+- On the server, `(senderId, clientMessageId)` is unique, and it is the idempotency key. The server takes the `senderId` from the authenticated call, never from the message, so a device can send only as its own user. If the device resends a pending message, for example after the app was killed before the echo arrived, the server recognises the pair and returns the message it already stored instead of storing a second one. The same `clientMessageId` from another sender is a different message.
 - In Room, `(senderId, clientMessageId)` is the primary key. Pending and confirmed messages are stored in one table, and a row with no `serverMessageId` is pending. `serverMessageId` has a unique index.
 - In the UI, a message's key is made from the same pair, so the bubble stays in place as it changes from pending to confirmed, rather than being removed and added again.
 

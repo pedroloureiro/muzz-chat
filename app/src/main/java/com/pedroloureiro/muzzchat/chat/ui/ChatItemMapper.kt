@@ -6,7 +6,6 @@ import androidx.paging.map
 import com.pedroloureiro.muzzchat.chat.domain.models.Message
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageDeliveryStatus
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
 import com.pedroloureiro.muzzchat.chat.ui.models.MessageDirection
 import com.pedroloureiro.muzzchat.utils.DateTimeFormat
@@ -23,19 +22,24 @@ private val GROUPING_WINDOW_MILLIS = 20.seconds.inWholeMilliseconds
 private const val TODAY = 0L
 private val WITHIN_A_WEEK = 1L..6L
 
-fun PagingData<MessageWithNext>.toChatItems(nowMillis: Long, zoneId: ZoneId, locale: Locale): PagingData<ChatItem> =
-    map { ChatItemMapper.toMessageItem(it) }
+fun PagingData<MessageWithNext>.toChatItems(
+    currentUserId: String,
+    nowMillis: Long,
+    zoneId: ZoneId,
+    locale: Locale
+): PagingData<ChatItem> =
+    map { ChatItemMapper.toMessageItem(it, currentUserId) }
         .insertSeparators { newer: ChatItem.Message?, older: ChatItem.Message? ->
             newer?.let { ChatItemMapper.headerAbove(it, older, nowMillis, zoneId, locale) }
         }
 
 object ChatItemMapper {
 
-    fun toMessageItem(row: MessageWithNext): ChatItem.Message {
+    fun toMessageItem(row: MessageWithNext, currentUserId: String): ChatItem.Message {
         val message = row.message
         return ChatItem.Message(
             key = "${message.senderId}/${message.clientMessageId}",
-            direction = if (message.senderId == Users.ME.id) MessageDirection.OUTGOING else MessageDirection.INCOMING,
+            direction = if (message.senderId == currentUserId) MessageDirection.OUTGOING else MessageDirection.INCOMING,
             content = message.content.value,
             timestampMillis = message.timestampMillis,
             isGrouped = isGrouped(message, row.nextSenderId, row.nextTimestampMillis),

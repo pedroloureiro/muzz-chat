@@ -45,7 +45,6 @@ fun Message.Pending.toEntity() = MessageEntity(
 
 fun Message.Pending.toDto() = OutgoingMessageDto(
     clientMessageId = clientMessageId,
-    senderId = senderId,
     content = ContentDto(type = content.type.name, value = content.value),
     timestampMillis = timestampMillis
 )

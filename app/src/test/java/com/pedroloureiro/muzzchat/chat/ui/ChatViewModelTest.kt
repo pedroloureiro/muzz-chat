@@ -9,8 +9,10 @@ import com.pedroloureiro.muzzchat.chat.domain.models.Content
 import com.pedroloureiro.muzzchat.chat.domain.models.ContentType
 import com.pedroloureiro.muzzchat.chat.domain.models.Message
 import com.pedroloureiro.muzzchat.chat.domain.models.MessageWithNext
-import com.pedroloureiro.muzzchat.chat.domain.models.Users
 import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
+import com.pedroloureiro.muzzchat.chat.ui.models.MessageDirection
+import com.pedroloureiro.muzzchat.user.domain.User
+import com.pedroloureiro.muzzchat.user.domain.UserRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.flow.Flow
@@ -28,13 +30,14 @@ import org.junit.Test
 class ChatViewModelTest {
 
     private val repository = FakeChatRepository()
+    private val userRepository = FakeUserRepository()
     private val otherUser = FakeOtherUserDevice()
     private lateinit var viewModel: ChatViewModel
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        viewModel = ChatViewModel(CHAT_ID, repository, SendMessageUseCase(repository), otherUser)
+        viewModel = ChatViewModel(CHAT_ID, SARAH.id, repository, userRepository, SendMessageUseCase(repository, userRepository), otherUser)
     }
 
     @After
@@ -52,7 +55,23 @@ class ChatViewModelTest {
         val items = flowOf(viewModel.messages.first()).asSnapshot()
 
         assertEquals(listOf(CHAT_ID), repository.requestedChatIds)
-        assertEquals(listOf("${Users.SARAH.id}/1", "header-${Users.SARAH.id}/1"), items.map(ChatItem::key))
+        assertEquals(listOf("${SARAH.id}/1", "header-${SARAH.id}/1"), items.map(ChatItem::key))
+    }
+
+    @Test
+    fun messages_fromTheCurrentUserAreOutgoing() = runTest {
+        userRepository.currentUser = SARAH
+
+        val items = flowOf(viewModel.messages.first()).asSnapshot()
+
+        assertEquals(MessageDirection.OUTGOING, items.filterIsInstance<ChatItem.Message>().single().direction)
+    }
+
+    @Test
+    fun messages_fromAnyoneElseAreIncoming() = runTest {
+        val items = flowOf(viewModel.messages.first()).asSnapshot()
+
+        assertEquals(MessageDirection.INCOMING, items.filterIsInstance<ChatItem.Message>().single().direction)
     }
 
     @Test
@@ -63,24 +82,24 @@ class ChatViewModelTest {
     }
 
     @Test
-    fun send_sendsInputAsMe() {
+    fun send_sendsInputAsTheCurrentUser() {
         viewModel.onInputChanged("hello")
 
         viewModel.send()
 
         val sent = repository.sent.single()
-        assertEquals(Users.ME.id, sent.senderId)
+        assertEquals(ME.id, sent.senderId)
         assertEquals(CHAT_ID, sent.chatId)
         assertEquals("hello", sent.content.value)
     }
 
     @Test
-    fun sendAsOther_sendsTrimmedInputThroughTheOtherUsersDevice() {
+    fun sendAsOther_sendsTrimmedInputAsTheOtherUserThroughTheirDevice() {
         viewModel.onInputChanged("  hello  ")
 
         viewModel.sendAsOther()
 
-        assertEquals(listOf(CHAT_ID to "hello"), otherUser.sent)
+        assertEquals(listOf(Triple(CHAT_ID, SARAH.id, "hello")), otherUser.sent)
         assertEquals(emptyList<Message.Pending>(), repository.sent)
     }
 
@@ -119,7 +138,7 @@ class ChatViewModelTest {
 
         viewModel.sendAsOther()
 
-        assertEquals(emptyList<Pair<String, String>>(), otherUser.sent)
+        assertEquals(emptyList<Triple<String, String, String>>(), otherUser.sent)
         assertEquals("  \n ", viewModel.uiState.value.inputText)
     }
 
@@ -144,23 +163,31 @@ class ChatViewModelTest {
         }
     }
 
-    private class FakeOtherUserDevice : OtherUserDevice {
-        val sent = mutableListOf<Pair<String, String>>()
+    private class FakeUserRepository : UserRepository {
+        var currentUser = ME
 
-        override suspend fun send(chatId: String, text: String) {
-            sent += chatId to text
+        override suspend fun currentUser() = currentUser
+    }
+
+    private class FakeOtherUserDevice : OtherUserDevice {
+        val sent = mutableListOf<Triple<String, String, String>>()
+
+        override suspend fun sendAsAnother(chatId: String, senderId: String, text: String) {
+            sent += Triple(chatId, senderId, text)
         }
     }
 
     private companion object {
         const val CHAT_ID = "chat"
+        val ME = User("me", "Me")
+        val SARAH = User("sarah", "Sarah")
 
         val sarahMessage = Message.Confirmed(
             clientMessageId = "1",
             serverMessageId = "server-1",
             seq = 1L,
             chatId = CHAT_ID,
-            senderId = Users.SARAH.id,
+            senderId = SARAH.id,
             content = Content(ContentType.TEXT, "hi"),
             timestampMillis = 0L
         )

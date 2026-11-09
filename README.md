@@ -28,6 +28,9 @@ Under `com.pedroloureiro.muzzchat`:
 | `chat/ui` | Chat screen, ViewModel, UI state |
 | `chat/ui/components` | Chat-specific stateless composables |
 | `chat/di` | Dependency wiring |
+| `user/domain` | `User` and the repository interface for the current user, which `chat` imports |
+| `user/data` | Repository implementation and the mock user data source |
+| `user/di` | Dependency wiring |
 | `ui/components` | Generic stateless composables |
 | `ui/theme` | Colours, typography, theme |
 
@@ -37,6 +40,7 @@ Under `com.pedroloureiro.muzzchat`:
 - [`docs/architecture.md`](docs/architecture.md) — architecture rules and accepted deviations
 - [`docs/adr/`](docs/adr/) — architecture decision records
 - [`docs/decisions.md`](docs/decisions.md) — smaller decisions and known limitations
+- [`docs/api.md`](docs/api.md) — what the app assumes of the backend, and how the mock backend works
 - [`docs/design-system.md`](docs/design-system.md) — colours, spacing, shapes (visual reference: [`design-system.html`](docs/design-system.html))
 - [`CLAUDE.md`](CLAUDE.md) — project conventions
 

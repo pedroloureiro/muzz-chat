@@ -80,10 +80,9 @@ class MessageMappersTest {
     }
 
     @Test
-    fun `pending toDto sends the clientMessageId and the content type name`() {
+    fun `pending toDto sends the clientMessageId and the content type name, and no sender`() {
         val expected = OutgoingMessageDto(
             clientMessageId = "client",
-            senderId = "sender",
             content = ContentDto(type = "TEXT", value = "text"),
             timestampMillis = 1L
         )
