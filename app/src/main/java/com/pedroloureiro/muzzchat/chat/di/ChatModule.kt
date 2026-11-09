@@ -1,7 +1,7 @@
 package com.pedroloureiro.muzzchat.chat.di
 
 import com.pedroloureiro.muzzchat.chat.data.ChatRepositoryImpl
-import com.pedroloureiro.muzzchat.chat.data.MockChatServer
+import com.pedroloureiro.muzzchat.chat.data.MockChatApi
 import com.pedroloureiro.muzzchat.chat.data.local.ChatLocalDataSource
 import com.pedroloureiro.muzzchat.chat.data.local.RoomChatLocalDataSource
 import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
@@ -23,7 +23,7 @@ private val localModule = module {
 
 private val mockBackendModule = module {
     single { MockChatRemoteDataSource(get()) } binds arrayOf(ChatRemoteDataSource::class, OtherUserDevice::class)
-    single { MockChatServer(androidContext()) }
+    single { MockChatApi(androidContext(), get()) }
 }
 
 val chatModule = module {
