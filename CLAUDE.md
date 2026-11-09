@@ -1,6 +1,7 @@
 # Muzz Chat — Project Instructions
 
 > Domain glossary: CONTEXT.md · Architecture rules: docs/architecture.md · Architecture decisions: docs/adr/ · Design system: docs/design-system.md
+> README, implementation decisions PDF and submission email: written by the submission-writer agent (.claude/agents/submission-writer.md), in Pedro's voice
 
 ## Implementer (default mode)
 

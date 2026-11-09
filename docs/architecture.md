@@ -45,7 +45,7 @@ com.pedroloureiro.muzzchat
     │   └── models            Message (Pending, Confirmed), MessageWithNext, Content, ContentType,
     │                         MessageDeliveryStatus
     ├── data                  ChatRepositoryImpl, MessageMappers, MessageRemoteMediator, MockChatApi
-    │   ├── local             ChatLocalDataSource, RoomChatLocalDataSource
+    │   ├── local             ChatLocalDataSource, RoomChatLocalDataSource, FirstLoadSafePagingSource
     │   │   └── db            MessageDatabase, Converters, MessageDao
     │   │       └── entities  MessageEntity, ChatSyncEntity, MessageWithNextRow
     │   └── remote            ChatRemoteDataSource, MockChatRemoteDataSource
@@ -136,7 +136,7 @@ Opening the Chat runs a REFRESH. With no sync state it fetches the newest page. 
 
 | Code | Approach |
 |---|---|
-| Classes with logic: use cases, `ChatItemMapper`, `ChatViewModel`, `ChatRepositoryImpl`, `UserRepositoryImpl`, `MessageRemoteMediator`, `Converters` | Unit tests, written first. `ChatItemMapper`'s rules are tested directly and its paging wiring with `asSnapshot()` |
+| Classes with logic: use cases, `ChatItemMapper`, `ChatViewModel`, `ChatRepositoryImpl`, `UserRepositoryImpl`, `MessageRemoteMediator`, `FirstLoadSafePagingSource`, `MessageMappers`, `Converters`, `DateTimeUtils` | Unit tests, written first. `ChatItemMapper`'s rules are tested directly and its paging wiring with `asSnapshot()` |
 | DAO queries, including the paged `MessageWithNext` query | `MessageDaoTest`, using Robolectric and an in-memory Room database, so no emulator is needed |
 | Forwarding code | Not tested directly |
 | Composables | Not tested |
