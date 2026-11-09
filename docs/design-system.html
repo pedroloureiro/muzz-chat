@@ -6,10 +6,10 @@
 <title>Muzz Chat — Design System</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #FAFAFA; color: #1A1A1A; padding: 40px; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #FAFAFA; color: #3B3559; padding: 40px; }
   h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
   .subtitle { color: #9E9E9E; font-size: 14px; margin-bottom: 48px; }
-  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #9E9E9E; margin-bottom: 20px; margin-top: 56px; border-bottom: 1px solid #E0E0E0; padding-bottom: 8px; }
+  h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: #9E9E9E; margin-bottom: 20px; margin-top: 56px; border-bottom: 1px solid #DAD9E2; padding-bottom: 8px; }
   h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #BDBDBD; margin-bottom: 12px; margin-top: 28px; }
   code { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; }
 
@@ -22,19 +22,19 @@
   .token-value { font-family: monospace; color: #666; font-size: 12px; }
   .token-desc { color: #555; }
   .swatch { width: 24px; height: 24px; border-radius: 6px; border: 1px solid rgba(0,0,0,0.08); display: inline-block; vertical-align: middle; margin-right: 8px; }
-  .role-ref { font-family: monospace; font-size: 11px; color: #E8175D; }
+  .role-ref { font-family: monospace; font-size: 11px; color: #FB406C; }
 
   /* ── Typography ── */
   .type-row { display: flex; align-items: baseline; gap: 24px; padding: 14px 0; border-bottom: 1px solid #F0F0F0; }
   .type-meta { width: 220px; flex-shrink: 0; }
-  .type-label { font-size: 12px; font-weight: 600; color: #E8175D; font-family: monospace; }
+  .type-label { font-size: 12px; font-weight: 600; color: #FB406C; font-family: monospace; }
   .type-spec  { font-size: 11px; color: #9E9E9E; font-family: monospace; margin-top: 2px; }
   .type-role  { font-size: 11px; color: #BDBDBD; margin-top: 2px; }
 
   /* ── Spacing ── */
   .spacing-grid { display: flex; flex-direction: column; gap: 10px; }
   .spacing-row { display: flex; align-items: center; gap: 16px; }
-  .spacing-bar { background: #E8175D; height: 8px; border-radius: 4px; opacity: 0.6; }
+  .spacing-bar { background: #FB406C; height: 8px; border-radius: 4px; opacity: 0.6; }
   .spacing-label { font-size: 12px; font-weight: 600; font-family: monospace; width: 120px; }
   .spacing-value { font-size: 11px; color: #9E9E9E; font-family: monospace; width: 44px; }
   .spacing-desc { font-size: 12px; color: #666; }
@@ -52,32 +52,32 @@
   .state-card { background: white; border: 1px solid #F0F0F0; border-radius: 12px; padding: 20px; min-width: 160px; }
   .state-card.dark-bg { background: #2C2C2C; }
   .state-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #BDBDBD; margin-bottom: 16px; font-family: monospace; }
-  .state-label.active { color: #E8175D; }
+  .state-label.active { color: #FB406C; }
   .state-props { font-size: 11px; color: #BDBDBD; margin-top: 12px; font-family: monospace; line-height: 18px; }
 
   /* ── Button states ── */
   .btn { display: inline-flex; align-items: center; justify-content: center; border: none; cursor: pointer; font-family: inherit; font-weight: 600; font-size: 14px; gap: 8px; }
-  .btn-primary { background: #E8175D; color: white; border-radius: 50%; width: 44px; height: 44px; }
-  .btn-primary-pressed { background: #C01048; color: white; border-radius: 50%; width: 44px; height: 44px; }
+  .btn-primary { background: #FB406C; color: white; border-radius: 50%; width: 44px; height: 44px; }
+  .btn-primary-pressed { background: #DD385F; color: white; border-radius: 50%; width: 44px; height: 44px; }
   .btn-primary-disabled { background: #F2F2F2; color: #BDBDBD; border-radius: 50%; width: 44px; height: 44px; cursor: not-allowed; }
   .btn-icon { font-size: 18px; }
-  .btn-floating { background: white; border: 1.5px solid #E0E0E0; border-radius: 50%; width: 44px; height: 44px; }
+  .btn-floating { background: white; border: 1.5px solid #DAD9E2; border-radius: 50%; width: 44px; height: 44px; }
   .btn-floating-pressed { background: #F5F5F5; border: 1.5px solid #BDBDBD; border-radius: 50%; width: 44px; height: 44px; transform: scale(0.95); }
-  .btn-floating-disabled { background: white; border: 1.5px solid #E0E0E0; border-radius: 50%; width: 44px; height: 44px; opacity: 0.6; cursor: not-allowed; }
+  .btn-floating-disabled { background: white; border: 1.5px solid #DAD9E2; border-radius: 50%; width: 44px; height: 44px; opacity: 0.6; cursor: not-allowed; }
 
   /* ── TextInput states ── */
   .text-input { width: 220px; border-radius: 24px; padding: 8px 16px; font-size: 14px; font-family: inherit; border: none; outline: none; }
   .text-input-empty { background: #F5F5F5; color: #9E9E9E; }
-  .text-input-focused { background: #F5F5F5; color: #1A1A1A; box-shadow: 0 0 0 2px #E8175D40; }
-  .text-input-filled { background: #F5F5F5; color: #1A1A1A; }
+  .text-input-focused { background: #F5F5F5; color: #3B3559; box-shadow: 0 0 0 2px #FB406C40; }
+  .text-input-filled { background: #F5F5F5; color: #3B3559; }
   .text-input-disabled { background: #F5F5F5; color: #BDBDBD; cursor: not-allowed; opacity: 0.6; }
 
   /* ── MessageBubble states ── */
   .bubble { padding: 8px 12px; font-size: 14px; line-height: 20px; display: inline-block; max-width: 80%; }
-  .bubble-sent { background: #E8175D; color: white; border-radius: 18px 18px 4px 18px; }
-  .bubble-recv { background: #F2F2F2; color: #1A1A1A; border-radius: 18px 18px 18px 4px; }
-  .bubble-sent-grouped { background: #E8175D; color: white; border-radius: 18px; }
-  .bubble-recv-grouped { background: #F2F2F2; color: #1A1A1A; border-radius: 18px; }
+  .bubble-sent { background: #FB406C; color: white; border-radius: 18px 18px 4px 18px; }
+  .bubble-recv { background: #DAD9E2; color: #3B3559; border-radius: 18px 18px 18px 4px; }
+  .bubble-sent-grouped { background: #FB406C; color: white; border-radius: 18px; }
+  .bubble-recv-grouped { background: #DAD9E2; color: #3B3559; border-radius: 18px; }
   .bubble-sending { opacity: 0.5; }
   .sending-indicator { display: flex; gap: 4px; margin-top: 4px; justify-content: flex-end; }
   @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
@@ -96,30 +96,30 @@
   .section-header-demo { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 16px; letter-spacing: 0; }
 
   /* ── Avatar ── */
-  .avatar-md { width: 36px; height: 36px; border-radius: 50%; background: #E8175D; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; line-height: 20px; font-weight: 600; flex-shrink: 0; }
+  .avatar-md { width: 36px; height: 36px; border-radius: 50%; background: #FB406C; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; line-height: 20px; font-weight: 600; flex-shrink: 0; }
 
   /* ── TopBar ── */
-  .topbar-demo { display: flex; align-items: center; padding: 4px 8px; background: white; border-bottom: 1px solid #E0E0E0; gap: 4px; width: 360px; border-radius: 12px 12px 0 0; }
+  .topbar-demo { display: flex; align-items: center; padding: 4px 8px; background: white; border-bottom: 1px solid #DAD9E2; gap: 4px; width: 360px; border-radius: 12px 12px 0 0; }
   /* 36px circle; the 6px margin makes up the 48dp touch target */
-  .topbar-back { width: 36px; height: 36px; margin: 6px; display: flex; align-items: center; justify-content: center; border: none; background: white; cursor: pointer; color: #1A1A1A; font-size: 18px; flex-shrink: 0; border-radius: 50%; }
+  .topbar-back { width: 36px; height: 36px; margin: 6px; display: flex; align-items: center; justify-content: center; border: none; background: white; cursor: pointer; color: #3B3559; font-size: 18px; flex-shrink: 0; border-radius: 50%; }
   .topbar-back:active, .topbar-back-pressed { background: #F5F5F5; }
   .topbar-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; }
-  .topbar-name-text { font-size: 16px; font-weight: 600; color: #1A1A1A; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .topbar-name-text { font-size: 16px; font-weight: 600; color: #3B3559; line-height: 20px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 
 
   /* ── ChatInput states ── */
-  .ci-field { flex: 1; min-height: 44px; box-sizing: border-box; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #1A1A1A; outline: none; font-family: inherit; }
+  .ci-field { flex: 1; min-height: 44px; box-sizing: border-box; background: #F5F5F5; border: none; border-radius: 24px; padding: 8px 16px; font-size: 14px; color: #3B3559; outline: none; font-family: inherit; }
   .ci-field::placeholder { color: #9E9E9E; }
   .ci-btn { width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .ci-btn-active { background: #E8175D; }
+  .ci-btn-active { background: #FB406C; }
   .ci-btn-disabled { background: #F2F2F2; cursor: not-allowed; }
   .ci-btn svg { fill: white; }
   .ci-btn-disabled svg { fill: #BDBDBD; }
 
   /* ── Chat Preview ── */
-  .chat-preview { background: #FFF; border-radius: 24px; border: 1px solid #E0E0E0; overflow: hidden; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
-  .chat-topbar { display: flex; align-items: center; padding: 4px 8px; border-bottom: 1px solid #E0E0E0; gap: 4px; }
+  .chat-preview { background: #FFF; border-radius: 24px; border: 1px solid #DAD9E2; overflow: hidden; max-width: 360px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  .chat-topbar { display: flex; align-items: center; padding: 4px 8px; border-bottom: 1px solid #DAD9E2; gap: 4px; }
   /* The list adds the 16px screen margin and no vertical padding: the gaps below the bubbles space it */
   .chat-body { padding: 0 16px; display: flex; flex-direction: column; background: #FFFFFF; min-height: 300px; }
   .chat-body .msg-row { margin-bottom: 8px; }
@@ -127,7 +127,7 @@
   .preview-msg-col { display: flex; flex-direction: column; align-items: flex-end; max-width: 80%; }
   .preview-msg-col .bubble { max-width: 100%; }
   .preview-section-header { text-align: center; font-size: 11px; font-weight: 600; color: #9E9E9E; padding: 8px 0; }
-  .ci-bar { background: white; border-top: 1px solid #E0E0E0; padding: 8px 16px; }
+  .ci-bar { background: white; border-top: 1px solid #DAD9E2; padding: 8px 16px; }
   .preview-input-row { display: flex; align-items: flex-end; gap: 8px; }
   .preview-input-row .btn { flex-shrink: 0; }
 </style>
@@ -145,33 +145,33 @@
 <h3>Tier 1 — Primitives</h3>
 <table class="token-table">
   <tr><th>Token</th><th>Swatch</th><th>Hex</th><th>Notes</th></tr>
-  <tr><td class="token-name">Pink500</td><td><span class="swatch" style="background:#E8175D;"></span></td><td class="token-value">#E8175D</td><td class="token-desc">Muzz brand pink</td></tr>
-  <tr><td class="token-name">Pink700</td><td><span class="swatch" style="background:#C01048;"></span></td><td class="token-value">#C01048</td><td class="token-desc">Pressed state of Pink500</td></tr>
-  <tr><td class="token-name">Neutral900</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="token-value">#1A1A1A</td><td class="token-desc">Near-black</td></tr>
+  <tr><td class="token-name">MuzzPink</td><td><span class="swatch" style="background:#FB406C;"></span></td><td class="token-value">#FB406C</td><td class="token-desc">Muzz brand pink</td></tr>
+  <tr><td class="token-name">MuzzPinkDark</td><td><span class="swatch" style="background:#DD385F;"></span></td><td class="token-value">#DD385F</td><td class="token-desc">Pressed state of MuzzPink: MuzzPink mixed with 12% black</td></tr>
+  <tr><td class="token-name">DarkPurple</td><td><span class="swatch" style="background:#3B3559;"></span></td><td class="token-value">#3B3559</td><td class="token-desc">Muzz dark purple</td></tr>
+  <tr><td class="token-name">SoftPurple</td><td><span class="swatch" style="background:#DAD9E2;"></span></td><td class="token-value">#DAD9E2</td><td class="token-desc">Muzz soft purple</td></tr>
   <tr><td class="token-name">Neutral500</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="token-value">#9E9E9E</td><td class="token-desc">Mid grey</td></tr>
   <tr><td class="token-name">Neutral300</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="token-value">#BDBDBD</td><td class="token-desc">Disabled text / icons, pressed border</td></tr>
   <tr><td class="token-name">Neutral200</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="token-value">#F2F2F2</td><td class="token-desc">Light grey</td></tr>
   <tr><td class="token-name">Neutral100</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="token-value">#F5F5F5</td><td class="token-desc">Near-white surface</td></tr>
-  <tr><td class="token-name">Neutral50</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="token-value">#E0E0E0</td><td class="token-desc">Border / divider</td></tr>
-  <tr><td class="token-name">White</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="token-value">#FFFFFF</td><td class="token-desc">Pure white</td></tr>
+  <tr><td class="token-name">White</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #DAD9E2;"></span></td><td class="token-value">#FFFFFF</td><td class="token-desc">Pure white</td></tr>
 </table>
 
 <h3>Tier 2 — Semantic roles</h3>
 <table class="token-table">
   <tr><th>Role</th><th>Swatch</th><th>→ Primitive</th><th>Usage</th></tr>
-  <tr><td class="token-name">colorPrimary</td><td><span class="swatch" style="background:#E8175D;"></span></td><td class="role-ref">Pink500</td><td class="token-desc">Brand CTAs, send button, sent bubble bg</td></tr>
-  <tr><td class="token-name">colorPrimaryPressed</td><td><span class="swatch" style="background:#C01048;"></span></td><td class="role-ref">Pink700</td><td class="token-desc">Send button pressed state</td></tr>
+  <tr><td class="token-name">colorPrimary</td><td><span class="swatch" style="background:#FB406C;"></span></td><td class="role-ref">MuzzPink</td><td class="token-desc">Brand CTAs, send button, sent bubble bg</td></tr>
+  <tr><td class="token-name">colorPrimaryPressed</td><td><span class="swatch" style="background:#DD385F;"></span></td><td class="role-ref">MuzzPinkDark</td><td class="token-desc">Send button pressed state</td></tr>
   <tr><td class="token-name">colorPrimaryDisabled</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="role-ref">Neutral200</td><td class="token-desc">Send button disabled bg</td></tr>
-  <tr><td class="token-name">colorBackground</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Screen / scaffold background</td></tr>
-  <tr><td class="token-name">colorSurface</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Top bar, input bar surface</td></tr>
-  <tr><td class="token-name">colorSurfaceVariant</td><td><span class="swatch" style="background:#F2F2F2;"></span></td><td class="role-ref">Neutral200</td><td class="token-desc">Received bubble bg, input focus ring bg</td></tr>
+  <tr><td class="token-name">colorBackground</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #DAD9E2;"></span></td><td class="role-ref">White</td><td class="token-desc">Screen / scaffold background</td></tr>
+  <tr><td class="token-name">colorSurface</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #DAD9E2;"></span></td><td class="role-ref">White</td><td class="token-desc">Top bar, input bar surface</td></tr>
+  <tr><td class="token-name">colorSurfaceVariant</td><td><span class="swatch" style="background:#DAD9E2;"></span></td><td class="role-ref">SoftPurple</td><td class="token-desc">Received bubble bg</td></tr>
   <tr><td class="token-name">colorInputBackground</td><td><span class="swatch" style="background:#F5F5F5;"></span></td><td class="role-ref">Neutral100</td><td class="token-desc">TextInput field background</td></tr>
-  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#E0E0E0;"></span></td><td class="role-ref">Neutral50</td><td class="token-desc">Dividers, input bar top border, floating button border</td></tr>
+  <tr><td class="token-name">colorBorder</td><td><span class="swatch" style="background:#DAD9E2;"></span></td><td class="role-ref">SoftPurple</td><td class="token-desc">Dividers, input bar top border, floating button border</td></tr>
   <tr><td class="token-name">colorBorderPressed</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Floating button border when pressed</td></tr>
-  <tr><td class="token-name">textPrimary</td><td><span class="swatch" style="background:#1A1A1A;"></span></td><td class="role-ref">Neutral900</td><td class="token-desc">Message text on received bubbles, top bar</td></tr>
+  <tr><td class="token-name">textPrimary</td><td><span class="swatch" style="background:#3B3559;"></span></td><td class="role-ref">DarkPurple</td><td class="token-desc">Message text on received bubbles, top bar</td></tr>
   <tr><td class="token-name">textSecondary</td><td><span class="swatch" style="background:#9E9E9E;"></span></td><td class="role-ref">Neutral500</td><td class="token-desc">Section headers, timestamps, placeholder</td></tr>
   <tr><td class="token-name">textDisabled</td><td><span class="swatch" style="background:#BDBDBD;"></span></td><td class="role-ref">Neutral300</td><td class="token-desc">Disabled input text, disabled button icon</td></tr>
-  <tr><td class="token-name">textOnPrimary</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #E0E0E0;"></span></td><td class="role-ref">White</td><td class="token-desc">Text/icons on pink (sent bubble, send button)</td></tr>
+  <tr><td class="token-name">textOnPrimary</td><td><span class="swatch" style="background:#FFFFFF; border:1px solid #DAD9E2;"></span></td><td class="role-ref">White</td><td class="token-desc">Text/icons on pink (sent bubble, send button)</td></tr>
 </table>
 
 <!-- ══════════════════════════════════════════════════════
@@ -220,9 +220,9 @@
      ══════════════════════════════════════════════════════ -->
 <h2>Shapes</h2>
 <div style="display:flex;gap:24px;flex-wrap:wrap;">
-  <div style="text-align:center;"><div style="width:80px;height:80px;background:#E8175D;border-radius:18px;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">Bubble</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">18dp (tail: 4dp)</div></div>
-  <div style="text-align:center;"><div style="width:120px;height:44px;background:#E8175D;border-radius:24px;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">TextInput</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">24dp pill</div></div>
-  <div style="text-align:center;"><div style="width:44px;height:44px;background:#E8175D;border-radius:50%;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">Button</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">circle</div></div>
+  <div style="text-align:center;"><div style="width:80px;height:80px;background:#FB406C;border-radius:18px;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">Bubble</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">18dp (tail: 4dp)</div></div>
+  <div style="text-align:center;"><div style="width:120px;height:44px;background:#FB406C;border-radius:24px;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">TextInput</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">24dp pill</div></div>
+  <div style="text-align:center;"><div style="width:44px;height:44px;background:#FB406C;border-radius:50%;display:inline-block;"></div><div style="font-size:12px;font-weight:600;font-family:monospace;margin-top:8px;">Button</div><div style="font-size:11px;color:#9E9E9E;font-family:monospace;">circle</div></div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════
@@ -313,12 +313,12 @@
   <div class="states-grid">
     <div class="state-card">
       <div class="state-label active">Default</div>
-      <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#3B3559"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
       <div class="state-props">bg: colorSurface<br>icon: textPrimary<br>border: borderWidth colorBorder<br>shape: circle, 44dp</div>
     </div>
     <div class="state-card">
       <div class="state-label active">Pressed</div>
-      <button class="btn btn-floating-pressed"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
+      <button class="btn btn-floating-pressed"><svg width="18" height="18" viewBox="0 0 24 24" fill="#3B3559"><path d="M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z"/></svg></button>
       <div class="state-props">bg: colorInputBackground<br>border: colorBorderPressed<br>scale: 0.95</div>
     </div>
     <div class="state-card">
@@ -539,7 +539,7 @@
         <div class="preview-input-row">
           <input class="ci-field" value="Hey, Sara looks great" readonly />
           <button class="ci-btn ci-btn-active"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
-          <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#1A1A1A"><g transform="translate(-1.8,-0.4)"><path d="M12.5,6 C12,4.6 10.7,4 9,4 C6.8,4 5,5.2 5,7.1 C5,9.1 6.8,9.9 9,10.4 C11.3,10.9 13,11.8 13,14 C13,16.1 11.2,17.3 9,17.3 C7.1,17.3 5.5,16.5 4.8,15" fill="none" stroke="#1A1A1A" stroke-width="2.2" stroke-linecap="round"/><g transform="translate(14.6,13.5) scale(0.4)"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></g></g></svg></button>
+          <button class="btn btn-floating"><svg width="18" height="18" viewBox="0 0 24 24" fill="#3B3559"><g transform="translate(-1.8,-0.4)"><path d="M12.5,6 C12,4.6 10.7,4 9,4 C6.8,4 5,5.2 5,7.1 C5,9.1 6.8,9.9 9,10.4 C11.3,10.9 13,11.8 13,14 C13,16.1 11.2,17.3 9,17.3 C7.1,17.3 5.5,16.5 4.8,15" fill="none" stroke="#3B3559" stroke-width="2.2" stroke-linecap="round"/><g transform="translate(14.6,13.5) scale(0.4)"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></g></g></svg></button>
         </div>
       </div></div>
       <div class="state-props">ChatInput: Filled<br>Reply as Sarah: enabled, sends as Sarah through the mock server</div>

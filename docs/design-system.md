@@ -13,32 +13,34 @@ Every value is listed here, in a token table or in its component's section.
 
 ## Colours
 
+MuzzPink, DarkPurple and SoftPurple are from the Muzz press kit palette. White on MuzzPink is about 3.6:1, below WCAG AA for body text. We keep it because it is the Muzz brand.
+
 ### Tier 1 — Primitives
 | Token | Hex | Notes |
 |---|---|---|
-| Pink500 | #E8175D | Muzz brand pink |
-| Pink700 | #C01048 | Pressed state of Pink500 |
-| Neutral900 | #1A1A1A | Near-black |
+| MuzzPink | #FB406C | Muzz brand pink |
+| MuzzPinkDark | #DD385F | Pressed state of MuzzPink: MuzzPink mixed with 12% black |
+| DarkPurple | #3B3559 | Muzz dark purple |
+| SoftPurple | #DAD9E2 | Muzz soft purple |
 | Neutral500 | #9E9E9E | Mid grey |
 | Neutral300 | #BDBDBD | Disabled text / icons, pressed border |
 | Neutral200 | #F2F2F2 | Light grey |
 | Neutral100 | #F5F5F5 | Near-white surface |
-| Neutral50 | #E0E0E0 | Border / divider |
 | White | #FFFFFF | Pure white |
 
 ### Tier 2 — Semantic roles
 | Role | → Primitive | Usage |
 |---|---|---|
-| colorPrimary | Pink500 | Brand CTAs, send button, sent bubble bg |
-| colorPrimaryPressed | Pink700 | Send button pressed state |
+| colorPrimary | MuzzPink | Brand CTAs, send button, sent bubble bg |
+| colorPrimaryPressed | MuzzPinkDark | Send button pressed state |
 | colorPrimaryDisabled | Neutral200 | Send button disabled bg |
 | colorBackground | White | Screen / scaffold background |
 | colorSurface | White | Top bar, input bar surface |
-| colorSurfaceVariant | Neutral200 | Received bubble bg |
+| colorSurfaceVariant | SoftPurple | Received bubble bg |
 | colorInputBackground | Neutral100 | TextInput field background |
-| colorBorder | Neutral50 | Dividers, input bar top border, floating button border |
+| colorBorder | SoftPurple | Dividers, input bar top border, floating button border |
 | colorBorderPressed | Neutral300 | Floating button border when pressed |
-| textPrimary | Neutral900 | Message text on received bubbles, top bar |
+| textPrimary | DarkPurple | Message text on received bubbles, top bar |
 | textSecondary | Neutral500 | Section headers, timestamps, placeholder |
 | textDisabled | Neutral300 | Disabled input text, disabled button icon |
 | textOnPrimary | White | Text/icons on pink (sent bubble, send button) |
@@ -114,6 +116,21 @@ Icons are vector drawables in `res/drawable`, loaded with `ImageVector.vectorRes
 | ic_send_as_other | "Reply as Sarah" button: an "S" monogram with a small send arrow at its bottom end, so it can't be mistaken for replying to a message |
 | ic_arrow_down | "Jump to latest" button |
 | ic_back | TopBar back button |
+
+---
+
+## Launcher icon and splash screen
+Both show the white Muzz butterfly from the press kit on MuzzPink.
+
+- Launcher icon: an adaptive icon in `mipmap-anydpi-v26`, as `ic_launcher` and `ic_launcher_round`. minSdk is 26, so there are no density mipmaps
+  - Background: the colour `ic_launcher_background`, MuzzPink
+  - Foreground: `ic_launcher_foreground`, the butterfly path from the press kit's SVG in white, on the 108dp canvas inside the 66dp safe zone
+  - Monochrome: `ic_launcher_foreground`, for themed icons
+- Splash screen: `androidx.core:core-splashscreen`, so API 26–30 match the Android 12 splash
+  - The activity starts in `Theme.MuzzChat.Starting`: background `ic_launcher_background`, icon `ic_launcher_foreground`, then `Theme.MuzzChat`
+  - `MainActivity` calls `installSplashScreen()` before `super.onCreate`. Nothing loads at start, so there is no keep-on-screen condition
+
+Android resources can't read Compose tokens, so `ic_launcher_background` repeats MuzzPink's hex.
 
 ---
 
