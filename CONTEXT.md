@@ -1,10 +1,19 @@
 # Muzz Chat — Domain Glossary
 
 ## User
-A participant in the conversation. Two fixed users exist: `ME` (the local user) and `SARAH` (the other participant). Each has a stable UUID and a display name. No authentication exists — users are hardcoded constants in `chat/domain/models`.
+A person who takes part in Chats. Has a stable UUID `id` and a display `name`. A domain model in `user/domain`, the only model of the `user` feature, which `chat` imports. No authentication exists.
+
+## Current user
+The User signed in on this device, given by `UserRepository.currentUser()`. Messages from the current user are outgoing, and new messages are sent as the current user. Only `MockUserRemoteDataSource` knows its fixed id.
+
+## UserRepository
+The domain interface for Users, in `user/domain`. Exposes `suspend fun currentUser(): User`. `UserRepositoryImpl` in `user/data` implements it by asking `UserRemoteDataSource` and mapping the `UserDto` to a `User`, with no cache.
+
+## UserRemoteDataSource
+The interface representing the remote user service, in `user/data/remote`. Exposes `suspend fun me(): UserDto`, which a real backend answers with the signed-in user. `MockUserRemoteDataSource` implements it, marked as mock data: it answers at once with the fixed current user, whose id the seed messages use.
 
 ## Chat
-A conversation between Users, identified by a server `chatId`. Every Message belongs to exactly one Chat, and its `seq` counts within that Chat. The app opens a single Chat, with Sarah. Use "Chat" and `chatId`, not "conversation" or `conversationId`.
+A conversation between Users, identified by a server `chatId`. Every Message belongs to exactly one Chat, and its `seq` counts within that Chat. The app opens a single Chat, with Sarah, whose name and user id `MainActivity` passes to `ChatScreen` with the `chatId`, as a chat list would. Use "Chat" and `chatId`, not "conversation" or `conversationId`.
 
 ## Message
 A unit of communication between two Users, in one Chat. A sealed class with two kinds, `Message.Pending` and `Message.Confirmed`. Both have a `clientMessageId`, a `chatId`, a `senderId` (UUID), a `Content` and a `timestampMillis` (epoch millis, so always UTC). It is identified by its `senderId` and `clientMessageId` together, from the moment it is sent. Has no edit flag and no delete flag — these are deliberate omissions for this scope. A domain model, stored as `MessageEntity` in one Room table in `chat/data`. See [ADR-0001](docs/adr/0001-repository-dual-datasource-echo-pattern.md).
@@ -43,7 +52,7 @@ A row of the paged message list: a `Message` together with the `senderId` and `t
 The payload of a Message. Has a `ContentType` (currently `TEXT` only) and a `value` (String). Modelled as a data class to allow future content types without changing the Message schema.
 
 ## MessageDirection
-Whether a rendered message is `OUTGOING` (sent by ME) or `INCOMING` (sent by SARAH). A UI-layer concept derived from comparing `senderId` to `Users.ME.id`. Not to be confused with delivery status.
+Whether a rendered message is `OUTGOING` (sent by the current user) or `INCOMING` (sent by anyone else). A UI-layer concept derived from comparing `senderId` to the current user's id. Not to be confused with delivery status.
 
 ## ChatItem
 A UI-layer model representing one renderable row in the message list. Every item has a `key`, which identifies it in the list. Either a `Message` (with `key`, `direction`, `content: String`, `timestampMillis`, `isGrouped`, `deliveryStatus`) or a `TimestampHeader` (with a pre-formatted `label` and a `key`). A message's `key` is its `senderId` and `clientMessageId` joined, so it stays the same from pending to confirmed. A header's `key` is derived from the message below it. Built by `ChatItemMapper`.
@@ -55,7 +64,7 @@ A `ChatItem` variant rendered as a centred date/time divider. Inserted above a m
 A `ChatItem.Message` where `isGrouped = true`. Occurs when the next message is sent by the same User AND within 20 seconds. Rendered with no tail on the bubble and the small gap below it, because the next bubble continues the run.
 
 ## ChatItemMapper
-A pure Kotlin object (no Android dependencies) holding the display rules, each looking at one message and one neighbour. `toMessageItem` builds a `ChatItem.Message` and computes `isGrouped` from the next message. `headerAbove` returns a `TimestampHeader` when one belongs above a message, choosing its `DateTimeFormat`. Paging applies them with `map` and `insertSeparators`. Date arithmetic and formatting are done by `calendarDaysBetween` and `formatUtc` in `utils`. The primary unit under TDD.
+A pure Kotlin object (no Android dependencies) holding the display rules, each looking at one message and one neighbour. `toMessageItem` builds a `ChatItem.Message`, takes its direction from the current user's id, which `ChatViewModel` reads once when the list is first collected, and computes `isGrouped` from the next message. `headerAbove` returns a `TimestampHeader` when one belongs above a message, choosing its `DateTimeFormat`. Paging applies them with `map` and `insertSeparators`. Date arithmetic and formatting are done by `calendarDaysBetween` and `formatUtc` in `utils`. The primary unit under TDD.
 
 ## ChatUiState
 The state object the ViewModel exposes to the UI via `StateFlow`. Contains `inputText: String`. The message list is exposed separately as `Flow<PagingData<ChatItem>>`, because paged data is a stream. No loading or error state — deliberate trade-off documented in decisions log.
@@ -67,13 +76,13 @@ The delivery state of a message, as shown in the UI. Follows from the message ty
 The domain interface for working with messages. Exposes `getMessages(chatId): Flow<PagingData<MessageWithNext>>`, `syncIncomingMessages(chatId)` and `sendMessage(message: Message.Pending)`. `syncIncomingMessages(chatId)` stores that Chat's messages from `ChatRemoteDataSource` until its caller cancels it, ignores other Chats' messages, and runs a catch-up when a message skips a `seq`. `ChatRepositoryImpl` in `chat/data` implements it and is the single ingestion point for all messages.
 
 ## SendMessageUseCase
-Trims and validates message text, ignores blank input, and builds a `Message.Pending` from `ME` for a Chat, with a new `clientMessageId` and the device time, before passing it to `ChatRepository`. The only use case, because the other operations have no logic of their own.
+Trims and validates message text, ignores blank input, and builds a `Message.Pending` from the current user, read from `UserRepository`, for a Chat, with a new `clientMessageId` and the device time, before passing it to `ChatRepository`. The only use case, because the other operations have no logic of their own.
 
 ## ChatRemoteDataSource
-The interface representing the remote messaging service. Exposes `sendMessage(chatId, dto): Result<MessageDto>` for outgoing messages, `fetchMessagesBefore(chatId, beforeSeq: Long?, limit)` and `fetchMessagesAfter(chatId, afterSeq: Long, limit)`, each returning a `Result<MessagePageDto>` history page, and `incomingMessages(): Flow<MessageDto>` for the incoming stream of every Chat, one WebSocket in production. The order it delivers messages in does not matter, because Room orders them. `MockChatRemoteDataSource` implements this using `MockData`, echoing sent messages back on `incomingMessages()` and answering `fetchMessages`, each after a ~200ms simulated network delay.
+The interface representing the remote messaging service. Exposes `sendMessage(chatId, dto): Result<MessageDto>` for outgoing messages, `fetchMessagesBefore(chatId, beforeSeq: Long?, limit)` and `fetchMessagesAfter(chatId, afterSeq: Long, limit)`, each returning a `Result<MessagePageDto>` history page, and `incomingMessages(): Flow<MessageDto>` for the incoming stream of every Chat, one WebSocket in production. The order it delivers messages in does not matter, because Room orders them. `MockChatRemoteDataSource` implements this using `MockChatServer`, echoing sent messages back on `incomingMessages()` and answering `fetchMessages`, each after a ~200ms simulated network delay.
 
 ## OtherUserDevice
-Mock data: a domain interface standing in for Sarah's phone, which the exercise does not have. `send(chatId, text)` sends a message as Sarah to the server. `MockChatRemoteDataSource` implements it by storing the message in `MockData` and pushing it on `incomingMessages()`, so it reaches Room through `syncIncomingMessages` like a message from any other device. `ChatViewModel.sendAsOther` is its only caller.
+Mock data: a domain interface standing in for Sarah's phone, which the exercise does not have. `send(chatId, senderId, text)` sends a message as that user to the server. `ChatViewModel.sendAsOther` passes Sarah's id, a navigation value like the `chatId`. `MockChatRemoteDataSource` implements it by storing the message in `MockChatServer` and pushing it on `incomingMessages()`, so it reaches Room through `syncIncomingMessages` like a message from any other device. `ChatViewModel.sendAsOther` is its only caller.
 
 ## ChatLocalDataSource
 The interface over Room, and the single source of truth for the UI. Stores pending and confirmed messages in one table, confirms a pending message in place when its echo arrives, keeps each Chat's sync state, and exposes the paged `MessageWithNext` query for one Chat, newest first: pending messages by device timestamp, then confirmed messages by `seq`. Each paging source it hands out also watches the `messages` table during its first load and invalidates itself after that load if the table changed, because Room's paging source ignores a change reported then.
@@ -81,5 +90,5 @@ The interface over Room, and the single source of truth for the UI. Stores pendi
 ## MessageRemoteMediator
 The Paging 3 `RemoteMediator` in `chat/data`, one per open Chat. When the Chat opens, it runs a catch-up, or fetches the newest page when nothing is stored. When the user scrolls past the stored history, it fetches the page before the sync state's oldest `seq`. History is complete when the server reports `hasMore = false` for older messages. See [ADR-0003](docs/adr/0003-cursor-paging.md).
 
-## MockData
-The fake server's messages, in `chat/data`. Holds a pre-written conversation from `assets/mock_messages.json`, all in the one Chat that `MainActivity` opens, numbered by `seq` from 1 and large enough to fill several pages, plus every message sent to it, kept in a file so they survive restarts. Every message has a `clientMessageId`. It gives each sent message a random UUID `serverMessageId`, the Chat's next `seq` and the server time, returns the stored message when the same sender resends a `clientMessageId`, and answers history pages by `seq` with `nextCursor` and `hasMore`. Only `MockChatRemoteDataSource` uses it.
+## MockChatServer
+Mock data: the fake chat server behind `MockChatRemoteDataSource`, in `chat/data`. Holds a pre-written conversation from `assets/mock_messages.json`, all in the one Chat that `MainActivity` opens, numbered by `seq` from 1 and large enough to fill several pages, plus every message sent to it, kept in a file so they survive restarts. Every message has a `clientMessageId`. It gives each sent message a random UUID `serverMessageId`, the Chat's next `seq` and the server time, returns the stored message when the same sender resends a `clientMessageId`, and answers history pages by `seq` with `nextCursor` and `hasMore`. Only `MockChatRemoteDataSource` uses it.

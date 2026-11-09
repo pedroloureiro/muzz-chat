@@ -227,13 +227,13 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 **To support clearing a Chat:**
 1. Add an overflow menu to `TopBar` that takes its actions from the caller, so it stays generic.
 2. Store the `seq` a Chat was cleared up to, on the server for each user and in the Chat sync state. The paged query and the history pages skip messages up to it, so cleared messages never come back.
-3. For the mock, a reset action that restores `MockData` to its seed and deletes the Chat's messages and sync state from Room in one transaction.
+3. For the mock, a reset action that restores `MockChatServer` to its seed and deletes the Chat's messages and sync state from Room in one transaction.
 
 ---
 
 ## The mock backend keeps sent messages in a file
 
-**Decision:** `MockData` writes the messages sent to it to a JSON file in the app's files directory after each one, and reads them back when it is created, after the seed messages.
+**Decision:** `MockChatServer` writes the messages sent to it to a JSON file in the app's files directory after each one, and reads them back when it is created, after the seed messages.
 
 **Limitation:** The file is rewritten in full on every send, and it is cleared only with the app's data, along with Room.
 
@@ -267,3 +267,16 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 **To remove it:**
 1. Delete `FirstLoadSafePagingSource` once a Room release keeps a change reported during the first load, and its test that changes the table during the first load passes against Room's own paging source.
+
+---
+
+## The current user is not cached
+
+**Decision:** `UserRepositoryImpl.currentUser()` asks `UserRemoteDataSource.me()` on every call and keeps nothing. `MockUserRemoteDataSource` answers at once.
+
+**Limitation:** Every send and every opening of the message list asks the user service again. With a real backend, each send would wait for that request before its pending message is stored, and the list would wait for it before showing the first page.
+
+**Trade-off:** The mock answers at once, so the calls cost nothing. A cache would need filling at sign-in and clearing at sign-out, and the app has neither.
+
+**To support a real backend:**
+1. Cache the signed-in user in `UserRepositoryImpl`, filled from `me()` at sign-in and on first use, kept on disk so the app opens offline, and cleared at sign-out.

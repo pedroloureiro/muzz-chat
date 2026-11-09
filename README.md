@@ -28,6 +28,9 @@ Under `com.pedroloureiro.muzzchat`:
 | `chat/ui` | Chat screen, ViewModel, UI state |
 | `chat/ui/components` | Chat-specific stateless composables |
 | `chat/di` | Dependency wiring |
+| `user/domain` | `User` and the repository interface for the current user, which `chat` imports |
+| `user/data` | Repository implementation and the mock user data source |
+| `user/di` | Dependency wiring |
 | `ui/components` | Generic stateless composables |
 | `ui/theme` | Colours, typography, theme |
 

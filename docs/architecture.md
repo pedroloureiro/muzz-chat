@@ -1,12 +1,12 @@
 # Architecture
 
-The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), paging in [ADR-0003](adr/0003-cursor-paging.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
+The rules every change must follow. The reasoning is in [ADR-0002](adr/0002-chat-domain-layer.md), the message flow in [ADR-0001](adr/0001-repository-dual-datasource-echo-pattern.md), paging in [ADR-0003](adr/0003-cursor-paging.md), dependencies between features in [ADR-0004](adr/0004-cross-feature-dependencies.md), and vocabulary in [`CONTEXT.md`](../CONTEXT.md).
 
 ---
 
 ## Overview
 
-The app follows Clean Architecture inside each feature, using packages in a single Gradle module. Chat is the only feature.
+The app follows Clean Architecture inside each feature, using packages in a single Gradle module. There are two features: `chat`, and `user`, which gives `chat` the current user. A feature may use another feature's `domain` only, and features depend one way, so `chat` imports `user/domain` and `user` imports nothing from `chat`.
 
 ```text
 ui ──> domain <── data
@@ -21,23 +21,30 @@ di ──> ui, domain, data
 | `di` | Creates objects and wires the layers together | All layers |
 | `utils` (top-level) | Static utility functions that know nothing about the app. Any layer may use them | Kotlin, the JDK |
 
+Any layer may also use the `domain` of a feature its own feature depends on, following rule 5.
+
 ---
 
 ## Package structure
 
 ```text
 com.pedroloureiro.muzzchat
-├── MainActivity (and MOCK_SARAH_CHAT_ID), MuzzChatApplication
+├── MainActivity (and MOCK_SARAH_CHAT_ID, MOCK_SARAH_NAME, MOCK_SARAH_USER_ID), MuzzChatApplication
 ├── ui
 │   ├── theme                 Colours, typography, spacing, dimens, shapes, alpha, scale, theme
 │   └── components            Generic composables: Button, TextInput, TopBar, Avatar
 ├── utils                     Static utility functions: DateTimeUtils
+├── user
+│   ├── di                    UserModule
+│   ├── domain                UserRepository (interface), User
+│   └── data                  UserRepositoryImpl
+│       └── remote            UserRemoteDataSource, MockUserRemoteDataSource, UserDto
 └── chat
     ├── di                    ChatModule
     ├── domain                ChatRepository (interface), SendMessageUseCase, OtherUserDevice (interface)
     │   └── models            Message (Pending, Confirmed), MessageWithNext, Content, ContentType,
-    │                         User + Users, MessageDeliveryStatus
-    ├── data                  ChatRepositoryImpl, MessageMappers, MessageRemoteMediator, MockData
+    │                         MessageDeliveryStatus
+    ├── data                  ChatRepositoryImpl, MessageMappers, MessageRemoteMediator, MockChatServer
     │   ├── local             ChatLocalDataSource, RoomChatLocalDataSource
     │   │   └── db            MessageDatabase, Converters, MessageDao
     │   │       └── entities  MessageEntity, ChatSyncEntity, MessageWithNextRow
@@ -49,49 +56,50 @@ com.pedroloureiro.muzzchat
                               MockChatInput
 ```
 
-A new feature gets its own package beside `chat`, with the same layers. Code moves to the top level only when it knows nothing about any feature. Inside a layer, packages follow rule 22.
+A new feature gets its own package beside `chat`, with the layers it needs. Code moves to the top level only when it knows nothing about any feature. Inside a layer, packages follow rule 23.
 
 ---
 
 ## Rules
 
 ### Dependencies
-1. `chat/domain` imports no Android, Room, serialization, `chat/data` or `chat/ui` code. The one `androidx` package it may import is `androidx.paging`, from the plain Kotlin `paging-common` library.
-2. `chat/ui` imports nothing from `chat/data`.
-3. `chat/data` imports nothing from `chat/ui`.
-4. Only `chat/di` may see every layer. The top-level `ui` and `utils` packages import nothing from `chat`.
+1. A feature's `domain` imports no Android, Room or serialization code, and nothing from its own feature's `data`, `ui` or `di`. The one `androidx` package it may import is `androidx.paging`, from the plain Kotlin `paging-common` library.
+2. A feature's `ui` imports nothing from its own feature's `data`.
+3. A feature's `data` imports nothing from its own feature's `ui`.
+4. Only a feature's `di` may see every layer of that feature. The top-level `ui` and `utils` packages import nothing from any feature.
+5. A feature may import another feature's `domain`, and never its `data`, `ui` or `di`. Features depend one way: `chat` imports `user/domain`, and `user` imports nothing from `chat`. See [ADR-0004](adr/0004-cross-feature-dependencies.md).
 
 ### Data
-5. `MessageEntity` and `MessageDto` stay inside `chat/data`. `ChatRepository` exposes only domain models.
-6. `ChatRepositoryImpl` is the single ingestion point for all messages.
-7. Room is the source of truth. The UI observes messages through `ChatRepository`, and message state is never duplicated.
-8. Nothing outside `chat/data/local` references `MessageDao` or `MessageDatabase`, except `chat/di` to wire them.
+6. `MessageEntity` and `MessageDto` stay inside `chat/data`. `ChatRepository` exposes only domain models.
+7. `ChatRepositoryImpl` is the single ingestion point for all messages.
+8. Room is the source of truth. The UI observes messages through `ChatRepository`, and message state is never duplicated.
+9. Nothing outside `chat/data/local` references `MessageDao` or `MessageDatabase`, except `chat/di` to wire them.
 
 ### Use cases
-9. Add a use case only when an operation has logic of its own, such as validation or building a domain object.
-10. `ChatViewModel` calls `ChatRepository` directly for operations with no logic. Forwarding-only use cases are not added.
-11. Use cases read the clock and generate IDs directly. Inject them only when logic depends on their values.
+10. Add a use case only when an operation has logic of its own, such as validation or building a domain object.
+11. `ChatViewModel` calls `ChatRepository` directly for operations with no logic. Forwarding-only use cases are not added.
+12. Use cases read the clock and generate IDs directly. Inject them only when logic depends on their values.
 
 ### Presentation
-12. Composables are stateless and receive only what they need to render. A composable that reacts to press or focus receives a `MutableInteractionSource` from its caller, and the screen remembers it.
-13. Display rules, such as grouping and timestamp headers, belong to `ChatItemMapper`.
-14. `ChatItemMapper` has no Android dependencies, so it can run on the JVM.
+13. Composables are stateless and receive only what they need to render. A composable that reacts to press or focus receives a `MutableInteractionSource` from its caller, and the screen remembers it.
+14. Display rules, such as grouping and timestamp headers, belong to `ChatItemMapper`.
+15. `ChatItemMapper` has no Android dependencies, so it can run on the JVM.
 
 ### Dependency injection
-15. Koin wiring lives in `chat/di`. Classes receive dependencies through their constructors and never call Koin themselves.
-16. Android types stay out of `chat/domain` contracts. A `data` class that needs `Context` receives it through Koin.
-17. Long-running work in `chat/data` is a `suspend` function whose caller owns its lifetime through a scope. Nothing uses `GlobalScope`.
+16. Koin wiring lives in each feature's `di`. Classes receive dependencies through their constructors and never call Koin themselves.
+17. Android types stay out of a feature's `domain` contracts. A `data` class that needs `Context` receives it through Koin.
+18. Long-running work in `chat/data` is a `suspend` function whose caller owns its lifetime through a scope. Nothing uses `GlobalScope`.
 
 ### Ordering and paging
-18. Every message belongs to one Chat, and every remote call and Room query is limited to one `chatId`. Confirmed messages are ordered by their server-assigned `seq`, and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
-19. A message is identified by its `senderId` and `clientMessageId` together: the Room primary key and the UI key. An echo confirms its pending message in place, by one upsert on that key. Every write of server messages, whether a history page or an incoming message, goes through the same insert, in the same transaction as the Chat's sync state it moves.
-20. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
+19. Every message belongs to one Chat, and every remote call and Room query is limited to one `chatId`. Confirmed messages are ordered by their server-assigned `seq`, and pending messages after them by device timestamp. `timestampMillis` is used only for display and grouping.
+20. A message is identified by its `senderId` and `clientMessageId` together: the Room primary key and the UI key. An echo confirms its pending message in place, by one upsert on that key. Every write of server messages, whether a history page or an incoming message, goes through the same insert, in the same transaction as the Chat's sync state it moves.
+21. The message list is paged from Room. Display rules look at one message and one neighbour, so they work on `PagingData` through `map` and `insertSeparators`. Data a rule needs from a neighbour that `map` cannot see is supplied by the paged query, as `MessageWithNext`.
 
 ### Text
-21. Text shown to the user, including content descriptions, comes from `res/values/strings.xml` through `stringResource`. Names and other data go in as format arguments, such as `reply_as` = "Reply as %1$s". `@Preview` functions may use literal sample text.
+22. Text shown to the user, including content descriptions, comes from `res/values/strings.xml` through `stringResource`. Names and other data go in as format arguments, such as `reply_as` = "Reply as %1$s". `@Preview` functions may use literal sample text.
 
 ### Packages
-22. Files of one type, such as models, entities or components, get a package of their own when there is more than one of them, named for the type in the plural: `models`, `entities`, `components`. A file that is the only one of its type sits in its parent package. An interface and its implementations count as one file. Packages that group by role, not by type, are kept whatever their size: the layers (`domain`, `data`, `ui`, `di`, `utils`), `theme`, and `local`, `remote` and `db` in `data`.
+23. Files of one type, such as models, entities or components, get a package of their own when there is more than one of them, named for the type in the plural: `models`, `entities`, `components`. A file that is the only one of its type sits in its parent package. An interface and its implementations count as one file. Packages that group by role, not by type, are kept whatever their size: the layers (`domain`, `data`, `ui`, `di`, `utils`), `theme`, and `local`, `remote` and `db` in `data`.
 
 ---
 
@@ -99,7 +107,7 @@ A new feature gets its own package beside `chat`, with the same layers. Code mov
 
 ```text
 ChatViewModel
-  → SendMessageUseCase          trims and validates text, builds Message.Pending(clientMessageId, device time)
+  → SendMessageUseCase          trims and validates text, builds Message.Pending(current user, clientMessageId, device time)
   → ChatRepository.sendMessage
   → ChatRepositoryImpl          inserts the pending row into Room, then calls the remote data source
   → Echo or response received   upsert by (senderId, clientMessageId): the pending row is confirmed in place
@@ -128,11 +136,11 @@ Opening the Chat runs a REFRESH. With no sync state it fetches the newest page. 
 
 | Code | Approach |
 |---|---|
-| Classes with logic: use cases, `ChatItemMapper`, `ChatViewModel`, `ChatRepositoryImpl`, `MessageRemoteMediator`, `Converters` | Unit tests, written first. `ChatItemMapper`'s rules are tested directly and its paging wiring with `asSnapshot()` |
+| Classes with logic: use cases, `ChatItemMapper`, `ChatViewModel`, `ChatRepositoryImpl`, `UserRepositoryImpl`, `MessageRemoteMediator`, `Converters` | Unit tests, written first. `ChatItemMapper`'s rules are tested directly and its paging wiring with `asSnapshot()` |
 | DAO queries, including the paged `MessageWithNext` query | `MessageDaoTest`, using Robolectric and an in-memory Room database, so no emulator is needed |
 | Forwarding code | Not tested directly |
 | Composables | Not tested |
-| Dependency rules 1–4 | `ArchitectureTest` scans the imports of the Kotlin files under `chat`, `ui` and `utils` |
+| Dependency rules 1–5 | `ArchitectureTest` scans the imports of the Kotlin files under every feature, `ui` and `utils`. It lists the features and which others each depends on, and fails when a feature package is missing from that list |
 
 ---
 
@@ -149,10 +157,9 @@ These are the places where the app knowingly departs from strict Clean Architect
 | # | Deviation | Why we accept it | How to correct it |
 |---|---|---|---|
 | 1 | `ChatViewModel` calls `ChatRepository` directly to observe messages, with no use case in between | That use case would only forward the call | Add a use case when an operation gains logic, or add all of them if a uniform rule becomes worth the code |
-| 2 | Layers are packages in one Gradle module, so boundaries are checked by a test and not the compiler | With one feature, separate modules would add build setup without enough benefit | Split into `:feature:chat:domain`, `:feature:chat:data` and `:feature:chat:presentation`, with `domain` as a plain Kotlin module and `:app` as the wiring point |
-| 3 | `Users.ME` is a global constant, so `ChatItemMapper` has the current user hardcoded | The app has no authentication and its users are fixed by design | Add a `CurrentUser` abstraction when login exists, and inject it into the mapper |
-| 4 | `chat/domain` has `MessageWithNext`, a row model shaped by the paged list's needs | Paging maps one row at a time, and the bubble tail needs the next message. See [ADR-0003](adr/0003-cursor-paging.md) | Move the type into `chat/data` and map it to a UI-facing row in the ViewModel, if the domain should stay free of display concerns |
-| 5 | `MessageEntity` stores the domain `ContentType` enum by name, so renaming a value changes what is stored | A separate enum for storage would duplicate it for little benefit | Add a storage-only enum or stable codes, and map them in `chat/data` |
-| 6 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
-| 7 | The open Chat's id is `MOCK_SARAH_CHAT_ID`, a private constant in `MainActivity.kt` marked as mock data. `MainActivity`, the app's entry point, passes it to `ChatScreen` as its `chatId` parameter, where a navigation argument would come from, and `ChatScreen` passes it to `ChatViewModel` through `parametersOf` | The app has one screen and no chat list to navigate from, so it has no navigation library | Add navigation, open `ChatScreen` from a chat list with the selected `chatId` as its navigation argument, and delete the constant |
-| 8 | `ChatScreen` shows `MockChatInput`, marked as mock data, which adds a "Reply as Sarah" button after Send in the real `ChatInput`. It calls `ChatViewModel.sendAsOther`, which sends the input through `OtherUserDevice`, a mock domain contract that `MockChatRemoteDataSource` implements: the mock server stores the message as Sarah's and pushes it on the incoming stream, so this device never writes it | Sarah has no device in the exercise, so her messages are sent from this one | Show `ChatInput` alone, and delete `MockChatInput`, `sendAsOther` and `OtherUserDevice`, once other users' messages arrive from the server |
+| 2 | Layers are packages in one Gradle module, so boundaries are checked by a test and not the compiler | With two small features, separate modules would add build setup without enough benefit | Split into `:feature:chat:domain`, `:feature:chat:data` and `:feature:chat:presentation`, with `domain` as a plain Kotlin module and `:app` as the wiring point |
+| 3 | `chat/domain` has `MessageWithNext`, a row model shaped by the paged list's needs | Paging maps one row at a time, and the bubble tail needs the next message. See [ADR-0003](adr/0003-cursor-paging.md) | Move the type into `chat/data` and map it to a UI-facing row in the ViewModel, if the domain should stay free of display concerns |
+| 4 | `MessageEntity` stores the domain `ContentType` enum by name, so renaming a value changes what is stored | A separate enum for storage would duplicate it for little benefit | Add a storage-only enum or stable codes, and map them in `chat/data` |
+| 5 | `chat/domain` uses `Flow` from `kotlinx.coroutines` and `PagingData` from `paging-common` | Neither has an Android dependency, and they are how the UI observes and pages Room | Define domain stream and paging abstractions, which is not worth doing unless the libraries must go |
+| 6 | The open Chat's id, Sarah's name and Sarah's user id are `MOCK_SARAH_CHAT_ID`, `MOCK_SARAH_NAME` and `MOCK_SARAH_USER_ID`, private constants in `MainActivity.kt` marked as mock data. `MainActivity`, the app's entry point, passes them to `ChatScreen` as its `chatId`, `title` and `otherUserId` parameters, where navigation arguments would come from. `ChatScreen` shows the `title` in `TopBar` and on the "Reply as" button, and passes `chatId` and `otherUserId` to `ChatViewModel` through `parametersOf` | The app has one screen and no chat list to navigate from, so it has no navigation library | Add navigation, open `ChatScreen` from a chat list with the selected Chat's id and title as navigation arguments, and delete the constants. `otherUserId` goes with deviation 7 |
+| 7 | `ChatScreen` shows `MockChatInput`, marked as mock data, which adds a "Reply as Sarah" button after Send in the real `ChatInput`. It calls `ChatViewModel.sendAsOther`, which sends the input as `otherUserId` through `OtherUserDevice`, a mock domain contract that `MockChatRemoteDataSource` implements: the mock server stores the message as Sarah's and pushes it on the incoming stream, so this device never writes it | Sarah has no device in the exercise, so her messages are sent from this one | Show `ChatInput` alone, and delete `MockChatInput`, `sendAsOther`, `otherUserId` and `OtherUserDevice`, once other users' messages arrive from the server |
