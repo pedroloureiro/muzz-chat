@@ -59,7 +59,7 @@ Everything here is marked `MOCK DATA` in the code and is replaced by a real back
 - **Sent messages**: `mock_sent_messages.json` in the app's files directory (`Context.filesDir`), a JSON array of `MessageDto`. It is read once when `MockChatApi` is created, and rewritten in full after every new message, so the mock never reuses a `seq` that Room already stores. It is deleted only with the app's data. See "The mock backend keeps sent messages in a file" in [`decisions.md`](decisions.md).
 - **Listing**: the seed, then the sent messages, filtered to one Chat and sliced by `seq` into pages.
 - **Storing**: a new message gets a random UUID `serverMessageId`, the highest `seq` in its Chat plus one, and the current time. A resend of a stored `(senderId, clientMessageId)` returns the stored message.
-- **Sender**: `send(chatId, dto)` stores the message as the current user, read from `UserRepository`, in place of the token. `sendAs(chatId, senderId, dto)` stores it as anyone, only for `OtherUserDevice`, which sends Sarah's messages from this device. A real API has no `sendAs`, and it goes when `OtherUserDevice` does.
+- **Sender**: `send(chatId, dto)` stores the message as the current user, read from `UserRepository`, in place of the token. `sendAs(chatId, senderId, dto)` stores it as anyone, only for `OtherUserDevice.sendAsAnother`, which sends Sarah's messages from this device. A real API has no `sendAs`, and it goes when `OtherUserDevice` does.
 
 ### User: `MockUserRemoteDataSource`
 
