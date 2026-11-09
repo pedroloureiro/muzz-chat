@@ -187,7 +187,7 @@ class ChatRepositoryImplTest {
         repository.getMessages(chat).asSnapshot()
         startSync(repository)
 
-        mockRemote.send(chat, OTHER_SENDER, "from another device")
+        mockRemote.sendAsAnother(chat, OTHER_SENDER, "from another device")
 
         assertEquals(SEED_SIZE + 1, local.syncState(chat)?.newestSeq)
     }
@@ -196,7 +196,7 @@ class ChatRepositoryImplTest {
     fun `syncIncomingMessages ignores another chat's messages`() = runTest {
         startSync(repository(mockRemote))
 
-        mockRemote.send(OTHER_CHAT, OTHER_SENDER, "elsewhere")
+        mockRemote.sendAsAnother(OTHER_CHAT, OTHER_SENDER, "elsewhere")
 
         assertEquals(emptyList<MessageEntity>(), stored(OTHER_CHAT))
     }

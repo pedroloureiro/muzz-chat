@@ -51,7 +51,7 @@ class ChatViewModel(
 
     fun send() = takeInput { text -> sendMessageUseCase(chatId, text) }
 
-    fun sendAsOther() = takeInput { text -> otherUser.send(chatId, otherUserId, text.trim()) }
+    fun sendAsOther() = takeInput { text -> otherUser.sendAsAnother(chatId, otherUserId, text.trim()) }
 
     private fun takeInput(send: suspend (String) -> Unit) {
         val text = _uiState.value.inputText

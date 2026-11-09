@@ -26,7 +26,9 @@ class MockChatRemoteDataSource(private val api: MockChatApi) : ChatRemoteDataSou
         return Result.success(stored)
     }
 
-    override suspend fun send(chatId: String, senderId: String, text: String) {
+    // MOCK DATA, droppable: Sarah has no device in the exercise, so this one sends her messages. Delete it with
+    // OtherUserDevice once other users' messages arrive from the server. Only this path names its sender.
+    override suspend fun sendAsAnother(chatId: String, senderId: String, text: String) {
         delay(MOCK_NETWORK_DELAY_MILLIS)
         val outgoing = OutgoingMessageDto(
             clientMessageId = UUID.randomUUID().toString(),

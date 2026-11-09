@@ -172,7 +172,7 @@ class ChatViewModelTest {
     private class FakeOtherUserDevice : OtherUserDevice {
         val sent = mutableListOf<Triple<String, String, String>>()
 
-        override suspend fun send(chatId: String, senderId: String, text: String) {
+        override suspend fun sendAsAnother(chatId: String, senderId: String, text: String) {
             sent += Triple(chatId, senderId, text)
         }
     }
