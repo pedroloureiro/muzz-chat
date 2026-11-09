@@ -2,7 +2,6 @@ package com.pedroloureiro.muzzchat.chat.data
 
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
-import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
 import com.pedroloureiro.muzzchat.chat.data.local.ChatLocalDataSource
@@ -23,7 +22,7 @@ class ChatRepositoryImpl(
     @OptIn(ExperimentalPagingApi::class)
     override fun getMessages(chatId: String): Flow<PagingData<MessageWithNext>> =
         Pager(
-            config = PagingConfig(pageSize = MESSAGE_PAGE_SIZE),
+            config = MESSAGE_PAGING_CONFIG,
             remoteMediator = MessageRemoteMediator(
                 syncState = { local.syncState(chatId) },
                 loadNewest = { loadNewest(chatId) },
@@ -51,20 +50,22 @@ class ChatRepositoryImpl(
         }
     }
 
-    private suspend fun loadNewest(chatId: String): Result<Unit> =
-        remote.fetchMessagesBefore(chatId, beforeSeq = null, MESSAGE_PAGE_SIZE).map { page ->
+    private suspend fun loadNewest(chatId: String): Result<Boolean> =
+        remote.fetchMessagesBefore(chatId, beforeSeq = null, REMOTE_PAGE_SIZE).map { page ->
             local.storeNewestPage(chatId, page.messages.map { it.toEntity() }, page.nextCursor, page.hasMore)
+            !page.hasMore
         }
 
-    private suspend fun loadOlder(chatId: String, beforeSeq: Long): Result<Unit> =
-        remote.fetchMessagesBefore(chatId, beforeSeq, MESSAGE_PAGE_SIZE).map { page ->
+    private suspend fun loadOlder(chatId: String, beforeSeq: Long): Result<Boolean> =
+        remote.fetchMessagesBefore(chatId, beforeSeq, REMOTE_PAGE_SIZE).map { page ->
             local.storeOlderPage(chatId, page.messages.map { it.toEntity() }, page.nextCursor, page.hasMore)
+            !page.hasMore
         }
 
     private suspend fun catchUp(chatId: String): Result<Unit> {
         var afterSeq = local.syncState(chatId)?.newestSeq ?: return Result.success(Unit)
         while (true) {
-            val page = remote.fetchMessagesAfter(chatId, afterSeq, MESSAGE_PAGE_SIZE).getOrElse { return Result.failure(it) }
+            val page = remote.fetchMessagesAfter(chatId, afterSeq, REMOTE_PAGE_SIZE).getOrElse { return Result.failure(it) }
             local.storeNewerPage(chatId, page.messages.map { it.toEntity() }, page.nextCursor)
             afterSeq = page.nextCursor ?: return Result.success(Unit)
             if (!page.hasMore) return Result.success(Unit)
