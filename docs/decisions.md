@@ -246,7 +246,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ## The message list follows new messages while the newest is in view
 
-**Decision:** When a new message becomes the newest and the list was showing the newest rows, `ChatScreen` scrolls to it, whoever sent it. Send and Reply as Sarah first snap the list to the newest message, so what they send always comes into view. Deep in history the newest rows are unloaded paging placeholders, so without the snap the message could not be seen arriving. Otherwise the list stays where it is, and the jump-to-latest button shows while the newest message is out of view.
+**Decision:** When a new message becomes the newest and the list was showing the newest rows, `ChatScreen` scrolls to it, whoever sent it. Send first snaps the list to the newest message, so what the user sends always comes into view. Deep in history the newest rows are unloaded paging placeholders, so without the snap the message could not be seen arriving. Reply as Sarah does not snap, because it stands in for a message received from Sarah's device, and a received message never pulls the user out of the history they are reading. Otherwise the list stays where it is, and the jump-to-latest button shows while the newest message is out of view.
 
 **Limitation:** A message that arrives while the user is reading older history gives no sign of itself beyond the jump-to-latest button, which shows whenever the newest message is out of view, new or not. "Showing the newest rows" means the first visible row is within two of the newest, which allows for a new message and its header pushing the old newest down.
 

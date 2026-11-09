@@ -296,6 +296,6 @@ Composes `TopBar`, the message list and `MockChatInput` in a `Scaffold` on color
 - List spacing: a `Spacing.md` side margin and no vertical padding. The gaps below the bubbles and SectionHeader's padding space the rows
 - A row not loaded yet is a blank 44dp space, the height of a one-line message with its gap, private to `ChatScreen.kt`. Paging's placeholders would otherwise take no space, so a jump to the newest message would land among older rows
 - When a new message becomes the newest and the list was showing the newest rows, the list scrolls to it. Reading older history is never interrupted
-- Send and Reply as Sarah first snap the list to the newest message, as Jump to latest does, so the message they send always comes into view
+- Send first snaps the list to the newest message, as Jump to latest does, so the message it sends always comes into view. Reply as Sarah does not snap: it stands in for a received message, which the list follows only when the newest rows are in view
 - Jump to latest: a `Button (floating)` with `ic_arrow_down`, content description `R.string.jump_to_latest` ("Jump to latest"), over the list's bottom end, `Spacing.md` from the edge and `Spacing.sm` above the input. It fades in while the newest message is scrolled out of view, and a tap snaps the list to the newest message with no animation
 - Insets: TopBar applies the status bar inset, and MockChatInput the navigation bar and keyboard insets. The list sits between them and applies none, so the keyboard never covers the input
