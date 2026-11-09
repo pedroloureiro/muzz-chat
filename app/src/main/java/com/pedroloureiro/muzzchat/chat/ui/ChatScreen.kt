@@ -95,7 +95,7 @@ fun ChatScreen(
                 inputText = uiState.inputText,
                 onInputChanged = viewModel::onInputChanged,
                 onSend = { sendThenShow(viewModel::send) },
-                onSendAsOther = { sendThenShow(viewModel::sendAsOther) },
+                onSendAsOther = viewModel::sendAsOther,
                 inputInteractionSource = inputInteractionSource,
                 sendInteractionSource = sendInteractionSource,
                 sendAsOtherInteractionSource = sendAsOtherInteractionSource,
