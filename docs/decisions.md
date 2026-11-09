@@ -227,13 +227,13 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 **To support clearing a Chat:**
 1. Add an overflow menu to `TopBar` that takes its actions from the caller, so it stays generic.
 2. Store the `seq` a Chat was cleared up to, on the server for each user and in the Chat sync state. The paged query and the history pages skip messages up to it, so cleared messages never come back.
-3. For the mock, a reset action that restores `MockChatServer` to its seed and deletes the Chat's messages and sync state from Room in one transaction.
+3. For the mock, a reset action that restores `MockChatApi` to its seed and deletes the Chat's messages and sync state from Room in one transaction.
 
 ---
 
 ## The mock backend keeps sent messages in a file
 
-**Decision:** `MockChatServer` writes the messages sent to it to a JSON file in the app's files directory after each one, and reads them back when it is created, after the seed messages.
+**Decision:** `MockChatApi` writes the messages sent to it to a JSON file in the app's files directory after each one, and reads them back when it is created, after the seed messages.
 
 **Limitation:** The file is rewritten in full on every send, and it is cleared only with the app's data, along with Room.
 
