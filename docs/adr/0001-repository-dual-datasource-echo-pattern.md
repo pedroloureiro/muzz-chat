@@ -46,7 +46,7 @@ User taps send
     → UI shows the message at the end of the list with the SENDING indicator
     → Repository calls RemoteDataSource.sendMessage(dto)   ← returns Result<MessageDto>
     → The server (the mock) stores it, gives it a serverMessageId, the Chat's next seq and a timestamp,
-      and returns and echoes it with the clientMessageId after ~200ms
+      and returns and echoes it with the clientMessageId after ~250ms
     → Repository, on the first copy: upsert by (senderId, clientMessageId), updating the pending row in place
     → Room invalidates the paged query → ChatItemMapper → UI shows it as SENT, in its server position
 
@@ -85,5 +85,5 @@ The device never assigns `seq`. If it did, a device clock or a second device cou
 - Confirming is a single upsert, and a repeated echo is harmless by construction.
 - `MessageDirection` is derived at mapping time from `senderId`, never from the code path.
 - `MockChatRemoteDataSource` can be replaced by a real `WebSocketChatDataSource` with no changes above the repository.
-- A sent message appears at once as SENDING, then moves to its server position as SENT after ~200ms. This intentionally mirrors real behaviour.
+- A sent message appears at once as SENDING, then moves to its server position as SENT after ~250ms. This intentionally mirrors real behaviour.
 - The delivery status follows from the message type: `Pending` is `SENDING` and `Confirmed` is `SENT`. Failure handling adds a state to `Pending` without changing the structure.

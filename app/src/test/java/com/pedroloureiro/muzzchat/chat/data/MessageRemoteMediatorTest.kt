@@ -17,7 +17,9 @@ class MessageRemoteMediatorTest {
 
     private val loads = mutableListOf<String>()
     private var syncState: ChatSyncEntity? = null
-    private var result: Result<Unit> = Result.success(Unit)
+    private var syncStateReads = 0
+    private var reachedStart = false
+    private var failure: Throwable? = null
     private val state = PagingState<Int, MessageWithNextRow>(
         pages = emptyList(),
         anchorPosition = null,
@@ -77,41 +79,68 @@ class MessageRemoteMediatorTest {
     }
 
     @Test
-    fun `pagination ends when a load reaches the start`() = runTest {
+    fun `pagination ends when an older page reaches the start`() = runTest {
         syncState = sync(oldestSeq = 5, reachedStart = false)
-        val mediator = mediator(onLoad = { syncState = sync(oldestSeq = 1, reachedStart = true) })
+        reachedStart = true
 
-        assertEndOfPagination(true, mediator.load(LoadType.APPEND, state))
+        assertEndOfPagination(true, mediator().load(LoadType.APPEND, state))
     }
 
     @Test
-    fun `pagination stays open while older history remains`() = runTest {
+    fun `pagination ends when the newest page is the whole history`() = runTest {
+        reachedStart = true
+
+        assertEndOfPagination(true, mediator().load(LoadType.REFRESH, state))
+    }
+
+    @Test
+    fun `pagination stays open after a catch-up while older history remains`() = runTest {
         syncState = sync(oldestSeq = 5, reachedStart = false)
 
         assertEndOfPagination(false, mediator().load(LoadType.REFRESH, state))
     }
 
     @Test
+    fun `pagination ends after a catch-up when the start was already reached`() = runTest {
+        syncState = sync(oldestSeq = 1, reachedStart = true)
+
+        assertEndOfPagination(true, mediator().load(LoadType.REFRESH, state))
+    }
+
+    @Test
+    fun `append reads the sync state only before loading`() = runTest {
+        syncState = sync(oldestSeq = 5, reachedStart = false)
+
+        mediator().load(LoadType.APPEND, state)
+
+        assertEquals(1, syncStateReads)
+    }
+
+    @Test
+    fun `a server page holds more than half of a first load`() {
+        assertTrue(REMOTE_PAGE_SIZE > MESSAGE_PAGING_CONFIG.initialLoadSize / 2)
+    }
+
+    @Test
     fun `a failed load is reported as an error`() = runTest {
-        val failure = IllegalStateException("unavailable")
-        result = Result.failure(failure)
+        val error = IllegalStateException("unavailable")
+        failure = error
 
         val result = mediator().load(LoadType.REFRESH, state)
 
-        assertEquals(failure, (result as MediatorResult.Error).throwable)
+        assertEquals(error, (result as MediatorResult.Error).throwable)
     }
 
-    private fun mediator(onLoad: () -> Unit = {}) = MessageRemoteMediator(
-        syncState = { syncState },
-        loadNewest = { record("newest", onLoad) },
-        catchUp = { record("catch-up", onLoad) },
-        loadOlder = { beforeSeq -> record("older than $beforeSeq", onLoad) }
+    private fun mediator() = MessageRemoteMediator(
+        syncState = { syncStateReads++; syncState },
+        loadNewest = { record("newest").map { reachedStart } },
+        catchUp = { record("catch-up") },
+        loadOlder = { beforeSeq -> record("older than $beforeSeq").map { reachedStart } }
     )
 
-    private fun record(load: String, onLoad: () -> Unit): Result<Unit> {
+    private fun record(load: String): Result<Unit> {
         loads += load
-        onLoad()
-        return result
+        return failure?.let { Result.failure(it) } ?: Result.success(Unit)
     }
 
     private fun sync(oldestSeq: Long, reachedStart: Boolean) =

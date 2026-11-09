@@ -15,4 +15,8 @@ sealed class ChatItem {
     ) : ChatItem()
 
     data class TimestampHeader(val label: String, override val key: String) : ChatItem()
+
+    data object StartOfChat : ChatItem() {
+        override val key = "start-of-chat"
+    }
 }

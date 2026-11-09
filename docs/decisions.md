@@ -139,16 +139,34 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The UI shows no loading or error state
+## Server pages are larger than the paged list's first load
 
-**Decision:** `ChatUiState` contains only `inputText`, and the screen does not render the paged list's `LoadState`.
+**Decision:** Each history request asks the server for `REMOTE_PAGE_SIZE` (60) messages, while Room is read in pages of 20 with a first load of 40. A test keeps `REMOTE_PAGE_SIZE` above half the first load. See [ADR-0003](adr/0003-cursor-paging.md).
 
-**Limitation:** The UI cannot show a loading indicator while a page is fetched, or report a failure. A failed send or page load would have no visible feedback.
+**Limitation:** The ratio guards a race inside Paging rather than removing it. Paging 3.5.3 drops an APPEND requested while the mediator's APPEND runs (`RemoteMediatorAccessor.launchBoundary` clears the pending request when the load returns). When server and Room pages were both 20, the generation started by each stored page read to the end of stored history on its first load and requested the next page at that moment, so scrolling up stopped for good after a page or two.
 
-**Trade-off:** There is no network connection, only a mocked one that always succeeds after a fixed delay of a few hundred milliseconds, so there are no failures to display and no slow requests. Modelling those states now would add UI paths that never run.
+**Trade-off:** Larger requests mean fewer round trips and a first page that fills the screen, at the cost of fetching up to 60 messages the user may never scroll to. Re-requesting from the UI when the list sits at its end, or replacing `RemoteMediator` with explicit loads, would remove the race but add code to work around the library.
+
+**To remove the workaround:**
+1. Once a Paging release keeps an APPEND requested during a running APPEND, the sizes can be chosen freely again.
+
+---
+
+## The UI shows loading for the first load and for older pages from the server, and no error state
+
+**Decision:** `ChatUiState` contains only `inputText`. `ChatScreen` reads the paged list's `LoadState`:
+- While the first load runs and nothing is stored yet (`loadState.refresh` and `itemCount`), a centred indicator fills the list area.
+- While the mediator fetches an older page (`loadState.mediator?.append`), a small indicator floats at the top of the list. It is an overlay, not a row, so rows never shift when it appears or goes.
+
+**Limitation:**
+- The catch-up on opening a Chat with stored messages runs with no indicator.
+- On a cold start with stored messages, the first-load indicator can flash for the moment Room takes to read the first page, because the list is empty until then.
+- The UI cannot report a failure. A failed send or page load would have no visible feedback.
+
+**Trade-off:** These are the two waits a user can see: a fresh install with nothing to show, and scrolling up to history that is not stored yet. Room reads are fast, and stored messages show at once. There is no network connection, only a mocked one that always succeeds, so there are no failures to display. Modelling them now would add UI paths that never run.
 
 **To support a real backend:**
-1. Render the paged list's `LoadState` for page loading and errors, and add connection state to `ChatUiState`.
+1. Render the paged list's errors with a retry, and add connection state to `ChatUiState`.
 2. Show failed sends, as described in "Sends are not retried and cannot fail".
 
 ---
@@ -190,7 +208,7 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 - If the ViewModel is cleared after the pending row is inserted and before the send finishes, the send is cancelled and the message stays pending for good. Nothing resends it.
 - A send that fails stays `SENDING`, and the user cannot retry it.
 
-**Trade-off:** The mock never fails and answers in ~200ms. Retries, failure states and an outbox would add paths that never run here.
+**Trade-off:** The mock never fails and answers in ~250ms. Retries, failure states and an outbox would add paths that never run here.
 
 **To support a real backend:**
 1. Keep pending messages as an outbox in the same table, and send each from a WorkManager job with a network constraint and exponential backoff, so a send outlives the screen and the process.

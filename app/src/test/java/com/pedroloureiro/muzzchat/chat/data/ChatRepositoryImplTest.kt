@@ -9,6 +9,7 @@ import com.pedroloureiro.muzzchat.chat.data.local.RoomChatLocalDataSource
 import com.pedroloureiro.muzzchat.chat.data.local.db.MessageDatabase
 import com.pedroloureiro.muzzchat.chat.data.local.db.entities.MessageEntity
 import com.pedroloureiro.muzzchat.chat.data.remote.ChatRemoteDataSource
+import com.pedroloureiro.muzzchat.chat.data.remote.MOCK_NETWORK_DELAY_MILLIS
 import com.pedroloureiro.muzzchat.chat.data.remote.MockChatRemoteDataSource
 import com.pedroloureiro.muzzchat.chat.data.remote.models.ContentDto
 import com.pedroloureiro.muzzchat.chat.data.remote.models.MessageDto
@@ -258,7 +259,7 @@ class ChatRepositoryImplTest {
 
         launch { repository.sendMessage(message) }
 
-        advanceTimeBy(200)
+        advanceTimeBy(MOCK_NETWORK_DELAY_MILLIS)
         assertEquals(listOf(null), stored().map { it.serverMessageId })
         runCurrent()
         val confirmed = stored().single()

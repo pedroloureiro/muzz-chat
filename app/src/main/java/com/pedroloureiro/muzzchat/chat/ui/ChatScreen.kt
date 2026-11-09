@@ -3,6 +3,8 @@ package com.pedroloureiro.muzzchat.chat.ui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,9 +15,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,26 +33,37 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemKey
 import com.pedroloureiro.muzzchat.R
 import com.pedroloureiro.muzzchat.chat.ui.components.MessageItem
 import com.pedroloureiro.muzzchat.chat.ui.components.MockChatInput
 import com.pedroloureiro.muzzchat.chat.ui.components.SectionHeader
+import com.pedroloureiro.muzzchat.chat.ui.components.StartOfChatMarker
 import com.pedroloureiro.muzzchat.chat.ui.models.ChatItem
 import com.pedroloureiro.muzzchat.ui.components.Button
 import com.pedroloureiro.muzzchat.ui.components.ButtonVariant
 import com.pedroloureiro.muzzchat.ui.components.TopBar
+import com.pedroloureiro.muzzchat.ui.theme.Dimens
 import com.pedroloureiro.muzzchat.ui.theme.Spacing
 import com.pedroloureiro.muzzchat.ui.theme.colorBackground
+import com.pedroloureiro.muzzchat.ui.theme.colorBorder
+import com.pedroloureiro.muzzchat.ui.theme.colorPrimary
+import com.pedroloureiro.muzzchat.ui.theme.colorSurface
 import kotlinx.coroutines.launch
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 // A one-line message and its gap. A zero-height placeholder would let a jump land among older rows.
 private val UnloadedRowHeight = 44.dp
+private val OlderPagesSurfaceSize = 36.dp
+private val OlderPagesIndicatorSize = 20.dp
+private val OlderPagesIndicatorStroke = 2.dp
 
 @Composable
 fun ChatScreen(
@@ -122,8 +138,42 @@ fun ChatScreen(
                     when (val item = messages[index]) {
                         is ChatItem.Message -> MessageItem(item)
                         is ChatItem.TimestampHeader -> SectionHeader(item.label)
+                        is ChatItem.StartOfChat -> StartOfChatMarker()
                         null -> Spacer(Modifier.height(UnloadedRowHeight))
                     }
+                }
+            }
+            if (messages.loadState.refresh is LoadState.Loading && messages.itemCount == 0) {
+                val loadingDescription = stringResource(R.string.loading)
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .semantics { contentDescription = loadingDescription },
+                    color = colorPrimary,
+                )
+            }
+            AnimatedVisibility(
+                visible = messages.loadState.mediator?.append is LoadState.Loading,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = Spacing.sm),
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                val loadingOlderDescription = stringResource(R.string.loading_older)
+                Box(
+                    modifier = Modifier
+                        .size(OlderPagesSurfaceSize)
+                        .background(colorSurface, CircleShape)
+                        .border(Dimens.borderWidth, colorBorder, CircleShape)
+                        .semantics { contentDescription = loadingOlderDescription },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(OlderPagesIndicatorSize),
+                        color = colorPrimary,
+                        strokeWidth = OlderPagesIndicatorStroke,
+                    )
                 }
             }
             AnimatedVisibility(

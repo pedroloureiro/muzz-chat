@@ -12,7 +12,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
-private const val MOCK_NETWORK_DELAY_MILLIS = 200L
+internal const val MOCK_NETWORK_DELAY_MILLIS = 250L
 
 class MockChatRemoteDataSource(private val api: MockChatApi) : ChatRemoteDataSource, OtherUserDevice {
     private val incoming = MutableSharedFlow<MessageDto>(replay = 0)

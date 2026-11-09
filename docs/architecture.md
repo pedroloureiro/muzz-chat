@@ -52,7 +52,7 @@ com.pedroloureiro.muzzchat
     │       └── models        MessageDto, MessagePageDto, ContentDto, OutgoingMessageDto
     └── ui                    ChatScreen, ChatViewModel, ChatItemMapper
         ├── models            ChatItem, ChatUiState, MessageDirection
-        └── components        MessageBubble, MessageItem, SendingIndicator, SectionHeader, ChatInput,
+        └── components        MessageBubble, MessageItem, SendingIndicator, SectionHeader, StartOfChatMarker, ChatInput,
                               MockChatInput
 ```
 
@@ -112,7 +112,7 @@ ChatViewModel
   → ChatRepositoryImpl          inserts the pending row into Room, then calls the remote data source
   → Echo or response received   upsert by (senderId, clientMessageId): the pending row is confirmed in place
   → Room PagingSource           invalidated, reloads PagingData<MessageWithNext>
-  → ChatItemMapper              map → ChatItem.Message, insertSeparators → TimestampHeader
+  → ChatItemMapper              map → ChatItem.Message, insertSeparators → TimestampHeader, then StartOfChat
   → Flow<PagingData<ChatItem>>  rendered by ChatScreen
 ```
 
