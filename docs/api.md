@@ -40,7 +40,7 @@ What the app expects of the backend, which the exercise does not have. Every gua
 The client assumes the backend is always reachable and always succeeds. The mock never fails and answers after a fixed ~250ms delay, so the paths below would never run:
 
 - No network errors, timeouts, 4xx or 5xx responses. A failed send would stay `SENDING`, and nothing retries it. See "Sends are not retried and cannot fail" in [`decisions.md`](decisions.md).
-- No error or connection state in the UI, and loading is shown only for a Chat's first load. See "The UI shows loading only for a Chat's first load, and no error state" in [`decisions.md`](decisions.md).
+- No error or connection state in the UI. Loading is shown only for a Chat's first load and for older pages from the server. See "The UI shows loading for the first load and for older pages from the server, and no error state" in [`decisions.md`](decisions.md).
 - No reconnection or catch-up after the stream drops. Opening a Chat catches up, and so does a message that skips a `seq`.
 - No sign-in, token refresh or sign-out, and no expired token handling.
 - No rate limits, payload size limits or content types beyond `TEXT`.

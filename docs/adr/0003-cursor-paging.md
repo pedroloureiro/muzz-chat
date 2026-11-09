@@ -52,6 +52,7 @@ Each row is a `MessageWithNext`. The query exists for the bubble tail, which is 
 
 - `map { toMessageItem(row) }` builds each `ChatItem.Message`, including `isGrouped` from the row's next-message data.
 - `insertSeparators { newer, older -> headerAbove(newer, older) }` inserts a `TimestampHeader` above a message when there is more than an hour since the older one. Paging calls it with `older = null` only once the oldest message has loaded, so the first message of the Chat still gets a header.
+- A second `insertSeparators { _, older -> }` pass adds `StartOfChat` after the last item when `older = null`, which is above the oldest message's header. Paging makes that call only when both Room and the mediator have reached the end, so the marker shows only when the whole history has loaded.
 
 ### UI
 `ChatViewModel` exposes `Flow<PagingData<ChatItem>>`, cached in `viewModelScope`, separately from `ChatUiState`. The screen collects it with `collectAsLazyPagingItems()` and shows it in a `LazyColumn(reverseLayout = true)`, keyed by each message's `senderId` and `clientMessageId` (see [ADR-0001](0001-repository-dual-datasource-echo-pattern.md)).

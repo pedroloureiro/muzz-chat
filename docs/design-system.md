@@ -258,6 +258,15 @@ Centred timestamp divider. Single state.
 
 ---
 
+### StartOfChatMarker
+A pill that marks the start of the conversation, above the oldest message's SectionHeader. Single state. Its values are private to `StartOfChatMarker.kt`.
+- Text `R.string.start_of_chat` ("Start of conversation") in `labelSmall`, colour `textPrimary`, which reads better on SoftPurple than textSecondary
+- Background `colorSurfaceVariant`, fully rounded, padding 12dp horizontal and 4dp vertical
+- Centred, with `Spacing.sm` above it
+- Shown only once the whole history has loaded
+
+---
+
 ### ChatInput
 The message input: composes `TextInput` + `Button (primary)`. The screen passes in an interaction source for each. Its values are private to `ChatInput.kt`.
 - Bar: `colorSurface`, with a `dividerWidth` `colorBorder` divider along its top, then padding `Spacing.md` horizontal and `Spacing.sm` vertical
@@ -295,6 +304,7 @@ Composes `TopBar`, the message list and `MockChatInput` in a `Scaffold` on color
 - List: the newest message at the bottom, and scrolling up loads older pages. Messages render as `MessageItem` and timestamp headers as `SectionHeader`
 - List spacing: a `Spacing.md` side margin and no vertical padding. The gaps below the bubbles and SectionHeader's padding space the rows
 - First load: while the paged list's first load runs and the list is empty, a Material `CircularProgressIndicator` at its default size (40dp, 4dp stroke) in colorPrimary is centred in the list area. Content description: `R.string.loading` ("Loading messages"). Stored messages show as soon as Room reads them, so in practice it appears only on a fresh install
+- Older pages: while the server is fetching an older page, a 24dp `CircularProgressIndicator` in colorPrimary, 2dp stroke, floats centred at the top of the list area, `Spacing.sm` below TopBar. It fades in and out with `AnimatedVisibility` and takes no space in the list, so rows never shift. Content description: `R.string.loading_older` ("Loading older messages"). Room reads show nothing
 - A row not loaded yet is a blank 44dp space, the height of a one-line message with its gap, private to `ChatScreen.kt`. Paging's placeholders would otherwise take no space, so a jump to the newest message would land among older rows
 - When a new message becomes the newest and the list was showing the newest rows, the list scrolls to it. Reading older history is never interrupted
 - Send first snaps the list to the newest message, as Jump to latest does, so the message it sends always comes into view. Reply as Sarah does not snap: it stands in for a received message, which the list follows only when the newest rows are in view

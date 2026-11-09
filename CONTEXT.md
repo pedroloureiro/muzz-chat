@@ -55,7 +55,10 @@ The payload of a Message. Has a `ContentType` (currently `TEXT` only) and a `val
 Whether a rendered message is `OUTGOING` (sent by the current user) or `INCOMING` (sent by anyone else). A UI-layer concept derived from comparing `senderId` to the current user's id. Not to be confused with delivery status.
 
 ## ChatItem
-A UI-layer model representing one renderable row in the message list. Every item has a `key`, which identifies it in the list. Either a `Message` (with `key`, `direction`, `content: String`, `timestampMillis`, `isGrouped`, `deliveryStatus`) or a `TimestampHeader` (with a pre-formatted `label` and a `key`). A message's `key` is its `senderId` and `clientMessageId` joined, so it stays the same from pending to confirmed. A header's `key` is derived from the message below it. Built by `ChatItemMapper`.
+A UI-layer model representing one renderable row in the message list. Every item has a `key`, which identifies it in the list. A `Message` (with `key`, `direction`, `content: String`, `timestampMillis`, `isGrouped`, `deliveryStatus`), a `TimestampHeader` (with a pre-formatted `label` and a `key`), or `StartOfChat`. A message's `key` is its `senderId` and `clientMessageId` joined, so it stays the same from pending to confirmed. A header's `key` is derived from the message below it. Built by `ChatItemMapper`.
+
+## StartOfChat
+A `ChatItem` rendered as a "Start of conversation" marker above the oldest message's `TimestampHeader`. Added by `toChatItems` only once the whole history has loaded, which is when Paging reports the end of both Room and the server, so seeing it means there is nothing older.
 
 ## TimestampHeader
 A `ChatItem` variant rendered as a centred date/time divider. Inserted above a message when the gap from the older message exceeds one hour, or when it is the oldest message in the conversation. The format depends on how many calendar days ago the message was sent, in the device's time zone: today `11:59`, 1–6 days ago `Thursday 11:59`, otherwise `12 Mar 2026 11:59`.
@@ -67,7 +70,7 @@ A `ChatItem.Message` where `isGrouped = true`. Occurs when the next message is s
 A pure Kotlin object (no Android dependencies) holding the display rules, each looking at one message and one neighbour. `toMessageItem` builds a `ChatItem.Message`, takes its direction from the current user's id, which `ChatViewModel` reads once when the list is first collected, and computes `isGrouped` from the next message. `headerAbove` returns a `TimestampHeader` when one belongs above a message, choosing its `DateTimeFormat`. Paging applies them with `map` and `insertSeparators`. Date arithmetic and formatting are done by `calendarDaysBetween` and `formatUtc` in `utils`. The primary unit under TDD.
 
 ## ChatUiState
-The state object the ViewModel exposes to the UI via `StateFlow`. Contains `inputText: String`. The message list is exposed separately as `Flow<PagingData<ChatItem>>`, because paged data is a stream. No loading or error state of its own: `ChatScreen` reads the first load from the paged list's `LoadState`, and errors are a deliberate omission documented in the decisions log.
+The state object the ViewModel exposes to the UI via `StateFlow`. Contains `inputText: String`. The message list is exposed separately as `Flow<PagingData<ChatItem>>`, because paged data is a stream. No loading or error state of its own: `ChatScreen` reads loading from the paged list's `LoadState`, and errors are a deliberate omission documented in the decisions log.
 
 ## MessageDeliveryStatus
 The delivery state of a message, as shown in the UI. Follows from the message type: `Pending` is `SENDING` and `Confirmed` is `SENT`. `FAILED` and `RETRYING` are reserved for future error handling, and will be states of a pending message.

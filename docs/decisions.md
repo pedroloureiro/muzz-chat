@@ -152,19 +152,21 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 
 ---
 
-## The UI shows loading only for a Chat's first load, and no error state
+## The UI shows loading for the first load and for older pages from the server, and no error state
 
-**Decision:** `ChatUiState` contains only `inputText`. `ChatScreen` shows a loading indicator while the paged list's first load runs and nothing is stored yet, read from `LazyPagingItems.loadState.refresh` and `itemCount`. It renders no other `LoadState`.
+**Decision:** `ChatUiState` contains only `inputText`. `ChatScreen` reads the paged list's `LoadState`:
+- While the first load runs and nothing is stored yet (`loadState.refresh` and `itemCount`), a centred indicator fills the list area.
+- While the mediator fetches an older page (`loadState.mediator?.append`), a small indicator floats at the top of the list. It is an overlay, not a row, so rows never shift when it appears or goes.
 
 **Limitation:**
-- Once messages are stored, the catch-up on opening the Chat runs with no indicator, and older pages load with none either: their rows are blank until they arrive.
-- On a cold start with stored messages, the indicator can flash for the moment Room takes to read the first page, because the list is empty until then.
+- The catch-up on opening a Chat with stored messages runs with no indicator.
+- On a cold start with stored messages, the first-load indicator can flash for the moment Room takes to read the first page, because the list is empty until then.
 - The UI cannot report a failure. A failed send or page load would have no visible feedback.
 
-**Trade-off:** Only a fresh install has nothing to show while the first page loads, so that is the one blank screen worth covering. Stored messages show at once, and the mock answers in ~250ms. There is no network connection, only a mocked one that always succeeds, so there are no failures to display and no slow requests. Modelling those states now would add UI paths that never run.
+**Trade-off:** These are the two waits a user can see: a fresh install with nothing to show, and scrolling up to history that is not stored yet. Room reads are fast, and stored messages show at once. There is no network connection, only a mocked one that always succeeds, so there are no failures to display. Modelling them now would add UI paths that never run.
 
 **To support a real backend:**
-1. Render the paged list's `LoadState` for older pages and errors, and add connection state to `ChatUiState`.
+1. Render the paged list's errors with a retry, and add connection state to `ChatUiState`.
 2. Show failed sends, as described in "Sends are not retried and cannot fail".
 
 ---
