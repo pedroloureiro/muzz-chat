@@ -258,7 +258,8 @@ Smaller decisions and known limitations. Architectural decisions live in [`adr/`
 **Trade-off:** The user keeps their place in older history, and sees new messages as they arrive when at the bottom. A new-message count would need the screen to track what the user has seen.
 
 **To show new messages:**
-1. Count the messages that arrive while the newest message is out of view, and show the count on the jump-to-latest button.
+1. Count the messages that arrive while the newest message is out of view.
+2. Show a "New message" pill above the input while the count is above zero, with the count when there is more than one. Tapping it jumps to the newest message, like Jump to latest, and clears the count.
 
 ---
 
